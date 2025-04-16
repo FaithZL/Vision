@@ -37,8 +37,8 @@ public:
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         Medium::render_sub_UI(widgets);
-        changed_ |= widgets->color_edit("sigma_a", addressof(sigma_a_.hv()));
-        changed_ |= widgets->color_edit("sigma_s", addressof(sigma_s_.hv()));
+        changed_ |= widgets->drag_float3("sigma_a", addressof(sigma_a_.hv()), 0.1, 0);
+        changed_ |= widgets->drag_float3("sigma_s", addressof(sigma_s_.hv()), 0.1, 0);
         changed_ |= widgets->drag_float("g", addressof(g_.hv()), 0.01, -1, 1);
     }
 
