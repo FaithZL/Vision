@@ -28,6 +28,14 @@ bool ShapeInstance::render_UI(ocarina::Widgets *widgets) noexcept {
     if (has_emission()) {
         emission()->render_UI(widgets);
     }
+    if (has_inside()) {
+        widgets->text("inside medium");
+        inside()->render_UI(widgets);
+    }
+    if (has_outside()) {
+        widgets->text("outside medium");
+        outside()->render_UI(widgets);
+    }
     widgets->use_tree("geometry detail", [&] {
         render_sub_UI(widgets);
     });
