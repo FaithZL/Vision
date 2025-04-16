@@ -18,6 +18,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     warper_desc_ = scene_desc.warper_desc;
     render_setting_ = scene_desc.render_setting;
     materials().set_mode(render_setting_.polymorphic_mode);
+    mediums().set_mode(render_setting_.polymorphic_mode);
     OC_INFO_FORMAT("polymorphic mode is {}", materials().mode());
     light_sampler_.init(scene_desc.light_sampler_desc);
     light_sampler_->set_mode(render_setting_.polymorphic_mode);
