@@ -253,7 +253,7 @@
                 "y": 1,
                 "z": 1,
                 "medium": {
-                    "inside" : "fog",
+                    "inside" : "fog2",
                     "outside" : ""
                 },
                 "material": "glass",
@@ -510,6 +510,17 @@
                     "g" : 0,
                     "medium_name" : "Skin1",
                     "scale": 30
+                    //                "sigma_s" : [7.4 ,8.8, 10.1],
+                    //                "sigma_a" : [0.32 ,1.7, 4.8 ]
+                }
+            },
+            {
+                "type" : "homogeneous",
+                "name" :"fog2",
+                "param" : {
+                    "g" : 0,
+                    "medium_name" : "Apple",
+                    "scale": 10
                     //                "sigma_s" : [7.4 ,8.8, 10.1],
                     //                "sigma_a" : [0.32 ,1.7, 4.8 ]
                 }
