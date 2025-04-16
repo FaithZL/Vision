@@ -88,7 +88,7 @@ void Scene::update_runtime_object(const vision::IObjectConstructor *constructor)
 }
 
 void Scene::prepare() noexcept {
-    material_registry().remove_unused_materials();
+    material_registry().remove_unused_elements();
     tidy_up();
     fill_instances();
     camera_->prepare();

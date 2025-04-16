@@ -9,7 +9,7 @@ namespace vision {
 
 template<typename T>
 bool TRegistry<T>::render_UI(ocarina::Widgets *widgets) noexcept {
-    bool open = widgets->use_folding_header("elements", [&] {
+    bool open = widgets->use_folding_header(UI_title().data(), [&] {
         uint type_num = elements().type_num();
         widgets->text(ocarina::format("type num is {}", type_num));
         elements().render_UI(widgets);
@@ -66,7 +66,7 @@ void TRegistry<T>::remedy() noexcept {
 }
 
 template<typename T>
-void TRegistry<T>::remove_unused_materials() noexcept {
+void TRegistry<T>::remove_unused_elements() noexcept {
     for (auto iter = elements_.begin(); iter != elements_.end();) {
         if (iter->use_count() == 1) {
             iter = elements_.erase(iter);
@@ -91,7 +91,7 @@ SP<T> TRegistry<T>::register_(SP<T> material) noexcept {
 }
 
 template<typename T>
-SP<T> TRegistry<T>::get_material(uint64_t hash) noexcept {
+SP<T> TRegistry<T>::get_element(uint64_t hash) noexcept {
     auto iter = std::find_if(elements_.begin(), elements_.end(), [&](SP<Material> mat) {
         return mat->hash() == hash;
     });
@@ -137,12 +137,12 @@ namespace detail {
 }
 }// namespace detail
 
-void precompute_albedo() noexcept {
+void MaterialRegistry::precompute_albedo() noexcept {
     vector<PrecomputedLobeTable> configs;
 
     Clock clock;
     clock.start();
-    MaterialRegistry::instance().elements().for_each_instance([&](SP<Material> material, uint i) {
+    elements().for_each_instance([&](SP<Material> material, uint i) {
         auto lst = material->precompute();
         configs.insert(configs.end(), lst.begin(), lst.end());
     });
