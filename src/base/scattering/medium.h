@@ -23,7 +23,7 @@ class ShapeInstance;
 class Medium : public Node, public Encodable {
 protected:
     uint index_{InvalidUI32};
-    float scale_{};
+    EncodedData<float> scale_{};
 
 public:
     using Desc = MediumDesc;
@@ -33,10 +33,12 @@ public:
     explicit Medium(const MediumDesc &desc)
         : Node(desc),
           scale_(desc.scale["value"].as_float()) {}
+    OC_ENCODABLE_FUNC(Encodable, scale_)
+    VS_HOTFIX_MAKE_RESTORE(Node, scale_)
     ~Medium() override = default;
-    void set_index(uint index) noexcept { index_ = index; }
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
-    OC_MAKE_MEMBER_GETTER(index,)
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
+    OC_MAKE_MEMBER_GETTER_SETTER(index,)
     template<typename T>
     void add_reference(T shape_instance) noexcept {}
     virtual SampledSpectrum Tr(const RayVar &ray, const SampledWavelengths &swl,
