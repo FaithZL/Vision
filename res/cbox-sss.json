@@ -524,6 +524,10 @@
             "rr_threshold": 1
         }
     },
+    "render_setting" : {
+        "min_world_radius": 10,
+        "polymorphic_mode" : 1
+    },
     "light_sampler": {
         "type": "uniform",
         "param": {

@@ -7,6 +7,76 @@
 
 namespace vision {
 
+template<typename T>
+bool TRegistry<T>::render_UI(ocarina::Widgets *widgets) noexcept {
+    bool open = widgets->use_folding_header("elements", [&] {
+        uint type_num = elements().type_num();
+        widgets->text(ocarina::format("type num is {}", type_num));
+        elements().render_UI(widgets);
+    });
+    return open;
+}
+
+template<typename T>
+void TRegistry<T>::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
+    for (int i = 0; i < elements_.size(); ++i) {
+        SP<element_ty> element = elements_[i];
+        if (!constructor->match(element.get())) {
+            continue;
+        }
+        SP<element_ty> new_element = constructor->construct_shared<element_ty>();
+        new_element->restore(element.get());
+        elements_.replace(i, new_element);
+    }
+}
+
+template<typename T>
+void TRegistry<T>::push_back(SP<element_ty> material) noexcept {
+    elements_.push_back(ocarina::move(material));
+}
+
+template<typename T>
+void TRegistry<T>::upload_device_data() noexcept {
+    if (has_changed()) {
+        elements_.update();
+    }
+}
+
+template<typename T>
+void TRegistry<T>::prepare() noexcept {
+    elements_.for_each_instance([&](const SP<element_ty> &element) noexcept {
+        element->prepare();
+    });
+    auto rp = Global::instance().pipeline();
+    elements_.prepare(rp->bindless_array(), rp->device());
+}
+
+template<typename T>
+void TRegistry<T>::tidy_up() noexcept {
+    elements_.for_each_instance([&](SP<element_ty> material, uint i) {
+        material->set_index(i);
+    });
+}
+
+template<typename T>
+void TRegistry<T>::remedy() noexcept {
+    elements_.remedy();
+    auto rp = Global::instance().pipeline();
+    elements_.prepare(rp->bindless_array(), rp->device());
+}
+
+template<typename T>
+void TRegistry<T>::remove_unused_materials() noexcept {
+    for (auto iter = elements_.begin(); iter != elements_.end();) {
+        if (iter->use_count() == 1) {
+            iter = elements_.erase(iter);
+        } else {
+            ++iter;
+        }
+    }
+    tidy_up();
+}
+
 OC_MAKE_INSTANCE_FUNC_DEF_WITH_HOTFIX(MaterialRegistry, s_material_registry)
 
 SP<Material> MaterialRegistry::register_(SP<vision::Material> material) noexcept {

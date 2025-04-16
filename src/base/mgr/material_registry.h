@@ -10,6 +10,26 @@
 
 namespace vision {
 using namespace ocarina;
+
+template<typename T>
+class TRegistry : public GUI, public Observer {
+public:
+    using element_ty = T;
+protected:
+    PolymorphicGUI<SP<T>> elements_;
+
+public:
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
+    void push_back(SP<T> element) noexcept;
+    void upload_device_data() noexcept;
+    void prepare() noexcept;
+    void remedy() noexcept;
+    void remove_unused_materials() noexcept;
+    void tidy_up() noexcept;
+    OC_MAKE_MEMBER_GETTER(elements, &)
+};
+
 class MaterialRegistry : public GUI, public Observer {
 private:
     OC_MAKE_INSTANCE_CONSTRUCTOR(MaterialRegistry, s_material_registry)
