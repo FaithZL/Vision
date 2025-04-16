@@ -20,10 +20,13 @@ using TSampler = TObject<Sampler, SamplerDesc>;
 
 class SampledWavelengths;
 class ShapeInstance;
-class Medium : public Node, public Encodable {
+class ShapeGroup;
+class Medium : public Node, public Encodable, std::enable_shared_from_this<Medium> {
 protected:
     uint index_{InvalidUI32};
     EncodedData<float> scale_{};
+    vector<weak_ptr<ShapeInstance>> shape_instances;
+    vector<weak_ptr<ShapeGroup>> shape_groups;
 
 public:
     using Desc = MediumDesc;
@@ -34,13 +37,13 @@ public:
         : Node(desc),
           scale_(desc.scale["value"].as_float()) {}
     OC_ENCODABLE_FUNC(Encodable, scale_)
-    VS_HOTFIX_MAKE_RESTORE(Node, index_, scale_)
+    void restore(vision::RuntimeObject *old_obj) noexcept override;
     ~Medium() override = default;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
-    template<typename T>
-    void add_reference(T shape_instance) noexcept {}
+    void add_reference(SP<ShapeInstance> shape_instance) noexcept;
+    void add_reference(SP<ShapeGroup> shape_group) noexcept;
     virtual SampledSpectrum Tr(const RayVar &ray, const SampledWavelengths &swl,
                                TSampler &sampler) const noexcept = 0;
     virtual SampledSpectrum sample(const RayState &rs, Interaction &it, TSampler &sampler,

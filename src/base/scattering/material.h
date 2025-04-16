@@ -177,12 +177,8 @@ protected:
 public:
     Material() = default;
     explicit Material(const MaterialDesc &desc);
-    void add_reference(SP<ShapeInstance> shape_instance) noexcept {
-        shape_instances.push_back(ocarina::move(shape_instance));
-    }
-    void add_reference(SP<ShapeGroup> shape_group) noexcept {
-        shape_groups.push_back(ocarina::move(shape_group));
-    }
+    void add_reference(SP<ShapeInstance> shape_instance) noexcept;
+    void add_reference(SP<ShapeGroup> shape_group) noexcept;
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
     [[nodiscard]] virtual bool is_dispersive() const noexcept { return false; }
     bool render_UI(ocarina::Widgets *widgets) noexcept override;

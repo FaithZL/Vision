@@ -342,6 +342,13 @@ Uint Material::combine_flag(const Float3 &wo, const Float3 &wi, Uint flag) noexc
     return select(reflect, flag & non_trans, flag & non_reflect);
 }
 
+void Material::add_reference(SP<ShapeInstance> shape_instance) noexcept {
+    shape_instances.push_back(ocarina::move(shape_instance));
+}
+void Material::add_reference(SP<ShapeGroup> shape_group) noexcept {
+    shape_groups.push_back(ocarina::move(shape_group));
+}
+
 void Material::_apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept {
     switch (bump_.dim()) {
         case 1: detail::compute_by_bump_map(bump_, bump_scale_, it, swl); break;
