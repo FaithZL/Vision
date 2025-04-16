@@ -21,7 +21,7 @@ using TSampler = TObject<Sampler, SamplerDesc>;
 class SampledWavelengths;
 class ShapeInstance;
 class ShapeGroup;
-class Medium : public Node, public Encodable, std::enable_shared_from_this<Medium> {
+class Medium : public Node, public Encodable, public std::enable_shared_from_this<Medium> {
 protected:
     uint index_{InvalidUI32};
     EncodedData<float> scale_{};
