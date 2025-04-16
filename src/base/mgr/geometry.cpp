@@ -189,7 +189,7 @@ SampledSpectrum Geometry::Tr(Scene &scene, const SampledWavelengths &swl,
     SampledSpectrum ret{swl.dimension(), 1.f};
     if (scene.has_medium()) {
         $if(ray_state.in_medium()) {
-            scene.mediums().dispatch_instance(ray_state.medium, [&](const Medium *medium) {
+            scene.mediums().dispatch(ray_state.medium, [&](const Medium *medium) {
                 ret = medium->Tr(ray_state.ray, swl, sampler);
             });
         };
