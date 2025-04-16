@@ -206,6 +206,7 @@ void Scene::upload_data() noexcept {
     camera_->update_device_data();
     integrator_->update_device_data();
     light_sampler_->update_device_data();
+    medium_registry().upload_device_data();
     material_registry_->upload_device_data();
     if (has_changed()) {
         pipeline()->upload_bindless_array();
