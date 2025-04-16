@@ -17,6 +17,7 @@ Sensor::Sensor(const SensorDesc &desc)
     if (!scene().has_medium()) {
         return;
     }
+    TObject<Medium> medium_;
     if (desc.contains("medium")) {
         medium_.name = desc["medium"].as_string();
     } else {
