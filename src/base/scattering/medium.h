@@ -42,7 +42,8 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
-    void add_reference(SP<ShapeInstance> shape_instance) noexcept;
+    void add_inside_reference(SP<ShapeInstance> shape_instance) noexcept;
+    void add_outside_reference(SP<ShapeInstance> shape_instance) noexcept;
     virtual SampledSpectrum Tr(const RayVar &ray, const SampledWavelengths &swl,
                                TSampler &sampler) const noexcept = 0;
     virtual SampledSpectrum sample(const RayState &rs, Interaction &it, TSampler &sampler,

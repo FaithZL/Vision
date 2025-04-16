@@ -337,7 +337,7 @@ Uint Material::combine_flag(const Float3 &wo, const Float3 &wi, Uint flag) noexc
     return select(reflect, flag & non_trans, flag & non_reflect);
 }
 
-void Material::add_reference(SP<ShapeInstance> shape_instance) noexcept {
+void Material::add_material_reference(SP<ShapeInstance> shape_instance) noexcept {
     shape_instances.push_back(ocarina::move(shape_instance));
 }
 

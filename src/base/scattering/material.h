@@ -176,7 +176,7 @@ protected:
 public:
     Material() = default;
     explicit Material(const MaterialDesc &desc);
-    void add_reference(SP<ShapeInstance> shape_instance) noexcept;
+    void add_material_reference(SP<ShapeInstance> shape_instance) noexcept;
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
     [[nodiscard]] virtual bool is_dispersive() const noexcept { return false; }
     bool render_UI(ocarina::Widgets *widgets) noexcept override;

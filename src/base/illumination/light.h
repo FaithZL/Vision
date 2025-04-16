@@ -210,15 +210,16 @@ public:
         : Light(desc, LightType::Area),
           inst_idx_(desc["inst_id"].as_uint(InvalidUI32)) {}
     OC_ENCODABLE_FUNC(Light, inst_idx_)
-    VS_HOTFIX_MAKE_RESTORE(Light, inst_idx_)
+    void restore(vision::RuntimeObject *old_obj) noexcept override;
+//    VS_HOTFIX_MAKE_RESTORE(Light, inst_idx_)
     template<typename T>
-    void add_reference(T shape_instance) noexcept {}
+    void add_emission_reference(T shape_instance) noexcept {}
     [[nodiscard]] ShapeInstance *instance() const noexcept;
 };
 
 class IPointLight : public Light {
 public:
-    IPointLight(): Light(LightType::DeltaPosition) {}
+    IPointLight() : Light(LightType::DeltaPosition) {}
     explicit IPointLight(const LightDesc &desc) : Light(desc, LightType::DeltaPosition) {}
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] Float PDF_wi(const LightSampleContext &p_ref,

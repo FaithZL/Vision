@@ -32,6 +32,13 @@ ShapeInstance *IAreaLight::instance() const noexcept {
     return scene().get_instance(inst_idx_.hv());
 }
 
+void IAreaLight::restore(vision::RuntimeObject *old_obj) noexcept {
+    Light::restore(old_obj);
+    VS_HOTFIX_MOVE_ATTRS(inst_idx_)
+    instance()->set_emission_name(name());
+    instance()->set_emission(std::static_pointer_cast<IAreaLight>(shared_from_this()));
+}
+
 LightSample IPointLight::sample_wi(const LightSampleContext &p_ref, Float2 u,
                                    const SampledWavelengths &swl) const noexcept {
     LightSample ret{swl.dimension()};

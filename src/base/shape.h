@@ -118,7 +118,7 @@ OC_STRUCT(vision, MeshHandle, vertex_buffer, triangle_buffer){};
 #define VS_MAKE_ATTR_SETTER_GETTER(attr)                     \
     void set_##attr(decltype(attr##_.impl()) val) noexcept { \
         if (val.get()) {                                     \
-            val->add_reference(shared_from_this());          \
+            val->add_##attr##_reference(shared_from_this()); \
         }                                                    \
         attr##_.init(val);                                   \
     }                                                        \
@@ -127,7 +127,7 @@ OC_STRUCT(vision, MeshHandle, vertex_buffer, triangle_buffer){};
     }                                                        \
     void set_##attr(decltype(attr##_) val) noexcept {        \
         if (val.get()) {                                     \
-            val->add_reference(shared_from_this());          \
+            val->add_##attr##_reference(shared_from_this()); \
         }                                                    \
         attr##_ = ocarina::move(val);                        \
     }                                                        \
@@ -214,8 +214,6 @@ public:
     explicit ShapeGroup(const ShapeDesc &desc);
     [[nodiscard]] string_view impl_type() const noexcept override { return "ShapeGroup"; }
     [[nodiscard]] string_view category() const noexcept override { return "shape"; }
-//    VS_MAKE_ATTR_SETTER_GETTER(material)
-//    VS_MAKE_ATTR_SETTER_GETTER(emission)
     void post_init(const ShapeDesc &desc);
     [[nodiscard]] ShapeInstance &instance(uint i) noexcept { return *(instances_[i]); }
     [[nodiscard]] const ShapeInstance &instance(uint i) const noexcept { return *(instances_[i]); }
