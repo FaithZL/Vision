@@ -37,9 +37,9 @@ public:
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         Medium::render_sub_UI(widgets);
-        widgets->color_edit("sigma_a", addressof(sigma_a_.hv()));
-        widgets->color_edit("sigma_s", addressof(sigma_s_.hv()));
-        widgets->drag_float("g", addressof(g_.hv()), 0.01, -1, 1);
+        changed_ |= widgets->color_edit("sigma_a", addressof(sigma_a_.hv()));
+        changed_ |= widgets->color_edit("sigma_s", addressof(sigma_s_.hv()));
+        changed_ |= widgets->drag_float("g", addressof(g_.hv()), 0.01, -1, 1);
     }
 
     [[nodiscard]] SampledSpectrum Tr(const RayVar &ray, const SampledWavelengths &swl,

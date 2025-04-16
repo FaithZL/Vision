@@ -42,7 +42,7 @@ bool Medium::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 void Medium::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    widgets->drag_float("scale", addressof(scale_.hv()), 0.01f, 0);
+    changed_ |= widgets->drag_float("scale", addressof(scale_.hv()), 0.01f, 0);
 }
 
 }// namespace vision
