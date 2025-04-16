@@ -5,6 +5,7 @@
 #pragma once
 
 #include "base/scattering/material.h"
+#include "base/scattering/medium.h"
 #include "UI/polymorphic.h"
 #include "hotfix/hotfix.h"
 
@@ -44,6 +45,15 @@ public:
     string_view UI_title() const noexcept override { return "materials"; }
     void precompute_albedo() noexcept;
     [[nodiscard]] bool has_dispersive() const noexcept;
+};
+
+class MediumRegistry : public TRegistry<Medium> {
+private:
+    OC_MAKE_INSTANCE_CONSTRUCTOR(MediumRegistry, s_medium_registry)
+
+public:
+    OC_MAKE_INSTANCE_FUNC_DECL(MediumRegistry)
+    string_view UI_title() const noexcept override { return "mediums"; }
 };
 
 }// namespace vision

@@ -2,7 +2,7 @@
 // Created by Zero on 2023/8/6.
 //
 
-#include "material_registry.h"
+#include "registries.h"
 #include "pipeline.h"
 
 namespace vision {
@@ -92,7 +92,7 @@ SP<T> TRegistry<T>::register_(SP<T> material) noexcept {
 
 template<typename T>
 SP<T> TRegistry<T>::get_element(uint64_t hash) noexcept {
-    auto iter = std::find_if(elements_.begin(), elements_.end(), [&](SP<Material> mat) {
+    auto iter = std::find_if(elements_.begin(), elements_.end(), [&](SP<T> mat) {
         return mat->hash() == hash;
     });
     if (iter == elements_.cend()) {
@@ -102,6 +102,9 @@ SP<T> TRegistry<T>::get_element(uint64_t hash) noexcept {
 }
 
 template class TRegistry<Material>;
+template class TRegistry<Medium>;
+
+///#region material registry
 
 OC_MAKE_INSTANCE_FUNC_DEF_WITH_HOTFIX(MaterialRegistry, s_material_registry)
 
@@ -169,5 +172,8 @@ void MaterialRegistry::precompute_albedo() noexcept {
     output << "} //namespace";
     output.close();
 }
+///#endregion
+
+OC_MAKE_INSTANCE_FUNC_DEF_WITH_HOTFIX(MediumRegistry, s_medium_registry)
 
 }// namespace vision

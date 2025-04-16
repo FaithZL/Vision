@@ -15,7 +15,7 @@
 #include "base/scattering/medium.h"
 #include "base/warper.h"
 #include "base/color/spectrum.h"
-#include "material_registry.h"
+#include "registries.h"
 #include "mesh_registry.h"
 #include "UI/GUI.h"
 #include "hotfix/hotfix.h"
