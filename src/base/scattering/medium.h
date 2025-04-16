@@ -34,7 +34,7 @@ public:
         : Node(desc),
           scale_(desc.scale["value"].as_float()) {}
     OC_ENCODABLE_FUNC(Encodable, scale_)
-    VS_HOTFIX_MAKE_RESTORE(Node, scale_)
+    VS_HOTFIX_MAKE_RESTORE(Node, index_, scale_)
     ~Medium() override = default;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
