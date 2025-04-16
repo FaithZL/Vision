@@ -58,7 +58,7 @@ public:
     [[nodiscard]] Pipeline *pipeline() noexcept;
 
     VS_MAKE_GUI_ALL_FUNC(GUI, camera_, integrator_, light_sampler_,
-                         material_registry_, spectrum_, sampler_)
+                         material_registry_, medium_registry_, spectrum_, sampler_)
     OC_MAKE_MEMBER_GETTER_SETTER(sampler, &)
     OC_MAKE_MEMBER_GETTER_SETTER(light_sampler, &)
     OC_MAKE_MEMBER_GETTER_SETTER(integrator, &)

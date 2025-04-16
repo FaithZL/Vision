@@ -35,6 +35,7 @@ public:
           scale_(desc.scale["value"].as_float()) {}
     ~Medium() override = default;
     void set_index(uint index) noexcept { index_ = index; }
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
     OC_MAKE_MEMBER_GETTER(index,)
     template<typename T>
     void add_reference(T shape_instance) noexcept {}
