@@ -86,6 +86,7 @@ void Scene::prepare() noexcept {
     camera_->update_device_data();
     prepare_lights();
     prepare_materials();
+    medium_registry().prepare();
     pipeline()->spectrum()->prepare();
 }
 
@@ -171,10 +172,12 @@ void Scene::fill_instances() {
         instance->fill_mesh_id();
         if (has_medium()) {
             if (instance->has_inside()) {
-                instance->update_inside_medium_id(instance->inside()->index());
+                const Medium *inside = instance->inside().get();
+                instance->update_inside_medium_id(mediums().encode_id(inside->index(), inside));
             }
             if (instance->has_outside()) {
-                instance->update_outside_medium_id(instance->outside()->index());
+                const Medium *outside = instance->outside().get();
+                instance->update_outside_medium_id(mediums().encode_id(outside->index(), outside));
             }
         }
     }
@@ -185,7 +188,6 @@ void Scene::load_mediums(const MediumsDesc &md) {
     for (uint i = 0; i < md.mediums.size(); ++i) {
         const MediumDesc &desc = md.mediums[i];
         auto medium = Node::create_shared<Medium>(desc);
-        medium->set_index(i);
         medium_registry().push_back(medium);
     }
     uint index = mediums().get_index([&](const SP<Medium> &medium) {

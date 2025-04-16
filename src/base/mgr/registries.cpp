@@ -53,8 +53,8 @@ void TRegistry<T>::prepare() noexcept {
 
 template<typename T>
 void TRegistry<T>::tidy_up() noexcept {
-    elements_.for_each_instance([&](SP<element_ty> material, uint i) {
-        material->set_index(i);
+    elements_.for_each_instance([&](SP<element_ty> element, uint i) {
+        element->set_index(i);
     });
 }
 
