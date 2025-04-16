@@ -199,11 +199,6 @@ void Material::restore(vision::RuntimeObject *old_obj) noexcept {
         sp->set_material(std::static_pointer_cast<Material>(shared_from_this()));
         sp->set_material_name(name());
     }
-    for (const auto &item : old_obj_->shape_groups) {
-        auto sp = item.lock();
-        sp->set_material(std::static_pointer_cast<Material>(shared_from_this()));
-        sp->set_material_name(name());
-    }
 }
 
 ///#region encodable
@@ -344,9 +339,6 @@ Uint Material::combine_flag(const Float3 &wo, const Float3 &wi, Uint flag) noexc
 
 void Material::add_reference(SP<ShapeInstance> shape_instance) noexcept {
     shape_instances.push_back(ocarina::move(shape_instance));
-}
-void Material::add_reference(SP<ShapeGroup> shape_group) noexcept {
-    shape_groups.push_back(ocarina::move(shape_group));
 }
 
 void Material::_apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept {

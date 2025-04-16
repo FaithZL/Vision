@@ -214,8 +214,8 @@ public:
     explicit ShapeGroup(const ShapeDesc &desc);
     [[nodiscard]] string_view impl_type() const noexcept override { return "ShapeGroup"; }
     [[nodiscard]] string_view category() const noexcept override { return "shape"; }
-    VS_MAKE_ATTR_SETTER_GETTER(material)
-    VS_MAKE_ATTR_SETTER_GETTER(emission)
+//    VS_MAKE_ATTR_SETTER_GETTER(material)
+//    VS_MAKE_ATTR_SETTER_GETTER(emission)
     void post_init(const ShapeDesc &desc);
     [[nodiscard]] ShapeInstance &instance(uint i) noexcept { return *(instances_[i]); }
     [[nodiscard]] const ShapeInstance &instance(uint i) const noexcept { return *(instances_[i]); }
