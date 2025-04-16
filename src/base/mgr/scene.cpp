@@ -40,23 +40,11 @@ void Scene::update_resolution(ocarina::uint2 res) noexcept {
 void Scene::tidy_up() noexcept {
     light_sampler_->tidy_up();
     material_registry().tidy_up();
+    medium_registry_->tidy_up();
     MeshRegistry::instance().tidy_up();
-    tidy_up_mediums();
     OC_INFO_FORMAT("This scene contains {} material types with {} material instances",
                    materials().type_num(),
                    materials().all_instance_num());
-}
-
-void Scene::tidy_up_materials() noexcept {
-    materials().for_each_instance([&](SP<Material> material, uint i) {
-        material->set_index(i);
-    });
-}
-
-void Scene::tidy_up_mediums() noexcept {
-    mediums_.for_each_instance([&](SP<Medium> medium, uint i) {
-        medium->set_index(i);
-    });
 }
 
 void Scene::mark_selected(ocarina::TriangleHit hit) noexcept {
@@ -140,16 +128,16 @@ void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
             instance->set_emission(light);
         }
         if (has_medium()) {
-            auto inside = mediums_.find_if([&](SP<Medium> &medium) {
+            auto inside = mediums().find_if([&](SP<Medium> &medium) {
                 return medium->name() == instance->inside_name();
             });
-            if (inside != mediums_.end()) {
+            if (inside != mediums().end()) {
                 instance->set_inside(*inside);
             }
-            auto outside = mediums_.find_if([&](SP<Medium> &medium) {
+            auto outside = mediums().find_if([&](SP<Medium> &medium) {
                 return medium->name() == instance->outside_name();
             });
-            if (outside != mediums_.end()) {
+            if (outside != mediums().end()) {
                 instance->set_outside(*outside);
             }
         }
@@ -197,13 +185,13 @@ void Scene::load_mediums(const MediumsDesc &md) {
         const MediumDesc &desc = md.mediums[i];
         auto medium = Node::create_shared<Medium>(desc);
         medium->set_index(i);
-        mediums_.push_back(medium);
+        medium_registry().push_back(medium);
     }
-    uint index = mediums_.get_index([&](const SP<Medium> &medium) {
+    uint index = mediums().get_index([&](const SP<Medium> &medium) {
         return medium->name() == global_medium_.name;
     });
     if (index != InvalidUI32) {
-        global_medium_.init(mediums_[index]);
+        global_medium_.init(mediums()[index]);
     }
 }
 

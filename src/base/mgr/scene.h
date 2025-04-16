@@ -37,7 +37,7 @@ private:
     TLightSampler light_sampler_{};
     vector<SP<ShapeGroup>> groups_;
     vector<SP<ShapeInstance>> instances_;
-    Polymorphic<SP<Medium>> mediums_;
+    MediumRegistry *medium_registry_{&MediumRegistry::instance()};
     WarperDesc warper_desc_;
     RenderSettingDesc render_setting_{};
     MaterialRegistry *material_registry_{&MaterialRegistry::instance()};
@@ -56,6 +56,7 @@ public:
     [[nodiscard]] PolymorphicMode polymorphic_mode() const noexcept { return render_setting_.polymorphic_mode; }
     void update_resolution(uint2 res) noexcept;
     [[nodiscard]] Pipeline *pipeline() noexcept;
+
     VS_MAKE_GUI_ALL_FUNC(GUI, camera_, integrator_, light_sampler_,
                          material_registry_, spectrum_, sampler_)
     OC_MAKE_MEMBER_GETTER_SETTER(sampler, &)
@@ -66,16 +67,19 @@ public:
     OC_MAKE_MEMBER_GETTER(global_medium, )
     OC_MAKE_MEMBER_GETTER(groups, &)
     OC_MAKE_MEMBER_GETTER(instances, &)
+
     [[nodiscard]] const auto &material_registry() const noexcept { return *material_registry_; }
     [[nodiscard]] auto &material_registry() noexcept { return *material_registry_; }
+    [[nodiscard]] const auto &medium_registry() const noexcept { return *medium_registry_; }
+    [[nodiscard]] auto &medium_registry() noexcept { return *medium_registry_; }
     [[nodiscard]] auto film() noexcept { return camera()->film(); }
     [[nodiscard]] auto film() const noexcept { return camera()->film(); }
     [[nodiscard]] const auto &materials() const noexcept { return material_registry().elements(); }
     [[nodiscard]] auto &materials() noexcept { return material_registry().elements(); }
-    [[nodiscard]] const auto &mediums() const noexcept { return mediums_; }
+    [[nodiscard]] const auto &mediums() const noexcept { return medium_registry_->elements(); }
+    [[nodiscard]] auto &mediums() noexcept { return medium_registry_->elements(); }
+
     void tidy_up() noexcept;
-    void tidy_up_materials() noexcept;
-    void tidy_up_mediums() noexcept;
     void mark_selected(TriangleHit hit) noexcept;
     [[nodiscard]] SP<Material> obtain_black_body() noexcept;
 
@@ -87,7 +91,7 @@ public:
         warper_desc.sub_type += "2d";
         return Node::create_shared<Warper2D>(warper_desc);
     }
-    [[nodiscard]] bool has_medium() const noexcept { return !mediums_.empty(); }
+    [[nodiscard]] bool has_medium() const noexcept { return !mediums().empty(); }
     void load_shapes(const vector<ShapeDesc> &descs);
     void add_shape(const SP<ShapeGroup> &group, ShapeDesc desc = {});
     void clear_shapes() noexcept;
