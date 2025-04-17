@@ -116,6 +116,7 @@ void Pipeline::render_output(ocarina::Widgets *widgets) noexcept {
     widgets->use_window("output setting", [&] {
         widgets->drag_uint("frame num", &output_desc.spp, 10, 1, InvalidUI32);
         widgets->check_box("exit after save", &output_desc.save_exit);
+        widgets->check_box("use denoise", &output_desc.denoise);
         fs::path scene_path = Global::instance().scene_path();
         static FileNameOption fnp{output_desc.fn};
         fnp.render_UI(widgets, output_desc);
