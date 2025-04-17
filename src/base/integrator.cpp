@@ -90,7 +90,7 @@ bool IlluminationIntegrator::render_UI(ocarina::Widgets *widgets) noexcept {
                 //                pipeline()->update_geometry();
                 compile();
             });
-            changed_ |= widgets->input_uint_limit("max depth", &max_depth_.hv(), 0, 30, 1, 1);
+            changed_ |= widgets->input_uint_limit("max depth", &max_depth_.hv(), 0, 128, 1, 1);
             changed_ |= widgets->input_uint_limit("min depth", &min_depth_.hv(), 0, 20, 1, 1);
             changed_ |= widgets->drag_float("rr threshold", &rr_threshold_.hv(), 0.01, 0, 1);
             render_sub_UI(widgets);

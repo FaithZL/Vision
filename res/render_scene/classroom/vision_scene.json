@@ -3800,7 +3800,7 @@
     },
     "mediums" : {
         "global" : "fog",
-        "process" : true,
+        "process" : false,
         "list": [
             {
                 "type" : "homogeneous",
@@ -3874,8 +3874,8 @@
                 "param": {
 //                    "accumulation": 0,
                     "resolution": [
-                        1280,
-                        720
+                        1920,
+                        1080
                     ],
                     //                    "gamma": false,
                     "fb_state": 0
@@ -3908,7 +3908,7 @@
                                 "yaw" :-30
                             }
                         },
-                        "scale" : 300
+                        "scale" : 1
                     }
                 }
             ]
@@ -3930,6 +3930,6 @@
     },
     "output": {
         "spp": 0,
-        "fn": "classroom-hero-512spp.png"
+        "fn": "classroom.png"
     }
 }

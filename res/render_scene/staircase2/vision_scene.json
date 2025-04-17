@@ -806,7 +806,7 @@
                             1.5,
                             1.5
                         ],
-                        "two_sided": false,
+                        "two_sided": true,
                         "scale": 1
                     }
                 }
@@ -858,7 +858,7 @@
                             1.5,
                             1.5
                         ],
-                        "two_sided": false,
+                        "two_sided": true,
                         "scale": 1
                     }
                 }
@@ -910,7 +910,7 @@
                             1.5,
                             1.5
                         ],
-                        "two_sided": false,
+                        "two_sided": true,
                         "scale": 1
                     }
                 }
@@ -962,7 +962,7 @@
                             1.5,
                             1.5
                         ],
-                        "two_sided": false,
+                        "two_sided": true,
                         "scale": 1
                     }
                 }
@@ -1014,7 +1014,7 @@
                             1.5,
                             1.5
                         ],
-                        "two_sided": false,
+                        "two_sided": true,
                         "scale": 1
                     }
                 }
@@ -1066,7 +1066,7 @@
                             1.5,
                             1.5
                         ],
-                        "two_sided": false,
+                        "two_sided": true,
                         "scale": 1
                     }
                 }
@@ -1118,7 +1118,7 @@
                             1.5,
                             1.5
                         ],
-                        "two_sided": false,
+                        "two_sided": true,
                         "scale": 1
                     }
                 }
@@ -1170,7 +1170,7 @@
                             1.5,
                             1.5
                         ],
-                        "two_sided": false,
+                        "two_sided": true,
                         "scale": 1
                     }
                 }
@@ -1222,7 +1222,7 @@
                             1.5,
                             1.5
                         ],
-                        "two_sided": false,
+                        "two_sided": true,
                         "scale": 1
                     }
                 }
@@ -1274,8 +1274,8 @@
                             0.6366197466850281,
                             0.6366197466850281
                         ],
-                        "two_sided": false,
-                        "scale": 30
+                        "two_sided": true,
+                        "scale": 3
                     }
                 }
             }
@@ -1326,7 +1326,7 @@
                             3.5907576084136963,
                             1.5497708320617676
                         ],
-                        "two_sided": false,
+                        "two_sided": true,
                         "scale": 1
                     }
                 }
@@ -1378,7 +1378,7 @@
                             3.5907576084136963,
                             1.5497708320617676
                         ],
-                        "two_sided": false,
+                        "two_sided": true,
                         "scale": 1
                     }
                 }
@@ -1430,7 +1430,7 @@
                             0.6366197466850281,
                             0.6366197466850281
                         ],
-                        "two_sided": false,
+                        "two_sided": true,
                         "scale": 30
                     }
                 }
@@ -1753,8 +1753,8 @@
                 "type": "rgb",
                 "param": {
                     "resolution": [
-                        1366,
-                        968
+                        1920,
+                        1080
                     ],
                     "tone_mapper" : {
                         //												"type": "reinhard",
@@ -1783,8 +1783,8 @@
     "integrator": {
         "type": "pt",
         "param": {
-            "min_depth": 0,
-            "max_depth": 64,
+            "min_depth": 5,
+            "max_depth": 16,
             "rr_threshold": 1
         }
     },
@@ -1844,6 +1844,6 @@
     },
     "output": {
         "spp": 0,
-        "fn": "output.png"
+        "fn": "staircase2.png"
     }
 }
