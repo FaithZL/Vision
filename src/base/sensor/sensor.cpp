@@ -39,6 +39,13 @@ void Sensor::update_runtime_object(const vision::IObjectConstructor *constructor
     HotfixSystem::replace_objects(constructor, tp);
 }
 
+void Sensor::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    if (medium_id_.hv() != InvalidUI32) {
+        auto medium = MediumRegistry::instance().elements()[medium_id_.hv()];
+        medium->render_UI(widgets);
+    }
+}
+
 bool Sensor::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_folding_header(
         ocarina::format("{} camera", impl_type().data()),

@@ -44,6 +44,7 @@ public:
     VS_HOTFIX_MAKE_RESTORE(Node, filter_, film_, medium_id_, datas_)
     VS_MAKE_GUI_STATUS_FUNC(Node, filter_, film_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     void prepare() noexcept override;
     void upload_immediately() noexcept override {
         EncodedObject::upload_immediately();
