@@ -27,7 +27,7 @@ public:
     OC_ENCODABLE_FUNC(Medium, sigma_a_, sigma_s_, g_)
     VS_HOTFIX_MAKE_RESTORE(Medium, sigma_a_, sigma_s_, g_)
 
-    [[nodiscard]] Float3 sigma_t() const noexcept { return sigma_s() + sigma_a(); }
+    [[nodiscard]] Float3 sigma_t() const noexcept { return (*sigma_a_ + *sigma_s_) * *scale_; }
     [[nodiscard]] Float3 sigma_s() const noexcept { return *sigma_s_ * *scale_; }
     [[nodiscard]] Float3 sigma_a() const noexcept { return *sigma_a_ * *scale_; }
 
