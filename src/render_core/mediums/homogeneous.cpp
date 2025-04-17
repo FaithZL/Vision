@@ -29,7 +29,6 @@ public:
 
     [[nodiscard]] Float3 sigma_t() const noexcept { return (*sigma_a_ + *sigma_s_) * *scale_; }
     [[nodiscard]] Float3 sigma_s() const noexcept { return *sigma_s_ * *scale_; }
-    [[nodiscard]] Float3 sigma_a() const noexcept { return *sigma_a_ * *scale_; }
 
     [[nodiscard]] SampledSpectrum Tr(const Float &t, const SampledWavelengths &swl) const noexcept {
         SampledSpectrum sigma_t_sp = spectrum()->decode_to_unbound_spectrum(sigma_t(), swl).sample;
