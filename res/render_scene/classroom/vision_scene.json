@@ -3800,7 +3800,7 @@
     },
     "mediums" : {
         "global" : "fog",
-        "process" : false,
+        "process" : true,
         "list": [
             {
                 "type" : "homogeneous",
@@ -3908,7 +3908,7 @@
                                 "yaw" :-30
                             }
                         },
-                        "scale" : 1
+                        "scale" : 300
                     }
                 }
             ]
@@ -3926,7 +3926,7 @@
     },
 
     "render_setting": {
-        "polymorphic_mode": 1
+        "polymorphic_mode": 0
     },
     "output": {
         "spp": 0,
