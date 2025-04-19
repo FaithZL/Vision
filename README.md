@@ -25,16 +25,16 @@ compute https://github.com/LuisaGroup/LuisaCompute, which is a great invention!
 
 ### Render algorithm
 
-| Feature                    | Progress |
-|----------------------------|----------|
-| Megakernel path tracing    | Done     |
-| ReSTIR DI                  | Done     |
-| ReSTIR GI                  | doing    |
-| Surfel                     | Planned  |
-| Light probe                | Planned  |
-| Wavefront path tracing     | Planned  |
-| Bidirectional path tracing | Planned  |
-| Photon mapping             | Planned  |
+| Feature                    | Progress   |
+|----------------------------|------------|
+| Megakernel path tracing    | Done       |
+| ReSTIR DI                  | Done       |
+| ReSTIR GI                  | doing(80%) |
+| Surfel                     | Planned    |
+| Light probe                | Planned    |
+| Wavefront path tracing     | Planned    |
+| Bidirectional path tracing | Planned    |
+| Photon mapping             | Planned    |
 
 ### Render mode
 
@@ -125,11 +125,10 @@ compute https://github.com/LuisaGroup/LuisaCompute, which is a great invention!
 
 ### Exporter/Importer
 
-| Feature | Progress |
-|---------|----------|
-| Blender | Doing    |
-| 3DS Max | Planned  |
-| USD     | Planned  |
+| Feature | Progress   |
+|---------|------------|
+| Blender | Doing(90%) |
+| 3DS Max | Planned    |
 
 Part of the scene comes from https://benedikt-bitterli.me/resources/
 
