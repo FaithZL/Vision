@@ -10,7 +10,7 @@ namespace vision {
 template<typename T>
 bool TRegistry<T>::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_folding_header(UI_title().data(), [&] {
-        uint type_num = elements().type_num();
+        uint type_num = elements().topology_num();
         widgets->text(ocarina::format("type num is {}", type_num));
         elements().render_UI(widgets);
     });

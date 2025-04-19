@@ -44,7 +44,7 @@ void Scene::tidy_up() noexcept {
     medium_registry_->tidy_up();
     MeshRegistry::instance().tidy_up();
     OC_INFO_FORMAT("This scene contains {} material types with {} material instances",
-                   materials().type_num(),
+                   materials().topology_num(),
                    materials().all_instance_num());
 }
 
@@ -94,7 +94,7 @@ void Scene::prepare_lights() noexcept {
     light_sampler_->prepare();
     auto &light = light_sampler_->lights();
     OC_INFO_FORMAT("This scene contains {} light types with {} light instances",
-                   light.type_num(),
+                   light.topology_num(),
                    light.all_instance_num());
 }
 

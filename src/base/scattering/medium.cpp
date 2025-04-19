@@ -34,7 +34,7 @@ void Medium::add_outside_reference(SP<ShapeInstance> shape_instance) noexcept {
 bool Medium::render_UI(ocarina::Widgets *widgets) noexcept {
     string label = format("{} {} medium: {}, type_index: {}",
                           index_, impl_type().data(),
-                          name_.c_str(), MediumRegistry::instance().elements().type_index(this));
+                          name_.c_str(), MediumRegistry::instance().elements().topology_index(this));
     bool open = widgets->use_tree(label, [&] {
         render_sub_UI(widgets);
     });

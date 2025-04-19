@@ -66,7 +66,7 @@ void LightSampler::tidy_up() noexcept {
     static_assert(ocarina::is_ptr_v<TObject<Filter>>);
 
     std::sort(lights_.begin(), lights_.end(), [&](TLight a, TLight b) {
-        return lights_.type_index(a.get()) < lights_.type_index(b.get());
+        return lights_.topology_index(a.get()) < lights_.topology_index(b.get());
     });
     for_each([&](TLight light, uint index) noexcept {
         light->set_index(index);
@@ -112,8 +112,8 @@ Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_
             break;
         }
         case ocarina::ETopology: {
-            nums.reserve(lights_.type_num());
-            for (int i = 0; i < lights_.type_num(); ++i) {
+            nums.reserve(lights_.topology_num());
+            for (int i = 0; i < lights_.topology_num(); ++i) {
                 nums.push_back(static_cast<uint>(lights_.instance_num(i)));
             }
             DynamicArray<uint> arr{nums};
@@ -133,8 +133,8 @@ pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcep
     Uint type_id = 0u;
     Uint inst_id = 0u;
     vector<uint> nums;
-    nums.reserve(lights_.type_num());
-    for (int i = 0; i < lights_.type_num(); ++i) {
+    nums.reserve(lights_.topology_num());
+    for (int i = 0; i < lights_.topology_num(); ++i) {
         nums.push_back(static_cast<uint>(lights_.instance_num(i)));
     }
 
@@ -322,7 +322,7 @@ void LightSampler::dispatch_environment(const std::function<void(const Environme
     if (lights_.mode() == PolymorphicMode::EInstance) {
         lights_.dispatch_instance(env_index(),lambda);
     } else {
-        uint type_index = lights_.type_index(env_light());
+        uint type_index = lights_.topology_index(env_light());
         dispatch_light(type_index, 0, lambda);
     }
 }
