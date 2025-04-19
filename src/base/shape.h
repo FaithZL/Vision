@@ -88,7 +88,7 @@ protected:
     bool normalized_{false};
 
 protected:
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override;
+    [[nodiscard]] uint64_t compute_hash() const noexcept override;
 
 public:
     Mesh(vector<Vertex> vert, vector<Triangle> tri)

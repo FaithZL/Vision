@@ -22,10 +22,10 @@ public:
     [[nodiscard]] bool near_one() const noexcept override {
         return std::all_of(value_.begin(), value_.end(), [](float elm) { return ocarina::abs(elm - 1.f) < s_cutoff; });
     }
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
         return hash64_list(value_);
     }
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+    [[nodiscard]] uint64_t compute_hash() const noexcept override {
         return hash64_list(value_);
     }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {

@@ -416,15 +416,15 @@ vector<PrecomputedLobeTable> Material::precompute() const noexcept {
     return {};
 }
 
-uint64_t Material::_compute_type_hash() const noexcept {
+uint64_t Material::compute_topology_hash() const noexcept {
     uint64_t ret = Hash64::default_seed;
     reduce_slots(ret, [&](uint64_t hash, const Slot &slot) {
-        return hash64(hash, slot.type_hash());
+        return hash64(hash, slot.topology_hash());
     });
     return ret;
 }
 
-uint64_t Material::_compute_hash() const noexcept {
+uint64_t Material::compute_hash() const noexcept {
     uint64_t ret = Hash64::default_seed;
     reduce_slots(ret, [&](uint64_t hash, const Slot &slot) {
         return hash64(hash, slot.hash());

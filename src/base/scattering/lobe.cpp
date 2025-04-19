@@ -78,8 +78,8 @@ Float Lobe::to_ratio_z() const noexcept {
 ///#endregion
 
 ///#region MicrofacetLobe
-uint64_t MicrofacetLobe::_compute_type_hash() const noexcept {
-    return hash64(fresnel_->type_hash(), bxdf_->type_hash());
+uint64_t MicrofacetLobe::compute_topology_hash() const noexcept {
+    return hash64(fresnel_->topology_hash(), bxdf_->topology_hash());
 }
 
 MicrofacetLobe::MicrofacetLobe(const SP<Fresnel> &fresnel,

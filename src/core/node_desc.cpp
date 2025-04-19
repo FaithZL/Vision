@@ -173,8 +173,8 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     }
 }
 
-uint64_t MaterialDesc::_compute_hash() const noexcept {
-    return hash64(NodeDesc::_compute_hash(), parameter_string());
+uint64_t MaterialDesc::compute_hash() const noexcept {
+    return hash64(NodeDesc::compute_hash(), parameter_string());
 }
 
 void MediumDesc::init(const ParameterSet &ps) noexcept {

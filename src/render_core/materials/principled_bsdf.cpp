@@ -339,8 +339,8 @@ public:
     }
     VS_HOTFIX_MAKE_RESTORE(Material, sheen_mode_, switches_)
 
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        uint64_t ret = Material::_compute_type_hash();
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
+        uint64_t ret = Material::compute_topology_hash();
         ret = hash64(ret, switches_);
         return ret;
     }

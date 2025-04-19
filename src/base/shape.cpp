@@ -123,7 +123,7 @@ BufferUploadCommand *GPUMesh::upload_vertices(const vector<vision::Vertex> &vert
     return vertex_buffer_.upload(vertices.data());
 }
 
-uint64_t Mesh::_compute_hash() const noexcept {
+uint64_t Mesh::compute_hash() const noexcept {
     uint64_t ret = Hash64::default_seed;
     for (Vertex vertex : vertices_) {
         ret = hash64(vertex, ret);

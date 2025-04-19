@@ -111,7 +111,7 @@ Uint LightSampler::combine_to_light_index(const Uint &type_id, const Uint &inst_
             ret = inst_id;
             break;
         }
-        case ocarina::EType: {
+        case ocarina::ETopology: {
             nums.reserve(lights_.type_num());
             for (int i = 0; i < lights_.type_num(); ++i) {
                 nums.push_back(static_cast<uint>(lights_.instance_num(i)));
@@ -147,7 +147,7 @@ pair<Uint, Uint> LightSampler::extract_light_id(const Uint &index) const noexcep
     switch (lights_.mode()) {
         case ocarina::EInstance:
             return {type_id, index};
-        case ocarina::EType:
+        case ocarina::ETopology:
             return {type_id, inst_id};
         default:
             break;

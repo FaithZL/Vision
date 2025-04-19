@@ -29,7 +29,7 @@ protected:
     string name_;
 
 protected:
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override { return 0; }
+    [[nodiscard]] uint64_t compute_hash() const noexcept override { return 0; }
 
 public:
     Node() = default;

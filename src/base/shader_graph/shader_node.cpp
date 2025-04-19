@@ -20,12 +20,12 @@ SlotBase::SlotBase(int, std::string channels, AttrTag attr_tag)
       attr_tag_(attr_tag) {
 }
 
-uint64_t SlotBase::_compute_hash() const noexcept {
+uint64_t SlotBase::compute_hash() const noexcept {
     return hash64(channel_mask_, dim_, node()->hash(), attr_tag_);
 }
 
-uint64_t SlotBase::_compute_type_hash() const noexcept {
-    return hash64(channel_mask_, dim_, node()->type_hash(), attr_tag_);
+uint64_t SlotBase::compute_topology_hash() const noexcept {
+    return hash64(channel_mask_, dim_, node()->topology_hash(), attr_tag_);
 }
 
 uint SlotBase::calculate_mask(string channels) noexcept {

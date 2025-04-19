@@ -75,7 +75,7 @@ protected:
     DCUP<MicrofacetBxDF> bxdf_;
 
 protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override;
 
 public:
     MicrofacetLobe(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl);
@@ -108,8 +108,8 @@ private:
     DCUP<BxDF> bxdf_;
 
 protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return bxdf_->type_hash();
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
+        return bxdf_->topology_hash();
     }
 
 public:
@@ -162,8 +162,8 @@ protected:
     Uint flag_{};
 
 protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(fresnel_->type_hash());
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
+        return hash64(fresnel_->topology_hash());
     }
     [[nodiscard]] static Uint select_lut(const SampledSpectrum &eta) noexcept;
     static Float eta_to_ratio_z(const Float &eta) noexcept;
@@ -246,10 +246,10 @@ protected:
     Lobes lobes_;
 
 protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
         uint64_t ret = Hash64::default_seed;
         for_each([&](const WeightedLobe &lobe) {
-            ret = hash64(ret, lobe->type_hash());
+            ret = hash64(ret, lobe->topology_hash());
         });
         return ret;
     }

@@ -29,8 +29,8 @@ protected:
     AttrTag attr_tag_{};
 
 private:
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override;
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
+    [[nodiscard]] uint64_t compute_hash() const noexcept override;
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override;
 
 public:
     explicit SlotBase(string attr_name = "") : attr_name_(std::move(attr_name)) {}

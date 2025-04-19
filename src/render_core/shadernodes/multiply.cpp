@@ -64,11 +64,11 @@ public:
     [[nodiscard]] bool is_constant() const noexcept override {
         return lhs_->is_constant() && rhs_->is_constant();
     }
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+    [[nodiscard]] uint64_t compute_hash() const noexcept override {
         return hash64(lhs_.hash(), rhs_.hash());
     }
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(lhs_.type_hash(), rhs_.type_hash());
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
+        return hash64(lhs_.topology_hash(), rhs_.topology_hash());
     }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return lhs_.average() * rhs_.average();

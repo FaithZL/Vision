@@ -109,8 +109,8 @@ public:
     explicit Light(const LightDesc &desc, LightType light_type);
     VS_HOTFIX_MAKE_RESTORE(Node, scale_, switch_, color_, strength_, index_)
     OC_ENCODABLE_FUNC(Encodable, scale_, color_, strength_, switch_)
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return color_.type_hash();
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
+        return color_.topology_hash();
     }
     OC_MAKE_MEMBER_GETTER_SETTER(index, )
     VS_MAKE_GUI_STATUS_FUNC(Node, color_, strength_)

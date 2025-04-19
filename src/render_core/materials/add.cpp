@@ -45,8 +45,8 @@ public:
         mat0_->prepare();
         mat1_->prepare();
     }
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(mat0_->type_hash(), mat1_->type_hash());
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
+        return hash64(mat0_->topology_hash(), mat1_->topology_hash());
     }
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         return make_unique<AddLobe>(mat0_->create_lobe_set(it, swl),

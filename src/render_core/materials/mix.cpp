@@ -32,8 +32,8 @@ public:
     }
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(Material, *mat0_, *mat1_)
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override {
-        return hash64(mat0_->type_hash(), mat1_->type_hash(), frac_.type_hash());
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
+        return hash64(mat0_->topology_hash(), mat1_->topology_hash(), frac_.topology_hash());
     }
     VS_MAKE_GUI_STATUS_FUNC(Material, frac_, mat0_, mat1_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
@@ -45,7 +45,7 @@ public:
             mat1_->render_sub_UI(widgets);
         });
     }
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+    [[nodiscard]] uint64_t compute_hash() const noexcept override {
         return hash64(mat0_->hash(), mat1_->hash(), frac_.hash());
     }
 

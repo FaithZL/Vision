@@ -51,7 +51,7 @@ public:
     string name;
 
 protected:
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
+    [[nodiscard]] uint64_t compute_hash() const noexcept override {
         return hash64(type_, hash64(sub_type));
     }
 
@@ -113,8 +113,8 @@ public:
     AttrTag node_tag{};
 
 protected:
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override {
-        return hash64(NodeDesc::_compute_hash(), parameter_string());
+    [[nodiscard]] uint64_t compute_hash() const noexcept override {
+        return hash64(NodeDesc::compute_hash(), parameter_string());
     }
 
 public:
@@ -340,7 +340,7 @@ public:
     VISION_DESC_COMMON(Material)
     void init_node_map(const ParameterSet &ps) noexcept;
     void init(const ParameterSet &ps) noexcept override;
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override;
+    [[nodiscard]] uint64_t compute_hash() const noexcept override;
 
     template<typename T>
     [[nodiscard]] SlotDesc slot(const string &key, T default_value,

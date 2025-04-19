@@ -283,8 +283,8 @@ public:
     ///#endregion
 
 protected:
-    [[nodiscard]] uint64_t _compute_type_hash() const noexcept override;
-    [[nodiscard]] uint64_t _compute_hash() const noexcept override;
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override;
+    [[nodiscard]] uint64_t compute_hash() const noexcept override;
     virtual void _apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] SampledSpectrum integral_albedo(const Float3 &wo, const Lobe *lobe_set) const noexcept;
 
