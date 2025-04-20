@@ -301,6 +301,12 @@ private:
     }()};
 
 protected:
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
+        uint64_t ret = Material::compute_topology_hash();
+        ret = hash64(ret, switches_);
+        return ret;
+    }
+
     VS_MAKE_MATERIAL_EVALUATOR(LobeSet)
 
 public:
@@ -338,12 +344,6 @@ public:
         init_slot_cursor(&color_, &transmission_weight_);
     }
     VS_HOTFIX_MAKE_RESTORE(Material, sheen_mode_, switches_)
-
-    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
-        uint64_t ret = Material::compute_topology_hash();
-        ret = hash64(ret, switches_);
-        return ret;
-    }
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         static vector<const char *> names = {"volume", "approximate"};
