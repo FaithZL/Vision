@@ -738,7 +738,7 @@
             "param": {
                 "fn": "models/Mesh029.obj",
                 "smooth": true,
-                "material": null,
+                "material": "Light",
                 "transform": {
                     "type": "matrix4x4",
                     "param": {
@@ -3698,6 +3698,17 @@
                     0.1,
                     0.1,
                     0.1
+                ]
+            }
+        },
+        {
+            "type" : "matte",
+            "name" : "Light",
+            "param" : {
+                "color" : [
+                    0,
+                    0,
+                    0
                 ]
             }
         },
