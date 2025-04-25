@@ -106,6 +106,7 @@ public:
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {}
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
+    VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
     VS_MAKE_PLUGIN_NAME_FUNC
     void initialize_(const vision::NodeDesc &node_desc) noexcept override {
         VS_CAST_DESC
