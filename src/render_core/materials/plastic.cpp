@@ -11,7 +11,7 @@ namespace vision {
 
 class PlasticLobe : public MicrofacetLobe {
 private:
-    DCSP<BxDF> diffuse_;
+    DCUP<BxDF> diffuse_;
 
 protected:
     [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
