@@ -11,7 +11,7 @@ namespace vision {
 
 class PlasticLobe : public MicrofacetBxDF {
 private:
-    SampledSpectrum Rd_, 
+    SampledSpectrum Rd_;
 };
 
 class PlasticMaterial : public Material {
