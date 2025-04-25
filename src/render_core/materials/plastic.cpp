@@ -9,9 +9,21 @@
 
 namespace vision {
 
-class PlasticLobe : public MicrofacetBxDF {
+class PlasticLobe : public MicrofacetLobe {
 private:
-    SampledSpectrum Rd_;
+    DCSP<BxDF> diffuse_;
+
+protected:
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
+        return hash64(MicrofacetLobe::compute_topology_hash(),
+                      diffuse_->topology_hash());
+    }
+
+public:
+    PlasticLobe(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl, UP<BxDF> diff)
+        : MicrofacetLobe(fresnel, std::move(refl)),
+          diffuse_(std::move(diff)) {}
+    
 };
 
 class PlasticMaterial : public Material {
