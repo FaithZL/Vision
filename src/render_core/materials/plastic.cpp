@@ -23,7 +23,35 @@ public:
     PlasticLobe(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl, UP<BxDF> diff)
         : MicrofacetLobe(fresnel, std::move(refl)),
           diffuse_(std::move(diff)) {}
-    
+
+
+
+    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                             const Uint &flag,TransportMode tm) const noexcept override {
+        ScatterEval ret{*swl()};
+        Float3 wh = normalize(wo + wi);
+        SampledSpectrum F = fresnel_->evaluate(abs_dot(wh, wo));
+
+        return ret;
+    }
+
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                             TSampler &sampler) const noexcept override {
+        Float3 wh = bxdf()->microfacet()->sample_wh(wo, sampler->next_2d());
+        Float d = dot(wo, wh);
+        auto fresnel = fresnel_.ptr();
+        SampledDirection sd;
+        SampledSpectrum F = fresnel->evaluate(abs(d));
+        Float uc = sampler->next_1d();
+        $if(uc < F.average()) {
+            sd.wi = reflect(wo, wh);
+            sd.valid = same_hemisphere(wo, sd.wi);
+        }
+        $else {
+            sd.wi = square_to_cosine_hemisphere(sampler->next_2d());
+        };
+        return sd;
+    }
 };
 
 class PlasticMaterial : public Material {
