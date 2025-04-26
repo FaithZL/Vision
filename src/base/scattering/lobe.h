@@ -85,6 +85,8 @@ public:
     [[nodiscard]] T *fresnel() noexcept { return static_cast<T *>(fresnel_.get()); }
     [[nodiscard]] const MicrofacetBxDF *bxdf() const noexcept { return bxdf_.get(); }
     [[nodiscard]] MicrofacetBxDF *bxdf() noexcept { return bxdf_.get(); }
+    [[nodiscard]] Microfacet<D> *microfacet() noexcept { return bxdf()->microfacet(); }
+    [[nodiscard]] const Microfacet<D> *microfacet() const noexcept { return bxdf()->microfacet(); }
     void from_ratio_x(const ocarina::Float &roughness) noexcept override;
     [[nodiscard]] Float to_ratio_x() const noexcept override;
     VS_MAKE_LOBE_ASSIGNMENT(MicrofacetLobe)

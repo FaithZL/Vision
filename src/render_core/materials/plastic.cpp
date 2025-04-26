@@ -24,20 +24,34 @@ public:
         : MicrofacetLobe(fresnel, std::move(refl)),
           diffuse_(std::move(diff)) {}
 
+    [[nodiscard]] Float PDF_diffuse(const Float3 &wo, const Float3 &wi) const noexcept {
+        return cosine_hemisphere_PDF(abs_cos_theta(wi));
+    }
 
+    [[nodiscard]] Float PDF_specular(const Float3 &wo, const Float3 &wi) const noexcept {
+        Float3 wh = normalize(wo + wi);
+        Float ret = microfacet()->PDF_wi_reflection(wo, wh);
+        return ret;
+    }
 
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                             const Uint &flag,TransportMode tm) const noexcept override {
+                                             const Uint &flag, TransportMode tm) const noexcept override {
         ScatterEval ret{*swl()};
         Float3 wh = normalize(wo + wi);
         SampledSpectrum F = fresnel_->evaluate(abs_dot(wh, wo));
-
+        if (BxDF::match_F(mode)) {
+            ret.f = diffuse_->f(wo, wi, nullptr, tm);
+            ret.f += microfacet()->BRDF(wo, wh, wi, F);
+        }
+        if (BxDF::match_PDF(mode)) {
+            ret.pdfs = lerp(F.average(), PDF_diffuse(wo, wi), PDF_specular(wo, wi));
+        }
         return ret;
     }
 
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override {
-        Float3 wh = bxdf()->microfacet()->sample_wh(wo, sampler->next_2d());
+        Float3 wh = microfacet()->sample_wh(wo, sampler->next_2d());
         Float d = dot(wo, wh);
         auto fresnel = fresnel_.ptr();
         SampledDirection sd;
@@ -84,6 +98,8 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = color_.eval_albedo_spectrum(it, swl).sample;
+        DynamicArray<float> iors = ior_.evaluate(it, swl);
+
         Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
         Float anisotropic = ocarina::clamp(anisotropic_.evaluate(it, swl).as_scalar(), -0.9f, 0.9f);
 
@@ -93,6 +109,8 @@ public:
         alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
+        auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{iors}, swl);
+
         return nullptr;
     }
 };
