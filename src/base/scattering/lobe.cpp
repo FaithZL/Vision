@@ -158,20 +158,20 @@ SampledDirection DiffuseLobe::sample_wi(const Float3 &wo, const Uint &flag,
 }
 ///#endregion
 
-Uint DielectricLobe::select_lut(const vision::SampledSpectrum &eta) noexcept {
+Uint DielectricReflection::select_lut(const vision::SampledSpectrum &eta) noexcept {
     Uint idx = MaterialLut::instance().get_index(lut_name).hv();
     Uint inv_idx = MaterialLut::instance().get_index(lut_inv_name).hv();
     Uint index = ocarina::select(eta[0] > 1, idx, inv_idx);
     return index;
 }
 
-Float DielectricLobe::eta_to_ratio_z(const Float &eta) noexcept {
+Float DielectricReflection::eta_to_ratio_z(const Float &eta) noexcept {
     Float ret = ocarina::select(eta > 1.f, inverse_lerp(eta, ior_lower, ior_upper),
                                 inverse_lerp(rcp(eta), ior_lower, ior_upper));
     return ret;
 }
 
-Float2 DielectricLobe::sample_lut(const Float3 &wo, const SampledSpectrum &eta) const noexcept {
+Float2 DielectricReflection::sample_lut(const Float3 &wo, const SampledSpectrum &eta) const noexcept {
     Uint idx = select_lut(eta);
     const BindlessArray &ba = Global::instance().bindless_array();
     Float x = to_ratio_x();

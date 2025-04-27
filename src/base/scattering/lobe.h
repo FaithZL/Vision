@@ -148,7 +148,7 @@ public:
     return ior;
 }
 
-class DielectricLobe : public Lobe {
+class DielectricReflection : public Lobe {
 public:
     static constexpr float ior_lower = 1.003;
     static constexpr float ior_upper = 5.f;
@@ -160,8 +160,13 @@ protected:
     DCSP<Fresnel> fresnel_;
     DCSP<Microfacet<D>> microfacet_;
 
+protected:
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
+        return hash64(fresnel_->topology_hash());
+    }
+
 public:
-    explicit DielectricLobe(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet)
+    explicit DielectricReflection(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet)
         : fresnel_(fresnel), microfacet_(microfacet) {}
     [[nodiscard]] static Uint select_lut(const SampledSpectrum &eta) noexcept;
     static Float eta_to_ratio_z(const Float &eta) noexcept;
@@ -178,17 +183,13 @@ public:
     }
 };
 
-class DielectricReflTrans : public DielectricLobe {
+class DielectricReflTrans : public DielectricReflection {
 protected:
     Bool dispersive_{};
     SampledSpectrum kt_{};
     Uint flag_{};
 
 protected:
-    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
-        return hash64(fresnel_->topology_hash());
-    }
-
     [[nodiscard]] Float refl_compensate(const Float3 &wo, const SampledSpectrum &eta) const noexcept;
     [[nodiscard]] Float trans_compensate(const Float3 &wo, const SampledSpectrum &eta) const noexcept;
     [[nodiscard]] ScatterEval evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
@@ -207,7 +208,7 @@ protected:
 public:
     DielectricReflTrans(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
                         SampledSpectrum color, Bool dispersive, Uint flag)
-        : DielectricLobe(fresnel,microfacet),kt_(std::move(color)),
+        : DielectricReflection(fresnel,microfacet),kt_(std::move(color)),
           dispersive_(ocarina::move(dispersive)),
           flag_(std::move(flag)) {}
     VS_MAKE_LOBE_ASSIGNMENT(DielectricReflTrans)
