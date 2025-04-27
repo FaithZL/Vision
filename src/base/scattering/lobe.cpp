@@ -158,6 +158,30 @@ SampledDirection DiffuseLobe::sample_wi(const Float3 &wo, const Uint &flag,
 }
 ///#endregion
 
+Uint DielectricLobe::select_lut(const vision::SampledSpectrum &eta) noexcept {
+    Uint idx = MaterialLut::instance().get_index(lut_name).hv();
+    Uint inv_idx = MaterialLut::instance().get_index(lut_inv_name).hv();
+    Uint index = ocarina::select(eta[0] > 1, idx, inv_idx);
+    return index;
+}
+
+Float DielectricLobe::eta_to_ratio_z(const Float &eta) noexcept {
+    Float ret = ocarina::select(eta > 1.f, inverse_lerp(eta, ior_lower, ior_upper),
+                                inverse_lerp(rcp(eta), ior_lower, ior_upper));
+    return ret;
+}
+
+Float2 DielectricLobe::sample_lut(const Float3 &wo, const SampledSpectrum &eta) const noexcept {
+    Uint idx = select_lut(eta);
+    const BindlessArray &ba = Global::instance().bindless_array();
+    Float x = to_ratio_x();
+    Float y = abs_cos_theta(wo);
+    Float z = eta_to_ratio_z(eta[0]);
+    Float3 uvw = make_float3(x, y, z);
+    Float2 ret = ba.tex_var(idx).sample(2, uvw).as_vec2();
+    return ret;
+}
+
 ///#region DielectricReflTrans
 void DielectricReflTrans::prepare() noexcept {
     MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
@@ -167,30 +191,6 @@ void DielectricReflTrans::prepare() noexcept {
     MaterialLut::instance().load_lut(lut_inv_name, make_uint3(lut_res),
                                      PixelStorage::FLOAT2,
                                      addressof(DielectricInvLobe_Table));
-}
-
-Uint DielectricReflTrans::select_lut(const vision::SampledSpectrum &eta) noexcept {
-    Uint idx = MaterialLut::instance().get_index(lut_name).hv();
-    Uint inv_idx = MaterialLut::instance().get_index(lut_inv_name).hv();
-    Uint index = ocarina::select(eta[0] > 1, idx, inv_idx);
-    return index;
-}
-
-Float DielectricReflTrans::eta_to_ratio_z(const Float &eta) noexcept {
-    Float ret = ocarina::select(eta > 1.f, inverse_lerp(eta, ior_lower, ior_upper),
-                                inverse_lerp(rcp(eta), ior_lower, ior_upper));
-    return ret;
-}
-
-Float2 DielectricReflTrans::sample_lut(const Float3 &wo, const SampledSpectrum &eta) const noexcept {
-    Uint idx = select_lut(eta);
-    const BindlessArray &ba = Global::instance().bindless_array();
-    Float x = to_ratio_x();
-    Float y = abs_cos_theta(wo);
-    Float z = eta_to_ratio_z(eta[0]);
-    Float3 uvw = make_float3(x, y, z);
-    Float2 ret = ba.tex_var(idx).sample(2, uvw).as_vec2();
-    return ret;
 }
 
 Float DielectricReflTrans::refl_compensate(const Float3 &wo,

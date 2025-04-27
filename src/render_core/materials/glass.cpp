@@ -50,7 +50,7 @@ public:
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(make_float2(0.001f), true);
         return make_unique<DielectricLobePrecompute>(fresnel, microfacet, SampledSpectrum::one(3), false, BxDFFlag::Glossy);
     }
-    static constexpr const char *name = "DielectricReflTrans";
+    static constexpr const char *name = "DielectricLobe";
     void from_ratio_z(ocarina::Float z) noexcept override {
         Float ior = lerp(z, ior_lower, ior_upper);
         fresnel_->set_eta(SampledSpectrum(*swl(), ior));
