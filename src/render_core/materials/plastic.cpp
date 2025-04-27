@@ -40,13 +40,18 @@ public:
         Float3 wh = normalize(wo + wi);
         SampledSpectrum F = fresnel_->evaluate(abs_dot(wh, wo));
         if (BxDF::match_F(mode)) {
-            ret.f = diffuse_->f(wo, wi, nullptr, tm);
+            ret.f = diffuse_->f(wo, wi, nullptr, tm) * (1 - F);
             ret.f += microfacet()->BRDF(wo, wh, wi, F);
         }
         if (BxDF::match_PDF(mode)) {
             ret.pdfs = lerp(F.average(), PDF_diffuse(wo, wi), PDF_specular(wo, wi));
         }
         return ret;
+    }
+
+    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
+                                          TSampler &sampler, TransportMode tm) const noexcept override {
+        return Lobe::sample_local(wo, flag, sampler, tm);
     }
 
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
@@ -108,10 +113,11 @@ public:
 
         alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{iors}, swl);
-
-        return nullptr;
+        auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
+        UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(spectrum()->one(), swl, microfacet);
+        UP<LambertReflection> diffuse = make_unique<LambertReflection>(Rd, swl);
+        return make_unique<PlasticLobe>(fresnel, std::move(refl), std::move(diffuse));
     }
 };
 
