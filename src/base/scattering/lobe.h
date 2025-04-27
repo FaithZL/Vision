@@ -148,7 +148,7 @@ public:
     return ior;
 }
 
-class DielectricReflTrans : public Lobe {
+class DielectricLobe : public Lobe {
 public:
     static constexpr float ior_lower = 1.003;
     static constexpr float ior_upper = 5.f;
@@ -158,6 +158,13 @@ public:
 
 protected:
     DCSP<Fresnel> fresnel_;
+
+protected:
+    explicit DielectricLobe(const SP<Fresnel> &fresnel) : fresnel_(fresnel) {}
+};
+
+class DielectricReflTrans : public DielectricLobe {
+protected:
     Bool dispersive_{};
     DCSP<Microfacet<D>> microfacet_;
     SampledSpectrum kt_{};
@@ -188,7 +195,7 @@ protected:
 public:
     DielectricReflTrans(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
                         SampledSpectrum color, Bool dispersive, Uint flag)
-        : fresnel_(fresnel), microfacet_(microfacet),
+        : DielectricLobe(fresnel), microfacet_(microfacet),
           kt_(std::move(color)), dispersive_(ocarina::move(dispersive)),
           flag_(std::move(flag)) {}
     VS_MAKE_LOBE_ASSIGNMENT(DielectricReflTrans)
