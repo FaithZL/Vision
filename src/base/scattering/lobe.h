@@ -180,6 +180,8 @@ public:
     static Float eta_to_ratio_z(const Float &eta) noexcept;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm) const noexcept override;
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                             TSampler &sampler) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override { return fresnel_->swl(); }
     Float to_ratio_x() const noexcept override {
         Float ax = microfacet_->alpha_x();

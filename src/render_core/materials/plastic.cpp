@@ -98,6 +98,10 @@ public:
         INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);
         init_slot_cursor(&color_, &anisotropic_);
     }
+    void prepare() noexcept override {
+        Material::prepare();
+        DielectricReflection::prepare();
+    }
 
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
@@ -121,6 +125,16 @@ public:
         Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
         UP<DielectricReflection> reflection = make_unique<DielectricReflection>(fresnel, microfacet, Rd, flag);
 
+//        Float cos_theta = dot(it.wo, it.shading.normal());
+//        SampledSpectrum albedo = reflection->albedo(abs(cos_theta));
+//        Float refl_weight = albedo.average();
+//        WeightedLobe lobe0 = WeightedLobe(refl_weight, std::move(reflection));
+//        WeightedLobe lobe1 = WeightedLobe(1 - refl_weight, make_unique<DiffuseLobe>(Rd, swl));
+//        vector<WeightedLobe> lobes;
+//        lobes.push_back(std::move(lobe0));
+//        lobes.push_back(std::move(lobe1));
+//        UP<LobeSet> ret = make_unique<LobeSet>(std::move(lobes));
+//        return ret;
         return make_unique<PlasticLobe>(fresnel, std::move(refl), std::move(diffuse));
     }
 };

@@ -222,6 +222,15 @@ ScatterEval DielectricReflection::evaluate_local(const Float3 &wo, const Float3 
     return evaluate_reflection(wo, wh, wi, F, fresnel_->eta(), mode);
 }
 
+SampledDirection DielectricReflection::sample_wi(const Float3 &wo, const Uint &flag,
+                                                 TSampler &sampler) const noexcept {
+    Float3 wh = microfacet_->sample_wh(wo, sampler->next_2d());
+    SampledDirection sd;
+    sd.wi = reflect(wo, wh);
+    sd.valid = same_hemisphere(wo, sd.wi);
+    return sd;
+}
+
 SampledSpectrum DielectricReflection::albedo(const ocarina::Float &cos_theta) const noexcept {
     SampledSpectrum F = fresnel_->evaluate(abs(cos_theta));
     return F;
