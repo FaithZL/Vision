@@ -158,6 +158,7 @@ SampledDirection DiffuseLobe::sample_wi(const Float3 &wo, const Uint &flag,
 }
 ///#endregion
 
+///#region DielectricReflection
 Uint DielectricReflection::select_lut(const vision::SampledSpectrum &eta) noexcept {
     Uint idx = MaterialLut::instance().get_index(lut_name).hv();
     Uint inv_idx = MaterialLut::instance().get_index(lut_inv_name).hv();
@@ -182,19 +183,8 @@ Float2 DielectricReflection::sample_lut(const Float3 &wo, const SampledSpectrum 
     return ret;
 }
 
-///#region DielectricReflTrans
-void DielectricReflTrans::prepare() noexcept {
-    MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
-                                     PixelStorage::FLOAT2,
-                                     addressof(DielectricLobe_Table));
-
-    MaterialLut::instance().load_lut(lut_inv_name, make_uint3(lut_res),
-                                     PixelStorage::FLOAT2,
-                                     addressof(DielectricInvLobe_Table));
-}
-
-Float DielectricReflTrans::refl_compensate(const Float3 &wo,
-                                           const SampledSpectrum &eta) const noexcept {
+Float DielectricReflection::refl_compensate(const Float3 &wo,
+                                            const SampledSpectrum &eta) const noexcept {
     if (!compensate()) {
         return 1;
     }
@@ -204,6 +194,38 @@ Float DielectricReflTrans::refl_compensate(const Float3 &wo,
     return rcp(factor);
 }
 
+Float DielectricReflection::refl_prob(const vision::SampledSpectrum &F) const noexcept {
+    SampledSpectrum T = 1 - F;
+    SampledSpectrum total = T * kt_ + F;
+    return F.average() / total.average();
+}
+
+ScatterEval DielectricReflection::evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                                      const SampledSpectrum &F, const SampledSpectrum &eta,
+                                                      MaterialEvalMode mode) const noexcept {
+    ScatterEval se{*swl()};
+    if (BxDF::match_F(mode)) {
+        se.f = microfacet_->BRDF(wo, wh, wi, F);
+    }
+    if (BxDF::match_PDF(mode)) {
+        se.pdfs = microfacet_->PDF_wi_reflection(wo, wh) * refl_prob(F);
+    }
+    se.flags = BxDFFlag::GlossyRefl;
+    se.f *= refl_compensate(wo, eta);
+    return se;
+}
+void DielectricReflection::prepare() noexcept {
+    MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
+                                     PixelStorage::FLOAT2,
+                                     addressof(DielectricLobe_Table));
+
+    MaterialLut::instance().load_lut(lut_inv_name, make_uint3(lut_res),
+                                     PixelStorage::FLOAT2,
+                                     addressof(DielectricInvLobe_Table));
+}
+///#endregion
+
+///#region DielectricReflTrans
 Float DielectricReflTrans::trans_compensate(const ocarina::Float3 &wo,
                                             const SampledSpectrum &eta) const noexcept {
     if (!compensate()) {
@@ -219,12 +241,6 @@ SampledSpectrum DielectricReflTrans::albedo(const Float &cos_theta) const noexce
     SampledSpectrum eta = fresnel->eta();
     SampledSpectrum F = fresnel->evaluate(abs(cos_theta));
     return kt_ * (1 - F) + F;
-}
-
-Float DielectricReflTrans::refl_prob(const vision::SampledSpectrum &F) const noexcept {
-    SampledSpectrum T = 1 - F;
-    SampledSpectrum total = T * kt_ + F;
-    return F.average() / total.average();
 }
 
 Float DielectricReflTrans::trans_prob(const vision::SampledSpectrum &F) const noexcept {
@@ -244,21 +260,6 @@ ScatterEval DielectricReflTrans::evaluate_impl(const Float3 &wo, const Float3 &w
         ret = evaluate_transmission(wo, wh, wi, F, fresnel->eta(), mode, tm);
     };
     return ret;
-}
-
-ScatterEval DielectricReflTrans::evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                                     const SampledSpectrum &F, const SampledSpectrum &eta,
-                                                     MaterialEvalMode mode) const noexcept {
-    ScatterEval se{*swl()};
-    if (BxDF::match_F(mode)) {
-        se.f = microfacet_->BRDF(wo, wh, wi, F);
-    }
-    if (BxDF::match_PDF(mode)) {
-        se.pdfs = microfacet_->PDF_wi_reflection(wo, wh) * refl_prob(F);
-    }
-    se.flags = BxDFFlag::GlossyRefl;
-    se.f *= refl_compensate(wo, eta);
-    return se;
 }
 
 ScatterEval DielectricReflTrans::evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
