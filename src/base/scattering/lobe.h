@@ -148,12 +148,12 @@ public:
     return ior;
 }
 
-class DielectricLobe : public Lobe {
+class DielectricReflTrans : public Lobe {
 public:
     static constexpr float ior_lower = 1.003;
     static constexpr float ior_upper = 5.f;
-    static constexpr const char *lut_name = "DielectricLobe::lut";
-    static constexpr const char *lut_inv_name = "DielectricLobeInv::lut";
+    static constexpr const char *lut_name = "DielectricRefl::lut";
+    static constexpr const char *lut_inv_name = "DielectricReflInv::lut";
     static constexpr uint lut_res = 32;
 
 protected:
@@ -186,12 +186,12 @@ protected:
     [[nodiscard]] Float trans_prob(const SampledSpectrum &F) const noexcept;
 
 public:
-    DielectricLobe(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
-                   SampledSpectrum color, Bool dispersive, Uint flag)
+    DielectricReflTrans(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
+                        SampledSpectrum color, Bool dispersive, Uint flag)
         : fresnel_(fresnel), microfacet_(microfacet),
           kt_(std::move(color)), dispersive_(ocarina::move(dispersive)),
           flag_(std::move(flag)) {}
-    VS_MAKE_LOBE_ASSIGNMENT(DielectricLobe)
+    VS_MAKE_LOBE_ASSIGNMENT(DielectricReflTrans)
     [[nodiscard]] virtual bool compensate() const noexcept { return true; }
 
     static void prepare() noexcept;

@@ -362,7 +362,7 @@ public:
         CoatLobe::prepare();
         SheenLTC::prepare();
         SpecularLobe::prepare();
-        DielectricLobe::prepare();
+        DielectricReflTrans::prepare();
         MetallicLobe::prepare();
     }
 
@@ -456,7 +456,7 @@ public:
                 auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl, eta}, swl);
                 SampledSpectrum t_weight = trans_weight * weight;
                 SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(schlick_F0_from_ior(eta) * specular_tint, etas, swl);
-                UP<Lobe> dielectric = make_unique<DielectricLobe>(fresnel_schlick, microfacet, color, false, SurfaceData::Glossy);
+                UP<Lobe> dielectric = make_unique<DielectricReflTrans>(fresnel_schlick, microfacet, color, false, SurfaceData::Glossy);
                 WeightedLobe trans_lobe(t_weight.average(), t_weight.average(), std::move(dielectric));
                 lobes.push_back(std::move(trans_lobe));
                 weight *= (1.0f - trans_weight);
