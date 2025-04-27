@@ -37,11 +37,10 @@ public:
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm) const noexcept override {
         ScatterEval ret{*swl()};
-        Float3 wh = normalize(wo + wi);
-        SampledSpectrum F = fresnel_->evaluate(abs_dot(wh, wo));
+        SampledSpectrum F = fresnel_->evaluate(abs_cos_theta(wo));
         if (BxDF::match_F(mode)) {
             ret.f = diffuse_->f(wo, wi, nullptr, tm) * (1 - F);
-            ret.f += microfacet()->BRDF(wo, wh, wi, F);
+            ret.f += microfacet()->BRDF(wo, wi, F);
         }
         if (BxDF::match_PDF(mode)) {
             ret.pdfs = lerp(F.average(), PDF_diffuse(wo, wi), PDF_specular(wo, wi));
@@ -57,10 +56,9 @@ public:
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override {
         Float3 wh = microfacet()->sample_wh(wo, sampler->next_2d());
-        Float d = dot(wo, wh);
         auto fresnel = fresnel_.ptr();
         SampledDirection sd;
-        SampledSpectrum F = fresnel->evaluate(abs(d));
+        SampledSpectrum F = fresnel->evaluate(abs_cos_theta(wo));
         Float uc = sampler->next_1d();
         $if(uc < F.average()) {
             sd.wi = reflect(wo, wh);
