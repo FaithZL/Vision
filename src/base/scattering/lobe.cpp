@@ -158,21 +158,31 @@ SampledDirection DiffuseLobe::sample_wi(const Float3 &wo, const Uint &flag,
 }
 ///#endregion
 
-///#region DielectricReflection
-Uint DielectricReflection::select_lut(const vision::SampledSpectrum &eta) noexcept {
+///#region DielectricLobe
+void DielectricLobe::prepare() noexcept {
+    MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
+                                     PixelStorage::FLOAT2,
+                                     addressof(DielectricLobe_Table));
+
+    MaterialLut::instance().load_lut(lut_inv_name, make_uint3(lut_res),
+                                     PixelStorage::FLOAT2,
+                                     addressof(DielectricInvLobe_Table));
+}
+
+Uint DielectricLobe::select_lut(const vision::SampledSpectrum &eta) noexcept {
     Uint idx = MaterialLut::instance().get_index(lut_name).hv();
     Uint inv_idx = MaterialLut::instance().get_index(lut_inv_name).hv();
     Uint index = ocarina::select(eta[0] > 1, idx, inv_idx);
     return index;
 }
 
-Float DielectricReflection::eta_to_ratio_z(const Float &eta) noexcept {
+Float DielectricLobe::eta_to_ratio_z(const Float &eta) noexcept {
     Float ret = ocarina::select(eta > 1.f, inverse_lerp(eta, ior_lower, ior_upper),
                                 inverse_lerp(rcp(eta), ior_lower, ior_upper));
     return ret;
 }
 
-Float2 DielectricReflection::sample_lut(const Float3 &wo, const SampledSpectrum &eta) const noexcept {
+Float2 DielectricLobe::sample_lut(const Float3 &wo, const SampledSpectrum &eta) const noexcept {
     Uint idx = select_lut(eta);
     const BindlessArray &ba = Global::instance().bindless_array();
     Float x = to_ratio_x();
@@ -183,8 +193,8 @@ Float2 DielectricReflection::sample_lut(const Float3 &wo, const SampledSpectrum 
     return ret;
 }
 
-Float DielectricReflection::refl_compensate(const Float3 &wo,
-                                            const SampledSpectrum &eta) const noexcept {
+Float DielectricLobe::refl_compensate(const Float3 &wo,
+                                      const SampledSpectrum &eta) const noexcept {
     if (!compensate()) {
         return 1;
     }
@@ -194,34 +204,8 @@ Float DielectricReflection::refl_compensate(const Float3 &wo,
     return rcp(factor);
 }
 
-SampledDirection DielectricReflection::sample_wi(const Float3 &wo, const Uint &flag,
-                                                 TSampler &sampler) const noexcept {
-    Float3 wh = microfacet_->sample_wh(wo, sampler->next_2d());
-    SampledDirection sd;
-    sd.wi = reflect(wo, wh);
-    sd.valid = same_hemisphere(wo, sd.wi);
-    return sd;
-}
-
-SampledSpectrum DielectricReflection::albedo(const ocarina::Float &cos_theta) const noexcept {
-    SampledSpectrum F = fresnel_->evaluate(abs(cos_theta));
-    return F;
-}
-
-void DielectricReflection::prepare() noexcept {
-    MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
-                                     PixelStorage::FLOAT2,
-                                     addressof(DielectricLobe_Table));
-
-    MaterialLut::instance().load_lut(lut_inv_name, make_uint3(lut_res),
-                                     PixelStorage::FLOAT2,
-                                     addressof(DielectricInvLobe_Table));
-}
-///#endregion
-
-///#region DielectricReflTrans
-Float DielectricReflTrans::trans_compensate(const ocarina::Float3 &wo,
-                                            const SampledSpectrum &eta) const noexcept {
+Float DielectricLobe::trans_compensate(const ocarina::Float3 &wo,
+                                       const SampledSpectrum &eta) const noexcept {
     if (!compensate()) {
         return 1;
     }
@@ -230,41 +214,26 @@ Float DielectricReflTrans::trans_compensate(const ocarina::Float3 &wo,
     return rcp(factor);
 }
 
-Float DielectricReflTrans::refl_prob(const vision::SampledSpectrum &F) const noexcept {
-    SampledSpectrum T = 1 - F;
-    SampledSpectrum total = T * kt_ + F;
-    return F.average() / total.average();
-}
-
-ScatterEval DielectricReflTrans::evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                                     const SampledSpectrum &F, const SampledSpectrum &eta,
-                                                     MaterialEvalMode mode) const noexcept {
-    ScatterEval se{*swl()};
-    if (BxDF::match_F(mode)) {
-        se.f = microfacet_->BRDF(wo, wh, wi, F);
-    }
-    if (BxDF::match_PDF(mode)) {
-        se.pdfs = microfacet_->PDF_wi_reflection(wo, wh) * refl_prob(F);
-    }
-    se.flags = BxDFFlag::GlossyRefl;
-    se.f *= refl_compensate(wo, eta);
-    return se;
-}
-
-SampledSpectrum DielectricReflTrans::albedo(const Float &cos_theta) const noexcept {
+SampledSpectrum DielectricLobe::albedo(const Float &cos_theta) const noexcept {
     SP<Fresnel> fresnel = fresnel_.ptr();
     SampledSpectrum eta = fresnel->eta();
     SampledSpectrum F = fresnel->evaluate(abs(cos_theta));
     return kt_ * (1 - F) + F;
 }
 
-Float DielectricReflTrans::trans_prob(const vision::SampledSpectrum &F) const noexcept {
+Float DielectricLobe::refl_prob(const vision::SampledSpectrum &F) const noexcept {
+    SampledSpectrum T = 1 - F;
+    SampledSpectrum total = T * kt_ + F;
+    return F.average() / total.average();
+}
+
+Float DielectricLobe::trans_prob(const vision::SampledSpectrum &F) const noexcept {
     return 1 - refl_prob(F);
 }
 
-ScatterEval DielectricReflTrans::evaluate_impl(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                               const SP<const Fresnel> &fresnel, MaterialEvalMode mode,
-                                               TransportMode tm) const noexcept {
+ScatterEval DielectricLobe::evaluate_impl(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                          const SP<const Fresnel> &fresnel, MaterialEvalMode mode,
+                                          TransportMode tm) const noexcept {
     ScatterEval ret{*swl()};
     Bool reflect = same_hemisphere(wo, wi);
     SampledSpectrum F = fresnel->evaluate(abs_dot(wh, wo));
@@ -277,10 +246,25 @@ ScatterEval DielectricReflTrans::evaluate_impl(const Float3 &wo, const Float3 &w
     return ret;
 }
 
-ScatterEval DielectricReflTrans::evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                                       const SampledSpectrum &F, const SampledSpectrum &eta,
-                                                       MaterialEvalMode mode,
-                                                       TransportMode tm) const noexcept {
+ScatterEval DielectricLobe::evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                                const SampledSpectrum &F, const SampledSpectrum &eta,
+                                                MaterialEvalMode mode) const noexcept {
+    ScatterEval se{*swl()};
+    if (BxDF::match_F(mode)) {
+        se.f = microfacet_->BRDF(wo, wh, wi, F);
+    }
+    if (BxDF::match_PDF(mode)) {
+        se.pdfs = microfacet_->PDF_wi_reflection(wo, wh) * refl_prob(F);
+    }
+    se.flags = BxDFFlag::GlossyRefl;
+    se.f *= refl_compensate(wo, eta);
+    return se;
+}
+
+ScatterEval DielectricLobe::evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                                  const SampledSpectrum &F, const SampledSpectrum &eta,
+                                                  MaterialEvalMode mode,
+                                                  TransportMode tm) const noexcept {
     ScatterEval se{*swl()};
     Float3 new_wh = face_forward(wh, wo);
     if (BxDF::match_F(mode)) {
@@ -295,13 +279,13 @@ ScatterEval DielectricReflTrans::evaluate_transmission(const Float3 &wo, const F
     return se;
 }
 
-Float DielectricReflTrans::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
+Float DielectricLobe::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
     return 1.f;
 }
 
-ScatterEval DielectricReflTrans::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                                MaterialEvalMode mode, const Uint &flag,
-                                                TransportMode tm) const noexcept {
+ScatterEval DielectricLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
+                                           MaterialEvalMode mode, const Uint &flag,
+                                           TransportMode tm) const noexcept {
     SP<Fresnel> fresnel = fresnel_.ptr();
     Bool reflect = same_hemisphere(wo, wi);
     Float eta_p = ocarina::select(reflect, 1.f, fresnel->eta()[0]);
@@ -309,8 +293,8 @@ ScatterEval DielectricReflTrans::evaluate_local(const Float3 &wo, const Float3 &
     return evaluate_impl(wo, wh, wi, fresnel, mode, tm);
 }
 
-ScatterEval DielectricReflTrans::evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                                const Uint &flag, TransportMode tm, Float *eta) const noexcept {
+ScatterEval DielectricLobe::evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                           const Uint &flag, TransportMode tm, Float *eta) const noexcept {
     SP<Fresnel> fresnel = fresnel_.ptr();
     Bool reflect = same_hemisphere(wo, wi);
     Float eta_p = ocarina::select(reflect, 1.f, fresnel->eta()[0]);
@@ -322,8 +306,8 @@ ScatterEval DielectricReflTrans::evaluate_local(const Float3 &wo, const Float3 &
     return evaluate_impl(wo, wh, wi, fresnel, mode, tm);
 }
 
-SampledDirection DielectricReflTrans::sample_wi(const Float3 &wo, const Uint &flag,
-                                                TSampler &sampler) const noexcept {
+SampledDirection DielectricLobe::sample_wi(const Float3 &wo, const Uint &flag,
+                                           TSampler &sampler) const noexcept {
     Float3 wh = microfacet_->sample_wh(wo, sampler->next_2d());
     Float d = dot(wo, wh);
     auto fresnel = fresnel_.ptr();
@@ -342,9 +326,9 @@ SampledDirection DielectricReflTrans::sample_wi(const Float3 &wo, const Uint &fl
     return sd;
 }
 
-BSDFSample DielectricReflTrans::sample_local(const Float3 &wo, const Uint &flag,
-                                             TSampler &sampler,
-                                             TransportMode tm) const noexcept {
+BSDFSample DielectricLobe::sample_local(const Float3 &wo, const Uint &flag,
+                                        TSampler &sampler,
+                                        TransportMode tm) const noexcept {
     return Lobe::sample_local(wo, flag, sampler, tm);
 }
 ///#endregion

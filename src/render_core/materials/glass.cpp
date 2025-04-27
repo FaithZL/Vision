@@ -11,9 +11,9 @@
 
 namespace vision {
 
-class DielectricPrecompute : public DielectricReflTrans {
+class DielectricPrecompute : public DielectricLobe {
 public:
-    using DielectricReflTrans::DielectricReflTrans;
+    using DielectricLobe::DielectricLobe;
     [[nodiscard]] bool compensate() const noexcept override { return false; }
     [[nodiscard]] SampledSpectrum integral_albedo(const Float3 &wo, TSampler &sampler,
                                                   const Uint &sample_num) const noexcept override {
@@ -178,7 +178,7 @@ private:
     float alpha_threshold_{0.022};
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(DielectricReflTrans)
+    VS_MAKE_MATERIAL_EVALUATOR(DielectricLobe)
 
 public:
     GlassMaterial() = default;
@@ -228,13 +228,13 @@ public:
             eta_slot = desc.slot("", ior);
         }
         ior_ = Slot::create_slot(eta_slot);
-        ior_->set_range(DielectricReflTrans::ior_lower, DielectricReflTrans::ior_upper);
+        ior_->set_range(DielectricLobe::ior_lower, DielectricLobe::ior_upper);
         ior_->set_name("ior");
     }
     [[nodiscard]] bool is_dispersive() const noexcept override { return ior_->impl_type() == "spd"; }
     void prepare() noexcept override {
         ior_->prepare();
-        DielectricReflTrans::prepare();
+        DielectricLobe::prepare();
     }
 
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
@@ -252,7 +252,7 @@ public:
 
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{iors}, swl);
-        return make_unique<DielectricReflTrans>(fresnel, microfacet, color, is_dispersive(), flag);
+        return make_unique<DielectricLobe>(fresnel, microfacet, color, is_dispersive(), flag);
     }
 };
 }// namespace vision

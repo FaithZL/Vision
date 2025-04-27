@@ -148,16 +148,17 @@ public:
     return ior;
 }
 
-class DielectricReflection : public Lobe {
+class DielectricLobe : public Lobe {
 public:
     static constexpr float ior_lower = 1.003;
     static constexpr float ior_upper = 5.f;
-    static constexpr const char *lut_name = "DielectricRefl::lut";
-    static constexpr const char *lut_inv_name = "DielectricReflInv::lut";
+    static constexpr const char *lut_name = "DielectricLobe::lut";
+    static constexpr const char *lut_inv_name = "DielectricLobeInv::lut";
     static constexpr uint lut_res = 32;
 
 protected:
     DCSP<Fresnel> fresnel_;
+    Bool dispersive_{};
     DCSP<Microfacet<D>> microfacet_;
     SampledSpectrum kt_{};
     Uint flag_{};
@@ -166,45 +167,14 @@ protected:
     [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
         return hash64(fresnel_->topology_hash());
     }
-    [[nodiscard]] Float refl_compensate(const Float3 &wo, const SampledSpectrum &eta) const noexcept;
-
-
-public:
-    explicit DielectricReflection(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
-                                  SampledSpectrum kt, const Uint &flag)
-        : fresnel_(fresnel), microfacet_(microfacet), kt_(std::move(kt)), flag_(flag) {}
     [[nodiscard]] static Uint select_lut(const SampledSpectrum &eta) noexcept;
     static Float eta_to_ratio_z(const Float &eta) noexcept;
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
-                                             TSampler &sampler) const noexcept override;
-    [[nodiscard]] const SampledWavelengths *swl() const override { return fresnel_->swl(); }
-    Float to_ratio_x() const noexcept override {
-        Float ax = microfacet_->alpha_x();
-        Float ay = microfacet_->alpha_y();
-        Float a = sqrt(ax * ay);
-        return ocarina::sqrt(a);
-    }
-    [[nodiscard]] Uint flag() const noexcept override { return flag_; }
-    static void prepare() noexcept;
-    SampledSpectrum albedo(const ocarina::Float &cos_theta) const noexcept override;
-    [[nodiscard]] virtual bool compensate() const noexcept { return true; }
     [[nodiscard]] Float2 sample_lut(const Float3 &wo, const SampledSpectrum &eta) const noexcept;
-    [[nodiscard]] Float to_ratio_z() const noexcept override {
-        Float ior = fresnel_->eta().average();
-        return inverse_lerp(ior, ior_lower, ior_upper);
-    }
-};
-
-class DielectricReflTrans : public DielectricReflection {
-protected:
-    Bool dispersive_{};
-
-protected:
+    [[nodiscard]] Float refl_compensate(const Float3 &wo, const SampledSpectrum &eta) const noexcept;
     [[nodiscard]] Float trans_compensate(const Float3 &wo, const SampledSpectrum &eta) const noexcept;
     [[nodiscard]] ScatterEval evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                                   const SampledSpectrum &F, const SampledSpectrum &eta,
                                                   MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] Float refl_prob(const SampledSpectrum &F) const noexcept;
     [[nodiscard]] ScatterEval evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                                     const SampledSpectrum &F, const SampledSpectrum &eta,
                                                     MaterialEvalMode mode,
@@ -212,16 +182,21 @@ protected:
     [[nodiscard]] ScatterEval evaluate_impl(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                             const SP<const Fresnel> &fresnel, MaterialEvalMode mode,
                                             TransportMode tm) const noexcept;
+    [[nodiscard]] Float refl_prob(const SampledSpectrum &F) const noexcept;
     [[nodiscard]] Float trans_prob(const SampledSpectrum &F) const noexcept;
 
 public:
-    DielectricReflTrans(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
-                        SampledSpectrum color, Bool dispersive, Uint flag)
-        : DielectricReflection(fresnel, microfacet, std::move(color), flag),
-          dispersive_(ocarina::move(dispersive)) {}
-    VS_MAKE_LOBE_ASSIGNMENT(DielectricReflTrans)
+    DielectricLobe(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
+                   SampledSpectrum color, Bool dispersive, Uint flag)
+        : fresnel_(fresnel), microfacet_(microfacet),
+          kt_(std::move(color)), dispersive_(ocarina::move(dispersive)),
+          flag_(std::move(flag)) {}
+    VS_MAKE_LOBE_ASSIGNMENT(DielectricLobe)
+    [[nodiscard]] virtual bool compensate() const noexcept { return true; }
 
+    static void prepare() noexcept;
     [[nodiscard]] Float valid_factor(const Float3 &wo, const Float3 &wi) const noexcept override;
+    [[nodiscard]] const SampledWavelengths *swl() const override { return fresnel_->swl(); }
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }
     [[nodiscard]] Bool splittable() const noexcept override { return true; }
@@ -229,10 +204,21 @@ public:
                                              const Uint &flag, TransportMode tm) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
+    [[nodiscard]] Uint flag() const noexcept override { return flag_; }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                           TransportMode tm) const noexcept override;
+    [[nodiscard]] Float to_ratio_z() const noexcept override {
+        Float ior = fresnel_->eta().average();
+        return inverse_lerp(ior, ior_lower, ior_upper);
+    }
+    Float to_ratio_x() const noexcept override {
+        Float ax = microfacet_->alpha_x();
+        Float ay = microfacet_->alpha_y();
+        Float a = sqrt(ax * ay);
+        return ocarina::sqrt(a);
+    }
 };
 
 class WeightedLobe {
