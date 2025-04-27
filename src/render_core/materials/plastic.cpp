@@ -37,10 +37,11 @@ public:
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm) const noexcept override {
         ScatterEval ret{*swl()};
-        SampledSpectrum F = fresnel_->evaluate(abs_cos_theta(wo));
+        Float3 wh = normalize(wo + wi);
+        SampledSpectrum F = fresnel_->evaluate(abs_dot(wh, wo));
         if (BxDF::match_F(mode)) {
             ret.f = diffuse_->f(wo, wi, nullptr, tm) * (1 - F);
-            ret.f += microfacet()->BRDF(wo, wi, F);
+            ret.f += microfacet()->BRDF(wo, wh, wi, F);
         }
         if (BxDF::match_PDF(mode)) {
             ret.pdfs = lerp(F.average(), PDF_diffuse(wo, wi), PDF_specular(wo, wi));
@@ -92,7 +93,7 @@ public:
         VS_CAST_DESC
         Material::initialize_(node_desc);
         INIT_SLOT(color, make_float3(1.f), Albedo);
-        INIT_SLOT(ior, 1.5f, Number).set_range(1.003, 5);
+        INIT_SLOT(ior, 1.3f, Number).set_range(1.003, 5);
         INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
         INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);
         init_slot_cursor(&color_, &anisotropic_);
