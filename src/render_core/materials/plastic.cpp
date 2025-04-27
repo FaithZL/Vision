@@ -75,6 +75,7 @@ public:
 class PlasticMaterial : public Material {
 private:
     VS_MAKE_SLOT(color)
+    VS_MAKE_SLOT(spec)
     VS_MAKE_SLOT(ior)
     VS_MAKE_SLOT(roughness)
     VS_MAKE_SLOT(anisotropic)
@@ -93,6 +94,7 @@ public:
         VS_CAST_DESC
         Material::initialize_(node_desc);
         INIT_SLOT(color, make_float3(1.f), Albedo);
+        INIT_SLOT(spec, make_float3(1.f), Albedo);
         INIT_SLOT(ior, 1.3f, Number).set_range(1.003, 5);
         INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
         INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);
@@ -106,6 +108,8 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum Rd = color_.eval_albedo_spectrum(it, swl).sample;
+        SampledSpectrum Rs = spec_.eval_albedo_spectrum(it, swl).sample;
+
         DynamicArray<float> iors = ior_.evaluate(it, swl);
 
         Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
@@ -116,12 +120,14 @@ public:
 
         alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-        auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{iors}, swl);
+
+        SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(schlick_F0_from_ior(iors[0]) * Rs, iors, swl);
+
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(spectrum()->one(), swl, microfacet);
         UP<LambertReflection> diffuse = make_unique<LambertReflection>(Rd, swl);
 
-        return make_unique<PlasticLobe>(fresnel, std::move(refl), std::move(diffuse));
+        return make_unique<PlasticLobe>(fresnel_schlick, std::move(refl), std::move(diffuse));
     }
 };
 

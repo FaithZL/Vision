@@ -12,37 +12,7 @@
 
 namespace vision {
 
-class FresnelSchlick : public Fresnel {
-private:
-    SampledSpectrum F0_;
-    SampledSpectrum eta_;
 
-public:
-    FresnelSchlick(SampledSpectrum F0, SampledSpectrum eta,
-                   const SampledWavelengths &swl)
-        : Fresnel(swl), F0_(std::move(F0)),
-          eta_(std::move(eta)) {}
-    FresnelSchlick(SampledSpectrum F0, const Float &eta,
-                   const SampledWavelengths &swl)
-        : Fresnel(swl), F0_(std::move(F0)),
-          eta_(SampledSpectrum{1, eta}) {}
-    OC_MAKE_MEMBER_GETTER(F0, )
-    void set_eta(const vision::SampledSpectrum &eta) noexcept override {
-        eta_ = eta;
-    }
-    [[nodiscard]] SampledSpectrum evaluate(ocarina::Float cos_theta) const noexcept override {
-        Float F_real = fresnel_dielectric(cos_theta, eta_[0]);
-        Float F0_real = schlick_F0_from_ior(eta_[0]);
-        Float t = inverse_lerp(F_real, F0_real, 1.f);
-        t = ocarina::clamp(t, 0.f, 1.f);
-        SampledSpectrum ret = lerp(t, F0_, 1.f);
-        return ret;
-    }
-    [[nodiscard]] SampledSpectrum eta() const noexcept override {
-        return eta_;
-    }
-    VS_MAKE_FRESNEL_ASSIGNMENT(FresnelSchlick)
-};
 
 /// reference https://tizianzeltner.com/projects/Zeltner2022Practical/
 /// reference https://github.com/tizian/ltc-sheen
