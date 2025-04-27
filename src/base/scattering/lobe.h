@@ -167,10 +167,7 @@ protected:
         return hash64(fresnel_->topology_hash());
     }
     [[nodiscard]] Float refl_compensate(const Float3 &wo, const SampledSpectrum &eta) const noexcept;
-    [[nodiscard]] ScatterEval evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
-                                                  const SampledSpectrum &F, const SampledSpectrum &eta,
-                                                  MaterialEvalMode mode) const noexcept;
-    [[nodiscard]] Float refl_prob(const SampledSpectrum &F) const noexcept;
+
 
 public:
     explicit DielectricReflection(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
@@ -178,8 +175,6 @@ public:
         : fresnel_(fresnel), microfacet_(microfacet), kt_(std::move(kt)), flag_(flag) {}
     [[nodiscard]] static Uint select_lut(const SampledSpectrum &eta) noexcept;
     static Float eta_to_ratio_z(const Float &eta) noexcept;
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                             const Uint &flag, TransportMode tm) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override { return fresnel_->swl(); }
@@ -205,9 +200,11 @@ protected:
     Bool dispersive_{};
 
 protected:
-
     [[nodiscard]] Float trans_compensate(const Float3 &wo, const SampledSpectrum &eta) const noexcept;
-
+    [[nodiscard]] ScatterEval evaluate_reflection(const Float3 &wo, const Float3 &wh, const Float3 &wi,
+                                                  const SampledSpectrum &F, const SampledSpectrum &eta,
+                                                  MaterialEvalMode mode) const noexcept;
+    [[nodiscard]] Float refl_prob(const SampledSpectrum &F) const noexcept;
     [[nodiscard]] ScatterEval evaluate_transmission(const Float3 &wo, const Float3 &wh, const Float3 &wi,
                                                     const SampledSpectrum &F, const SampledSpectrum &eta,
                                                     MaterialEvalMode mode,
