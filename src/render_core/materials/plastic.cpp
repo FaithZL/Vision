@@ -94,7 +94,7 @@ public:
         VS_CAST_DESC
         Material::initialize_(node_desc);
         INIT_SLOT(color, make_float3(1.f), Albedo);
-        INIT_SLOT(spec, make_float3(1.f), Albedo);
+        INIT_SLOT(spec, make_float3(0.05f), Albedo);
         INIT_SLOT(ior, 1.3f, Number).set_range(1.003, 5);
         INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
         INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);
