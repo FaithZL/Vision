@@ -123,7 +123,7 @@ public:
 
         Float alpha_min = min(alpha.x, alpha.y);
         Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
-        UP<DielectricReflection> reflection = make_unique<DielectricReflection>(fresnel, microfacet, Rd, flag);
+//        UP<DielectricReflection> reflection = make_unique<DielectricReflection>(fresnel, microfacet, Rd, flag);
 
 //        Float cos_theta = dot(it.wo, it.shading.normal());
 //        SampledSpectrum albedo = reflection->albedo(abs(cos_theta));
