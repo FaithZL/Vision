@@ -116,6 +116,11 @@ public:
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(spectrum()->one(), swl, microfacet);
         UP<LambertReflection> diffuse = make_unique<LambertReflection>(Rd, swl);
+
+        Float alpha_min = min(alpha.x, alpha.y);
+        Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
+        UP<DielectricReflection> reflection = make_unique<DielectricReflection>(fresnel, microfacet, Rd, flag);
+
         return make_unique<PlasticLobe>(fresnel, std::move(refl), std::move(diffuse));
     }
 };

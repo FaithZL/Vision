@@ -214,6 +214,19 @@ ScatterEval DielectricReflection::evaluate_reflection(const Float3 &wo, const Fl
     se.f *= refl_compensate(wo, eta);
     return se;
 }
+
+ScatterEval DielectricReflection::evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                                 const Uint &flag, TransportMode tm) const noexcept {
+    Float3 wh = normalize(wo + wi);
+    SampledSpectrum F = fresnel_->evaluate(abs_dot(wh, wo));
+    return evaluate_reflection(wo, wh, wi, F, fresnel_->eta(), mode);
+}
+
+SampledSpectrum DielectricReflection::albedo(const ocarina::Float &cos_theta) const noexcept {
+    SampledSpectrum F = fresnel_->evaluate(abs(cos_theta));
+    return F;
+}
+
 void DielectricReflection::prepare() noexcept {
     MaterialLut::instance().load_lut(lut_name, make_uint3(lut_res),
                                      PixelStorage::FLOAT2,
