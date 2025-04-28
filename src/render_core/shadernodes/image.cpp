@@ -10,6 +10,7 @@
 
 namespace vision {
 using namespace ocarina;
+
 class ImageNode : public ShaderNode {
 private:
     RegistrableTexture *texture_{};

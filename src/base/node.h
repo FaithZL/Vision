@@ -110,7 +110,7 @@ template<typename impl_t, typename Desc>
 SP<impl_t> Node::create_shared(const Desc &desc) {
     const DynamicModule *module = FileManager::instance().obtain_module(desc.plugin_name());
     using Constructor = INodeConstructor *();
-    Constructor *constructor = module->function<Constructor *>("constructor");
+    Constructor *constructor = module->function<Constructor *>(desc.construct_name);
     SP<impl_t> ret = constructor()->construct_shared<impl_t>(&desc);
     ret->initialize_(desc);
     OC_ERROR_IF(ret == nullptr, "error node load ", desc.name);

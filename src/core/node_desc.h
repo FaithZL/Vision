@@ -48,6 +48,7 @@ protected:
 
 public:
     string sub_type;
+    string construct_name = "constructor";
     string name;
 
 protected:
