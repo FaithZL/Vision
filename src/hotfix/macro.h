@@ -28,12 +28,12 @@ template<typename T>
 
 #define VS_REGISTER_HOTFIX(NS, Class)                                                  \
     namespace {                                                                        \
-    struct ConstructorRegistrar {                                                      \
-        ConstructorRegistrar() {                                                       \
+    struct Class##ConstructorRegistrar {                                               \
+        Class##ConstructorRegistrar() {                                                \
             using namespace vision::hotfix;                                            \
             auto value = ocarina::make_unique<ObjectConstructor<NS::Class>>(__FILE__); \
             ModuleInterface::instance().add_constructor(std::move(value));             \
         }                                                                              \
     };                                                                                 \
-    static ConstructorRegistrar s_##Class##_registrar;                                 \
+    static Class##ConstructorRegistrar s_##Class##_registrar;                          \
     }// namespace
