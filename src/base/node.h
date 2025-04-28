@@ -121,6 +121,16 @@ SP<impl_t> Node::create_shared(const Desc &desc) {
     [[nodiscard]] string_view impl_type() const noexcept override { return VISION_PLUGIN_NAME; } \
     [[nodiscard]] string_view category() const noexcept override { return VISION_CATEGORY; }
 
+#define VS_MAKE_PLUGIN_CATEGORY \
+    [[nodiscard]] string_view category() const noexcept override { return VISION_CATEGORY; }
+
+#define VS_MAKE_PLUGIN_IMPL_TYPE(name) \
+    [[nodiscard]] string_view impl_type() const noexcept override { return #name; }
+
+#define VS_MAKE_PLUGIN_NAME_FUNC_(name) \
+    VS_MAKE_PLUGIN_IMPL_TYPE(name)      \
+    VS_MAKE_PLUGIN_CATEGORY
+
 template<typename impl_t, typename desc_t = typename impl_t::Desc>
 class TObject {
 public:
@@ -239,6 +249,16 @@ public:
         return &ret;                                              \
     }
 
+#define VS_MAKE_CLASS_CREATOR_FUNC(Class, FuncName)            \
+    VS_EXPORT_API vision::NodeConstructor<Class> *FuncName() { \
+        static vision::NodeConstructor<Class> ret;             \
+        return &ret;                                           \
+    }
+
 #define VS_MAKE_CLASS_CREATOR_HOTFIX(NS, Class) \
     VS_REGISTER_HOTFIX(NS, Class)               \
     VS_MAKE_CLASS_CREATOR(NS::Class)
+
+#define VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(NS, Class, FuncName) \
+    VS_REGISTER_HOTFIX(NS, Class)                              \
+    VS_MAKE_CLASS_CREATOR_FUNC(NS::Class, FuncName)
