@@ -77,8 +77,13 @@ public:
         return parameter_.contains(key);
     }
     virtual void init(const ParameterSet &ps) noexcept {
-        if (ps.data().is_object())
+        if (ps.data().is_object()) {
+            string func_name = ps["construct_name"].as_string("");
+            if (!func_name.empty()) {
+                construct_name = func_name;
+            }
             name = ps["name"].as_string();
+        }
     };
     void init(const char *str) noexcept {
         init(ParameterSet(DataWrap::parse(str)));
