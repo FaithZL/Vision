@@ -72,10 +72,6 @@ public:
     [[nodiscard]] Float4x4 device_c2w() const noexcept;
     [[nodiscard]] Float linear_depth(const Float3 &world_pos) const noexcept;
     void move(float3 delta) noexcept { position_ += delta; }
-    virtual void update_focal_distance(float val) noexcept {}
-    [[nodiscard]] virtual float focal_distance() const noexcept { return 0; }
-    virtual void update_lens_radius(float val) noexcept {}
-    [[nodiscard]] virtual float lens_radius() const noexcept { return 0; }
 
     void set_resolution(ocarina::uint2 res) noexcept override;
     void set_yaw(decltype(yaw_) yaw) noexcept { yaw_ = yaw; }

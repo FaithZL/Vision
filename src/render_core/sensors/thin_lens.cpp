@@ -20,37 +20,17 @@ public:
           lens_radius_(desc["lens_radius"].as_float(0.f)) {
     }
     OC_ENCODABLE_FUNC(Sensor, focal_distance_, lens_radius_)
-    VS_HOTFIX_MAKE_RESTORE(Sensor, focal_distance_,lens_radius_)
+    VS_HOTFIX_MAKE_RESTORE(Sensor, focal_distance_, lens_radius_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         Sensor::render_sub_UI(widgets);
         changed_ |= widgets->drag_float("lens radius", addressof(lens_radius_.hv()),
-                                               0.005, 0,0.5);
+                                        0.005, 0, 0.5);
         changed_ |= widgets->drag_float("focal distance", addressof(focal_distance_.hv()),
-                                               0.05, 0, 10000);
+                                        0.05, 0, 10000);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
-    void update_focal_distance(float val) noexcept override {
-        float new_val = focal_distance_.hv() + val;
-        if (new_val > 0.f) {
-            focal_distance_ = new_val;
-        } else {
-            focal_distance_ = 0.1f;
-        }
-    }
-    void update_lens_radius(float val) noexcept override {
-        float new_val = lens_radius_.hv() + val;
-        if (new_val >= 0.f) {
-            lens_radius_ = new_val;
-        } else {
-            lens_radius_ = 0.f;
-        }
-    }
-    [[nodiscard]] float focal_distance() const noexcept override {
-        return focal_distance_.hv();
-    }
-    [[nodiscard]] float lens_radius() const noexcept override {
-        return lens_radius_.hv();
-    }
+    [[nodiscard]] float focal_distance() const noexcept { return focal_distance_.hv(); }
+    [[nodiscard]] float lens_radius() const noexcept { return lens_radius_.hv(); }
     [[nodiscard]] RayVar generate_ray_in_local_space(const SensorSample &ss) const noexcept override {
         RayVar ray = Sensor::generate_ray_in_local_space(ss);
         Float2 p_lens = square_to_disk<D>(ss.p_lens) * *lens_radius_;
