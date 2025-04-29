@@ -6,7 +6,7 @@
 
 #include "dsl/dsl.h"
 #include "node.h"
-#include "base/sensor/sensor.h"
+#include "base/sensor/photosensory.h"
 #include "base/sensor/filter.h"
 
 namespace vision {

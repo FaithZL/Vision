@@ -2,14 +2,14 @@
 // Created by Zero on 11/10/2022.
 //
 
-#include "sensor.h"
+#include "photosensory.h"
 #include "base/mgr/pipeline.h"
 #include "GUI/window.h"
 
 namespace vision {
 using namespace ocarina;
 
-Sensor::Sensor(const SensorDesc &desc)
+Photosensory::Photosensory(const SensorDesc &desc)
     : Node(desc),
       filter_(desc.filter_desc),
       film_(Node::create_shared<Film>(desc.film_desc)),
@@ -33,20 +33,20 @@ Sensor::Sensor(const SensorDesc &desc)
     }
 }
 
-void Sensor::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
+void Photosensory::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
     std::tuple tp = {addressof(filter_.impl()),
         addressof(film_)};
     HotfixSystem::replace_objects(constructor, tp);
 }
 
-void Sensor::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+void Photosensory::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     if (medium_id_.hv() != InvalidUI32) {
         auto medium = MediumRegistry::instance().elements()[medium_id_.hv()];
         medium->render_UI(widgets);
     }
 }
 
-bool Sensor::render_UI(ocarina::Widgets *widgets) noexcept {
+bool Photosensory::render_UI(ocarina::Widgets *widgets) noexcept {
     bool open = widgets->use_folding_header(
         ocarina::format("{} camera", impl_type().data()),
         [&] {
@@ -58,7 +58,7 @@ bool Sensor::render_UI(ocarina::Widgets *widgets) noexcept {
     return open;
 }
 
-void Sensor::prepare() noexcept {
+void Photosensory::prepare() noexcept {
     filter_->prepare();
     film_->prepare();
 }

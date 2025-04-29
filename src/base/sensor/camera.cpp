@@ -11,7 +11,7 @@ namespace vision {
 static float4x4 origin_matrix;
 
 Camera::Camera(const SensorDesc &desc)
-    : Sensor(desc) {
+    : Photosensory(desc) {
     init(desc);
     _update_resolution(film_->resolution());
 }
@@ -25,7 +25,7 @@ void Camera::init(const SensorDesc &desc) noexcept {
 }
 
 void Camera::render_sub_UI(ocarina::Widgets *widgets) noexcept {
-    Sensor::render_sub_UI(widgets);
+    Photosensory::render_sub_UI(widgets);
     widgets->button_click("reset view", [&] {
         changed_ = true;
         update_mat(origin_matrix);
@@ -56,7 +56,7 @@ RayVar Camera::generate_ray_in_camera_space(const vision::SensorSample &ss) cons
 }
 
 void Camera::set_resolution(ocarina::uint2 res) noexcept {
-    Sensor::set_resolution(res);
+    Photosensory::set_resolution(res);
     _update_resolution(res);
 }
 
@@ -149,12 +149,12 @@ LineSegment Camera::clipping(vision::LineSegment ls) const noexcept {
 
 void Camera::update_device_data() noexcept {
     c2w_ = camera_to_world();
-    Sensor::update_data();
+    Photosensory::update_data();
     upload_immediately();
 }
 
 void Camera::prepare() noexcept {
-    Sensor::prepare();
+    Photosensory::prepare();
     prepare_data();
     upload_immediately();
     store_prev_data();

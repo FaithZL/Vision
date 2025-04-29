@@ -3,7 +3,7 @@
 //
 
 #include "pipeline.h"
-#include "base/sensor/sensor.h"
+#include "base/sensor/photosensory.h"
 #include "scene.h"
 #include "base/color/spectrum.h"
 #include "GUI/window.h"

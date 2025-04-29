@@ -2,7 +2,7 @@
 // Created by Zero on 2025/4/3.
 //
 
-#include "base/sensor/sensor.h"
+#include "base/sensor/photosensory.h"
 #include "base/mgr/pipeline.h"
 #include "GUI/widgets.h"
 

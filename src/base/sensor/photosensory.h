@@ -27,7 +27,7 @@ struct SensorSample {
         : p_film(pixel + 0.5f) {}
 };
 
-class Sensor : public Node, public EncodedObject, public Observer {
+class Photosensory : public Node, public EncodedObject, public Observer {
 public:
     using Desc = SensorDesc;
 
@@ -37,8 +37,8 @@ protected:
     EncodedData<uint> medium_id_{InvalidUI32};
 
 public:
-    Sensor() = default;
-    explicit Sensor(const SensorDesc &desc);
+    Photosensory() = default;
+    explicit Photosensory(const SensorDesc &desc);
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     OC_ENCODABLE_FUNC(EncodedObject, filter_, film_)
     VS_HOTFIX_MAKE_RESTORE(Node, filter_, film_, medium_id_, datas_)
@@ -58,6 +58,6 @@ public:
     [[nodiscard]] virtual RayState generate_ray(const SensorSample &ss) const noexcept = 0;
 };
 
-using TSensor = TObject<Sensor>;
+using TSensor = TObject<Photosensory>;
 
 }// namespace vision
