@@ -214,9 +214,9 @@
 //								"material" : "Mirror",
 //								"material" : "Metal",
 //				"material" : "principled_bsdf",
-				"material" : "plastic",
+//				"material" : "plastic",
 //				"material" : "metallic",
-//																                "material" : "mix",
+																                "material" : "mix",
 //												                                "material" : "Glass",
 				"transform" : {
 					"type" : "matrix4x4",
@@ -441,7 +441,7 @@
 			"name" : "mix",
 			"param" : {
 				"mat0" : {
-					"type" : "glass",
+					"type" : "principled_bsdf",
 					"name" : "Glass",
 					"param" : {
 						"material_name" : "BK7",
@@ -457,7 +457,7 @@
 					}
 				},
 				"mat1" : {
-					"type" : "glass",
+					"type" : "matte",
 					"name" : "Glass",
 					"param" : {
 						"material_name" : "BK7",

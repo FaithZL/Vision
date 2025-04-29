@@ -16,9 +16,10 @@ private:
     SP<Material> mat1_{};
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(MixLobe)
+    VS_MAKE_MATERIAL_EVALUATOR(LobeSet)
 
 public:
+    MixMaterial() = default;
     explicit MixMaterial(const MaterialDesc &desc)
         : Material(desc),
           mat0_(Node::create_shared<Material>(*desc.mat0)),
@@ -31,11 +32,12 @@ public:
         init_slot_cursor(addressof(frac_), 1);
     }
     VS_MAKE_PLUGIN_NAME_FUNC
+    VS_HOTFIX_MAKE_RESTORE(Material, frac_, mat0_, mat1_)
+    VS_MAKE_GUI_STATUS_FUNC(Material, frac_, mat0_, mat1_)
     OC_ENCODABLE_FUNC(Material, *mat0_, *mat1_)
     [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
         return hash64(mat0_->topology_hash(), mat1_->topology_hash(), frac_.topology_hash());
     }
-    VS_MAKE_GUI_STATUS_FUNC(Material, frac_, mat0_, mat1_)
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         Material::render_sub_UI(widgets);
         widgets->use_tree(ocarina::format("mat0 {}", mat0_->impl_type()), [&] {
@@ -57,12 +59,23 @@ public:
     }
 
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        Float frac = frac_.evaluate(it, swl)[0];
-        return make_unique<MixLobe>(frac, mat0_->create_lobe_set(it, swl),
-                                    mat1_->create_lobe_set(it, swl));
+        WeightedLobe wb0{1, 1, mat0_->create_lobe_set(it, swl)};
+        LobeSet::Lobes lobes;
+        lobes.push_back(std::move(wb0));
+        auto ret = make_unique<LobeSet>(std::move(lobes));;
+        return ret;
+
+
+
+
+        return mat0_->create_lobe_set(it, swl);
+//        Float frac = frac_.evaluate(it, swl)[0];
+//        return make_unique<MixLobe>(frac, mat0_->create_lobe_set(it, swl),
+//                                    mat1_->create_lobe_set(it, swl));
     }
 };
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR(vision::MixMaterial)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, MixMaterial)
+VS_REGISTER_CURRENT_PATH(0, "vision-material-mix.dll")

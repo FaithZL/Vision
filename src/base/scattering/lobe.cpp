@@ -416,7 +416,13 @@ SampledDirection LobeSet::sample_wi(const Float3 &wo, const Uint &flag,
 
 BSDFSample LobeSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                  TransportMode tm) const noexcept {
-    return Lobe::sample_local(wo, flag, sampler, tm);
+    BSDFSample ret{*swl()};
+    SampledDirection sd = sample_wi(wo, flag, sampler);
+    ret.wi = sd.wi;
+    ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag, tm, addressof(ret.eta));
+    $condition_info("  sample_local   {} {} {}, {}, num = {}", ret.eval .f.vec3(), ret.eval.pdfs.as_scalar(), uint(lobes_.size()));
+    ret.eval.pdfs *= sd.factor();
+    return ret;
 }
 
 Uint LobeSet::flag() const noexcept {
@@ -440,8 +446,17 @@ ScatterEval LobeSet::evaluate_local(const Float3 &wo, const Float3 &wi,
             ret.f += se.f;
             ret.pdfs += se.pdfs;
             ret.flags = ret.flags | se.flags;
+            string cn = lobe->class_name();
+            if (eta) {
+                $condition_info(cn + " LobeSet    {} {} {}, {}, eta = {}", ret.f.vec3(), ret.pdfs.as_scalar(), *eta);
+            }
+
         });
     });
+    if (eta) {
+        $condition_info("  LobeSet sum    {} {} {}, {}, num = {},  eta = {}", ret.f.vec3(), ret.pdfs.as_scalar(), uint(lobes_.size()), *eta);
+    }
+
     return ret;
 }
 
