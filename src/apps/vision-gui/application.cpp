@@ -75,7 +75,7 @@ void App::on_key_event(int key, int action) noexcept {
         return;
     }
     double dt = window->dt();
-    TCamera camera = pipeline().scene().camera();
+    TSensor camera = pipeline().scene().sensor();
     float3 forward = camera->forward();
     float3 up = camera->up();
     float3 right = camera->right();
@@ -125,13 +125,13 @@ void App::on_window_size_change(uint2 size) noexcept {
 
 void App::on_scroll_event(float2 scroll) noexcept {
     invalidation = true;
-    auto camera = pipeline().scene().camera();
+    auto camera = pipeline().scene().sensor();
     camera->update_fov_y(scroll.y);
     invalidation = true;
 }
 
 void App::update_camera_view(float d_yaw, float d_pitch) const noexcept {
-    auto camera = pipeline().scene().camera();
+    auto camera = pipeline().scene().sensor();
     float sensitivity = camera->sensitivity();
     camera->update_yaw(d_yaw * sensitivity);
     camera->update_pitch(d_pitch * sensitivity);
@@ -179,7 +179,7 @@ void App::update(double dt) noexcept {
     pipeline().upload_data();
     HotfixSystem::instance().execute_callback();
     if (invalidation || pipeline().has_changed()) {
-        auto camera = pipeline().scene().camera();
+        auto camera = pipeline().scene().sensor();
         //        OC_INFO(camera->to_string());
         invalidation = false;
         pipeline().invalidate();

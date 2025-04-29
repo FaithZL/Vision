@@ -27,25 +27,25 @@ protected:
     float4x4 camera_to_screen_{};
     EncodedData<float> tan_fov_y_over_2_{};
     EncodedData<float4x4> c2w_;
-    EncodedData<float4x4> prev_w2c_;
-    EncodedData<float4x4> raster_to_camera_{};
-    EncodedData<float4x4> prev_c2r_{};
+    EncodedData<float4x4> prev_w2s_;
+    EncodedData<float4x4> raster_to_sensor_{};
+    EncodedData<float4x4> prev_s2r_{};
     /// previous position in world space
     EncodedData<float3> prev_pos_;
 
 protected:
     void _update_raster() noexcept;
     void _update_resolution(uint2 res) noexcept;
-    [[nodiscard]] virtual RayVar generate_ray_in_camera_space(const SensorSample &ss) const noexcept;
+    [[nodiscard]] virtual RayVar generate_ray_in_local_space(const SensorSample &ss) const noexcept;
 
 public:
     Sensor() = default;
     explicit Sensor(const SensorDesc &desc);
-    OC_ENCODABLE_FUNC(Photosensory, tan_fov_y_over_2_, c2w_, prev_w2c_,
-                         raster_to_camera_, prev_c2r_, prev_pos_)
+    OC_ENCODABLE_FUNC(Photosensory, tan_fov_y_over_2_, c2w_, prev_w2s_,
+                      raster_to_sensor_, prev_s2r_, prev_pos_)
     VS_HOTFIX_MAKE_RESTORE(Photosensory, position_, yaw_,pitch_,velocity_,sensitivity_,
                            fov_y_,raster_to_screen_,camera_to_screen_,tan_fov_y_over_2_,
-                           c2w_,prev_w2c_,raster_to_camera_,prev_c2r_,prev_pos_)
+                           c2w_,prev_w2s_, raster_to_sensor_,prev_s2r_,prev_pos_)
     void init(const SensorDesc &desc) noexcept;
     void update_mat(float4x4 m) noexcept;
     void set_mat(float4x4 m) noexcept;
@@ -112,6 +112,6 @@ public:
     [[nodiscard]] RayState generate_ray(const SensorSample &ss) const noexcept override;
 };
 
-using TCamera = TObject<Sensor>;
+using TSensor = TObject<Sensor>;
 
 }// namespace vision

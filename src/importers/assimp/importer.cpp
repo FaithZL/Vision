@@ -50,7 +50,7 @@ public:
         });
 
         auto cameras = parser_.parse_cameras();
-        scene.camera()->update_mat(cameras[0]);
+        scene.sensor()->update_mat(cameras[0]);
         return ret;
     }
 };

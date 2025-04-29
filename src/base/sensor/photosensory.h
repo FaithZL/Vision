@@ -58,6 +58,4 @@ public:
     [[nodiscard]] virtual RayState generate_ray(const SensorSample &ss) const noexcept = 0;
 };
 
-using TSensor = TObject<Photosensory>;
-
 }// namespace vision

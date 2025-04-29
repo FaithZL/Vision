@@ -16,7 +16,7 @@ BakePipeline::BakePipeline(const PipelineDesc &desc)
 void BakePipeline::init_scene(const vision::SceneDesc &scene_desc) {
     scene_.init(scene_desc);
     init_postprocessor(scene_desc.denoiser_desc);
-    postprocessor_.set_tone_mapper(scene_.camera()->film()->tone_mapper());
+    postprocessor_.set_tone_mapper(scene_.sensor()->film()->tone_mapper());
 }
 
 void BakePipeline::init_postprocessor(const DenoiserDesc &desc) {
@@ -70,7 +70,7 @@ void BakePipeline::compile() noexcept {
 }
 
 void BakePipeline::compile_displayer() noexcept {
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
     TSampler &sampler = scene().sampler();
     Kernel kernel = [&](Uint frame_index, Uint lightmap_base) {
         Uint2 pixel = dispatch_idx().xy();

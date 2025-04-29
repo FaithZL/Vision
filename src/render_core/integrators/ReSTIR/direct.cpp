@@ -266,7 +266,7 @@ void ReSTIRDI::canonical_pairwise_MIS(const DIReservoirVar &canonical_rsv, Float
 DIReservoirVar ReSTIRDI::pairwise_combine(const DIReservoirVar &canonical_rsv, Float3 view_pos,
                                           const Container<ocarina::uint> &rsv_idx) const noexcept {
     const SampledWavelengths &swl = sampled_wavelengths();
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
     SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, view_pos);
 
@@ -288,7 +288,7 @@ DIReservoirVar ReSTIRDI::pairwise_combine(const DIReservoirVar &canonical_rsv, F
 
 DIReservoirVar ReSTIRDI::constant_combine(const DIReservoirVar &canonical_rsv, Float3 view_pos,
                                           const Container<ocarina::uint> &rsv_idx) const noexcept {
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
     SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, view_pos);
 
@@ -332,7 +332,7 @@ DIReservoirVar ReSTIRDI::combine_temporal(const DIReservoirVar &cur_rsv,
                                           Float3 view_pos,
                                           Float3 prev_view_pos) const noexcept {
     other_rsv.sample.age += 1;
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
     //    view_pos = camera->device_position();
     //    prev_view_pos = camera->prev_device_position();
     const Geometry &geom = pipeline()->geometry();
@@ -388,7 +388,7 @@ DIReservoirVar ReSTIRDI::temporal_reuse(DIReservoirVar rsv, const SurfaceDataVar
     Float2 prev_p_film = ss.p_film - motion_vec;
     Float limit = rsv.C * param.history_limit;
     Int2 res = make_int2(dispatch_dim().xy());
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
 
     Float3 view_pos = camera->device_position();
     Float3 prev_view_pos = camera->prev_device_position();
@@ -433,7 +433,7 @@ DIReservoirVar ReSTIRDI::temporal_reuse(DIReservoirVar rsv, const SurfaceDataVar
 
 SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, TriangleHitVar &hit, Interaction &it,
                                      SurfaceExtendVar &surf_ext) const noexcept {
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
     const Geometry &geometry = pipeline()->geometry();
     RayVar camera_ray = rs.ray;
     surf_ext.view_pos = rs.origin();
@@ -490,7 +490,7 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, TriangleHitVar &hit, Interacti
 void ReSTIRDI::compile_shader0() noexcept {
     Pipeline *rp = pipeline();
     const Geometry &geometry = rp->geometry();
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
     TSpectrum &spectrum = rp->spectrum();
 
     Kernel kernel = [&](Uint frame_index, Var<DIParam> param) {
@@ -512,7 +512,7 @@ void ReSTIRDI::compile_shader0() noexcept {
         };
 
         DIReservoirVar rsv = RIS(hit->is_hit(), it, param, surf_ext.throughput, nullptr);
-        Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().camera(), ss.p_film,
+        Float2 motion_vec = FrameBuffer::compute_motion_vec(scene().sensor(), ss.p_film,
                                                             rs.ray->at(surf_ext.t_max), hit->is_hit());
 
         frame_buffer().motion_vectors().write(dispatch_id(), motion_vec);
@@ -554,7 +554,7 @@ DIReservoirVar ReSTIRDI::spatial_reuse(DIReservoirVar rsv, const SurfaceDataVar 
 Float3 ReSTIRDI::shading(vision::DIReservoirVar rsv, const SurfaceDataVar &surf) const noexcept {
     TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = pipeline()->spectrum();
-    const TCamera &camera = scene().camera();
+    const TSensor &camera = scene().sensor();
     const Geometry &geometry = pipeline()->geometry();
     Float3 view_pos = camera->device_position();
     Float3 throughput = make_float3(1.f);
@@ -607,7 +607,7 @@ Float3 ReSTIRDI::shading(vision::DIReservoirVar rsv, const SurfaceDataVar &surf)
 }
 
 void ReSTIRDI::compile_shader1() noexcept {
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
     Film *film = camera->film();
     TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = pipeline()->spectrum();

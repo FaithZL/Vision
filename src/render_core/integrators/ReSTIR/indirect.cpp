@@ -80,7 +80,7 @@ GISampleVar ReSTIRGI::init_sample(const Interaction &it, const SensorSample &ss,
 
 void ReSTIRGI::compile_initial_samples() noexcept {
     TSpectrum &spectrum = pipeline()->spectrum();
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
     Kernel kernel = [&](Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
         SurfaceDataVar surf = cur_surfaces().read(dispatch_id());
@@ -133,7 +133,7 @@ GIReservoirVar ReSTIRGI::combine_temporal(const GIReservoirVar &cur_rsv, Surface
                                           GIReservoirVar &other_rsv, SurfaceDataVar *neighbor_surf,
                                           Float3 view_pos, Float3 prev_view_pos) const noexcept {
     other_rsv.sample.age += 1;
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
     Interaction it = pipeline()->compute_surface_interaction(cur_surf.hit, view_pos);
     GIReservoirVar ret;
     Float cur_p_hat = compute_p_hat(it, cur_rsv.sample);
@@ -156,7 +156,7 @@ GIReservoirVar ReSTIRGI::temporal_reuse(GIReservoirVar rsv, const SurfaceDataVar
     Float2 prev_p_film = ss.p_film - motion_vec;
     Float limit = rsv.C * param.history_limit;
     Int2 res = make_int2(dispatch_dim().xy());
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
 
     Float3 view_pos = cur_view_pos(cur_surf.is_replaced);
     Float3 prev_view_pos = camera->prev_device_position();
@@ -204,7 +204,7 @@ GIReservoirVar ReSTIRGI::temporal_reuse(GIReservoirVar rsv, const SurfaceDataVar
 
 void ReSTIRGI::compile_temporal_reuse() noexcept {
     TSpectrum &spectrum = pipeline()->spectrum();
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
     //todo remedy init samples and reservoir
     Kernel kernel = [&](Var<GIParam> param, Uint frame_index) {
         initial(sampler(), frame_index, spectrum);
@@ -237,7 +237,7 @@ void ReSTIRGI::compile_temporal_reuse() noexcept {
 
 GIReservoirVar ReSTIRGI::constant_combine(const GIReservoirVar &canonical_rsv,
                                           const Container<uint> &rsv_idx) const noexcept {
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
     SurfaceDataVar cur_surf = cur_surfaces().read(dispatch_id());
     Float3 view_pos = cur_view_pos(cur_surf.is_replaced);
     Interaction canonical_it = pipeline()->compute_surface_interaction(cur_surf.hit, view_pos);
@@ -295,7 +295,7 @@ GIReservoirVar ReSTIRGI::spatial_reuse(GIReservoirVar rsv, const SurfaceDataVar 
 
 Float3 ReSTIRGI::shading(GIReservoirVar rsv,
                          const SurfaceDataVar &cur_surf) const noexcept {
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
     Float3 view_pos = cur_view_pos(cur_surf.is_replaced);
     Float3 throughput = make_float3(1.f);
     $if(cur_surf.is_replaced) {
@@ -309,7 +309,7 @@ Float3 ReSTIRGI::shading(GIReservoirVar rsv,
 }
 
 void ReSTIRGI::compile_spatial_shading() noexcept {
-    TCamera &camera = scene().camera();
+    TSensor &camera = scene().sensor();
     Film *film = camera->film();
     TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = pipeline()->spectrum();

@@ -10,7 +10,7 @@
 #include "dsl/dsl.h"
 #include "UI/GUI.h"
 #include "hotfix/hotfix.h"
-#include "sensor/camera.h"
+#include "sensor/sensor.h"
 
 namespace vision {
 
@@ -46,7 +46,7 @@ public:
     HOTFIX_VIRTUAL void clear() noexcept;
     OC_MAKE_MEMBER_GETTER(show, )
     VS_HOTFIX_MAKE_RESTORE(RuntimeObject, state_, show_, line_segments_, color_, width_)
-    [[nodiscard]] Sensor *camera() const noexcept;
+    [[nodiscard]] Sensor *sensor() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;

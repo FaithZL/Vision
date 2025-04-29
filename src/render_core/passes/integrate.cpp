@@ -23,13 +23,13 @@ public:
             Uint2 pixel = dispatch_idx().xy();
             RenderEnv render_env;
             sampler()->load_data();
-            camera()->load_data();
+            sensor()->load_data();
             integrator()->load_data();
             render_env.initial(sampler(), frame_index, spectrum());
             sampler()->start(pixel, frame_index, 0);
-            SensorSample ss = sampler()->sensor_sample(pixel, camera()->filter());
+            SensorSample ss = sampler()->sensor_sample(pixel, sensor()->filter());
             Float scatter_pdf = 1e16f;
-            RayState rs = camera()->generate_ray(ss);
+            RayState rs = sensor()->generate_ray(ss);
             Float3 L = integrator()->Li(rs, scatter_pdf, scene().spectrum()->one(), {}, render_env);
             output.write(dispatch_id(), make_float4(L, 1.f));
         };
@@ -47,7 +47,7 @@ public:
     }
 
     [[nodiscard]] static TIntegrator &integrator() noexcept { return scene().integrator(); }
-    [[nodiscard]] static TCamera &camera() noexcept { return scene().camera(); }
+    [[nodiscard]] static TSensor &sensor() noexcept { return scene().sensor(); }
     [[nodiscard]] static TSampler &sampler() noexcept { return scene().sampler(); }
 };
 

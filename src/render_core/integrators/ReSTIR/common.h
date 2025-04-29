@@ -118,7 +118,7 @@ public:
         $if(is_replace) {
             view_pos = cur_surface_extends().read(dispatch_id()).view_pos;
         }$else {
-            view_pos = scene().camera()->device_position();
+            view_pos = scene().sensor()->device_position();
         };
         return view_pos;
     }

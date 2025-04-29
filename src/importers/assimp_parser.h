@@ -9,7 +9,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/Subdivision.h>
 #include <assimp/scene.h>
-#include "base/sensor/camera.h"
+#include "base/sensor/sensor.h"
 
 namespace vision {
 

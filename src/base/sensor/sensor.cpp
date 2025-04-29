@@ -2,7 +2,7 @@
 // Created by Zero on 2023/6/13.
 //
 
-#include "camera.h"
+#include "sensor.h"
 #include "base/mgr/pipeline.h"
 #include "GUI/widgets.h"
 
@@ -42,15 +42,15 @@ void Sensor::render_sub_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 RayState Sensor::generate_ray(const SensorSample &ss) const noexcept {
-    RayVar ray = generate_ray_in_camera_space(ss);
+    RayVar ray = generate_ray_in_local_space(ss);
     Float4x4 c2w = *c2w_;
     ray = transform_ray(c2w, ray);
     return {.ray = ray, .ior = 1.f, .medium = *medium_id_};
 }
 
-RayVar Sensor::generate_ray_in_camera_space(const vision::SensorSample &ss) const noexcept {
+RayVar Sensor::generate_ray_in_local_space(const vision::SensorSample &ss) const noexcept {
     Float3 p_film = make_float3(ss.p_film, 0.f);
-    Float3 p_sensor = transform_point(*raster_to_camera_, p_film);
+    Float3 p_sensor = transform_point(*raster_to_sensor_, p_film);
     RayVar ray = make_ray(make_float3(0.f), normalize(p_sensor));
     return ray;
 }
@@ -72,7 +72,7 @@ void Sensor::_update_resolution(uint2 res) noexcept {
 
 void Sensor::_update_raster() noexcept {
     camera_to_screen_ = transform::perspective<H>(fov_y(), z_near, z_far);
-    raster_to_camera_ = inverse(camera_to_screen_) * raster_to_screen_;
+    raster_to_sensor_ = inverse(camera_to_screen_) * raster_to_screen_;
 }
 
 void Sensor::update_mat(float4x4 m) noexcept {
@@ -97,15 +97,15 @@ void Sensor::after_render() noexcept {
 }
 
 void Sensor::store_prev_data() noexcept {
-    prev_c2r_ = inverse(raster_to_camera_.hv());
-    prev_w2c_ = inverse(c2w_.hv());
+    prev_s2r_ = inverse(raster_to_sensor_.hv());
+    prev_w2s_ = inverse(c2w_.hv());
     prev_pos_ = position();
 }
 
 Float3 Sensor::prev_raster_coord(Float3 pos) const noexcept {
-    pos = transform_point(*prev_w2c_, pos);
+    pos = transform_point(*prev_w2s_, pos);
     pos /= pos.z;
-    Float3 ret = transform_point(*prev_c2r_, pos);
+    Float3 ret = transform_point(*prev_s2r_, pos);
     return ret;
 }
 
@@ -113,7 +113,7 @@ Float3 Sensor::raster_coord(ocarina::Float3 pos) const noexcept {
     Float4x4 w2c = inverse(device_c2w());
     pos = transform_point(w2c, pos);
     pos /= pos.z;
-    Float4x4 c2r = inverse(raster_to_camera_.dv());
+    Float4x4 c2r = inverse(raster_to_sensor_.dv());
     Float3 ret = transform_point(c2r, pos);
     return ret;
 }
@@ -122,7 +122,7 @@ float3 Sensor::raster_coord(float3 pos) const noexcept {
     float4x4 w2c = inverse(c2w_.hv());
     pos = transform_point<H>(w2c, pos);
     pos /= pos.z;
-    float4x4 c2r = inverse(raster_to_camera_.hv());
+    float4x4 c2r = inverse(raster_to_sensor_.hv());
     float3 ret = transform_point<H>(c2r, pos);
     return ret;
 }

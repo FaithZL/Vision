@@ -43,7 +43,7 @@ void VisionRendererImpl::compile() {
     _pipeline->scene().prepare();
     _pipeline->upload_bindless_array();
     auto &geometry = _pipeline->geometry();
-    auto camera = _pipeline->scene().camera();
+    auto camera = _pipeline->scene().sensor();
     auto film = camera->film();
     auto sampler = _pipeline->scene().sampler();
     Buffer<float4> &buffer = film->rt_buffer().device_buffer();
@@ -81,7 +81,7 @@ void VisionRendererImpl::compile() {
 
 void VisionRendererImpl::render() {
     Stream &stream = _pipeline->stream();
-    auto camera = _pipeline->scene().camera();
+    auto camera = _pipeline->scene().sensor();
     auto film = camera->film();
     uint2 res = film->resolution();
     if (!_shader.has_function()) {
@@ -131,7 +131,7 @@ void VisionRendererImpl::init_scene() {
 
 void VisionRendererImpl::download_radiance(void *data) {
     Stream &stream = _pipeline->stream();
-    auto camera = _pipeline->scene().camera();
+    auto camera = _pipeline->scene().sensor();
     auto &buffer = camera->film()->rt_buffer();
     buffer.device_buffer().download_immediately(data);
 }
@@ -203,14 +203,14 @@ void VisionRendererImpl::build_accel() {
 
 void VisionRendererImpl::update_camera(vision::sdk::Sensor c) {
     float4x4 o2w = from_array(c.c2w.m);
-    auto camera = _pipeline->scene().camera();
+    auto camera = _pipeline->scene().sensor();
     camera->set_mat(o2w);
     camera->set_fov_y(45);
     OC_INFO("update_camera");
 }
 
 void VisionRendererImpl::update_resolution(uint32_t width, uint32_t height) {
-    auto camera = _pipeline->scene().camera();
+    auto camera = _pipeline->scene().sensor();
     auto film = camera->film();
     camera->set_resolution(make_uint2(width, height));
     _pipeline->scene().prepare();

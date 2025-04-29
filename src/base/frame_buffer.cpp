@@ -183,7 +183,7 @@ Uint FrameBuffer::checkerboard_value(const Uint2 &coord, const Uint &frame_index
     return checkerboard_value(coord) ^ (frame_index & 1);
 }
 
-Float2 FrameBuffer::compute_motion_vec(const TCamera &camera, const Float2 &p_film,
+Float2 FrameBuffer::compute_motion_vec(const TSensor &camera, const Float2 &p_film,
                                        const Float3 &cur_pos, const Bool &is_hit) noexcept {
     Float2 ret = make_float2(0.f);
     $if(is_hit) {
@@ -193,7 +193,7 @@ Float2 FrameBuffer::compute_motion_vec(const TCamera &camera, const Float2 &p_fi
     return ret;
 }
 
-Float3 FrameBuffer::compute_motion_vector(const TCamera &camera, const Float2 &p_film,
+Float3 FrameBuffer::compute_motion_vector(const TSensor &camera, const Float2 &p_film,
                                           const Uint &frame_index) const noexcept {
     Uint2 pixel = make_uint2(p_film);
     Uint pixel_index = dispatch_id(pixel);
@@ -202,7 +202,7 @@ Float3 FrameBuffer::compute_motion_vector(const TCamera &camera, const Float2 &p
     return compute_motion_vector(camera, cur_surf->position(), prev_surf->position());
 }
 
-Float3 FrameBuffer::compute_motion_vector(const TCamera &camera, const Float3 &cur_pos,
+Float3 FrameBuffer::compute_motion_vector(const TSensor &camera, const Float3 &cur_pos,
                                           const Float3 &pre_pos) const noexcept {
     Float3 cur_coord = camera->raster_coord(cur_pos);
     Float3 prev_coord = camera->raster_coord(pre_pos);

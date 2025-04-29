@@ -20,7 +20,7 @@ tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Tr
                                                               const BufferVar<uint4> &pixels,
                                                               Float2 *p_film) noexcept {
     TSampler &sampler = scene().sampler();
-    auto filter = scene().camera()->filter();
+    auto filter = scene().sensor()->filter();
     Uint4 pixel_data = pixels.read(dispatch_id());
     Uint triangle_id = pixel_data.x;
     Uint pixel_offset = pixel_data.y;
@@ -78,7 +78,7 @@ tuple<Float3, Float3, Bool, Float> Baker::fetch_geometry_data(const BufferVar<Tr
 
 void Baker::_compile_bake() noexcept {
     TSampler &sampler = scene().sampler();
-    TCamera camera = scene().camera();
+    TSensor camera = scene().sensor();
     TIntegrator &integrator = scene().integrator();
     Kernel kernel = [&](Uint frame_index, BufferVar<Triangle> triangles,
                         BufferVar<Vertex> vertices, BufferVar<uint4> pixels,

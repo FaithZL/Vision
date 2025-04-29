@@ -78,7 +78,7 @@ public:
 
     void compile_path_tracing() noexcept {
         TSampler &sampler = scene().sampler();
-        TCamera &camera = scene().camera();
+        TSensor &camera = scene().sensor();
         Kernel kernel = [&](Uint frame_index, BufferVar<SurfaceData> surfaces) {
             SurfaceDataVar surface = surfaces.read(dispatch_id());
             $if(!surface->near_specular()) {
@@ -106,7 +106,7 @@ public:
         indirect_->compile();
         //        compile_path_tracing();
 
-        TCamera &camera = scene().camera();
+        TSensor &camera = scene().sensor();
         Kernel kernel = [&](Uint frame_index, Float di, Float ii) {
             camera->load_data();
             Float3 direct = direct_->radiance()->read(dispatch_id()).xyz() * di;

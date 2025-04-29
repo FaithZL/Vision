@@ -27,7 +27,7 @@ public:
     VS_HOTFIX_MAKE_RESTORE(FrameBuffer, compute_geom_, compute_grad_, compute_hit_)
 
     void compile_compute_geom() noexcept {
-        TCamera &camera = scene().camera();
+        TSensor &camera = scene().sensor();
         TSampler &sampler = scene().sampler();
         TLightSampler &light_sampler = scene().light_sampler();
         Kernel kernel = [&](Uint frame_index, BufferVar<PixelGeometry> gbuffer, BufferVar<float2> motion_vectors,
@@ -133,7 +133,7 @@ public:
     }
 
     void compile_compute_hit() noexcept {
-        TCamera &camera = scene().camera();
+        TSensor &camera = scene().sensor();
         TSampler &sampler = scene().sampler();
         Kernel kernel = [&](BufferVar<TriangleHit> hit_buffer, Uint frame_index) {
             Uint2 pixel = dispatch_idx().xy();

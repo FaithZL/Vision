@@ -51,8 +51,8 @@ public:
     [[nodiscard]] float lens_radius() const noexcept override {
         return lens_radius_.hv();
     }
-    [[nodiscard]] RayVar generate_ray_in_camera_space(const SensorSample &ss) const noexcept override {
-        RayVar ray = Sensor::generate_ray_in_camera_space(ss);
+    [[nodiscard]] RayVar generate_ray_in_local_space(const SensorSample &ss) const noexcept override {
+        RayVar ray = Sensor::generate_ray_in_local_space(ss);
         Float2 p_lens = square_to_disk<D>(ss.p_lens) * *lens_radius_;
         Float ft = *focal_distance_ / ray->direction().z;
         Float3 p_focus = ray->at(ft);

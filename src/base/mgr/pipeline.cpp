@@ -286,7 +286,7 @@ void Pipeline::before_render() noexcept {
 
 void Pipeline::after_render() noexcept {
     Env::debugger().reset_range();
-    scene().camera()->after_render();
+    scene().sensor()->after_render();
     frame_buffer_->after_render();
 }
 

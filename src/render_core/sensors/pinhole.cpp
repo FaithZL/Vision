@@ -2,7 +2,7 @@
 // Created by Zero on 2023/7/18.
 //
 
-#include "base/sensor/camera.h"
+#include "base/sensor/sensor.h"
 
 namespace vision {
 

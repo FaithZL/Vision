@@ -25,7 +25,7 @@ void Scene::init(const SceneDesc &scene_desc) {
     spectrum_.init(scene_desc.spectrum_desc);
     load_materials(scene_desc.material_descs);
     load_mediums(scene_desc.mediums_desc);
-    camera_.init(scene_desc.sensor_desc);
+    sensor_.init(scene_desc.sensor_desc);
     load_shapes(scene_desc.shape_descs);
     integrator_.init(scene_desc.integrator_desc);
     sampler_.init(scene_desc.sampler_desc);
@@ -34,7 +34,7 @@ void Scene::init(const SceneDesc &scene_desc) {
 }
 
 void Scene::update_resolution(ocarina::uint2 res) noexcept {
-    camera()->update_resolution(res);
+    sensor()->update_resolution(res);
     integrator()->update_resolution(res);
 }
 
@@ -68,7 +68,7 @@ SP<Material> Scene::obtain_black_body() noexcept {
 }
 
 void Scene::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
-    std::tuple tp = {addressof(camera_.impl()),
+    std::tuple tp = {addressof(sensor_.impl()),
                      addressof(light_sampler_.impl()),
                      addressof(integrator_.impl()),
                      addressof(sampler_.impl()),
@@ -80,10 +80,10 @@ void Scene::prepare() noexcept {
     material_registry().remove_unused_elements();
     tidy_up();
     fill_instances();
-    camera_->prepare();
+    sensor_->prepare();
     sampler_->prepare();
     integrator_->prepare();
-    camera_->update_device_data();
+    sensor_->update_device_data();
     prepare_lights();
     prepare_materials();
     medium_registry().prepare();
@@ -204,7 +204,7 @@ void Scene::prepare_materials() {
 }
 
 void Scene::upload_data() noexcept {
-    camera_->update_device_data();
+    sensor_->update_device_data();
     integrator_->update_device_data();
     light_sampler_->update_device_data();
     medium_registry().upload_device_data();

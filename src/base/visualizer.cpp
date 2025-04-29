@@ -3,14 +3,14 @@
 //
 
 #include "visualizer.h"
-#include "base/sensor/camera.h"
+#include "base/sensor/sensor.h"
 #include "mgr/pipeline.h"
 #include "math/util.h"
 
 namespace vision {
 
-Sensor *Visualizer::camera() const noexcept {
-    return scene().camera().get();
+Sensor *Visualizer::sensor() const noexcept {
+    return scene().sensor().get();
 }
 
 uint2 Visualizer::resolution() const noexcept {
@@ -54,9 +54,9 @@ void Visualizer::draw(ocarina::float4 *data) const noexcept {
 
     for (int index = 0; index < count; ++index) {
         LineSegment ls = host[index];
-        ls = camera()->clipping(ls);
-        float2 p0 = camera()->raster_coord(ls.p0).xy();
-        float2 p1 = camera()->raster_coord(ls.p1).xy();
+        ls = sensor()->clipping(ls);
+        float2 p0 = sensor()->raster_coord(ls.p0).xy();
+        float2 p1 = sensor()->raster_coord(ls.p1).xy();
 
         p0.x = ocarina::isnan(p0.x) ? resolution().x / 2 : p0.x;
         p0.y = ocarina::isnan(p0.y) ? resolution().y / 2 : p0.y;
