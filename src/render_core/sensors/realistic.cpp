@@ -45,7 +45,7 @@ OC_STRUCT(vision, LensInterface, curvature_radius,
 
 namespace vision {
 
-class RealisticCamera : public Camera {
+class RealisticCamera : public Sensor {
 private:
     EncodedData<vector<float>> lens_interfaces_;
     bool simple_weighting_{};
@@ -53,8 +53,8 @@ private:
 public:
     RealisticCamera() = default;
     explicit RealisticCamera(const SensorDesc &desc)
-        : Camera(desc) {}
-    OC_ENCODABLE_FUNC(Camera, lens_interfaces_)
+        : Sensor(desc) {}
+    OC_ENCODABLE_FUNC(Sensor, lens_interfaces_)
     [[nodiscard]] LensInterfaceVar lens_element(const Uint &index) const noexcept {
         Uint i = index * 4;
         Float curvature_radius = (*lens_interfaces_)[i];

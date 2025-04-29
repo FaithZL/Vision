@@ -58,7 +58,7 @@ struct Instance {
     std::string mat{};
 };
 
-struct Camera {
+struct Sensor {
     Mat4x4 c2w{Mat4x4::identity()};
     float fov_y{35};
 };
@@ -74,7 +74,7 @@ public:
     virtual void clear_geometries() = 0;
     virtual void add_instance(const Instance &instance, const char *mat) = 0;
     virtual void build_accel() = 0;
-    virtual void update_camera(Camera camera) = 0;
+    virtual void update_camera(Sensor camera) = 0;
     virtual void update_resolution(uint32_t width, uint32_t height) = 0;
     virtual void download_radiance(void *data) = 0;
 };

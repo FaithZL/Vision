@@ -9,7 +9,7 @@
 
 namespace vision {
 
-Camera *Visualizer::camera() const noexcept {
+Sensor *Visualizer::camera() const noexcept {
     return scene().camera().get();
 }
 

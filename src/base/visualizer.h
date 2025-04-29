@@ -46,7 +46,7 @@ public:
     HOTFIX_VIRTUAL void clear() noexcept;
     OC_MAKE_MEMBER_GETTER(show, )
     VS_HOTFIX_MAKE_RESTORE(RuntimeObject, state_, show_, line_segments_, color_, width_)
-    [[nodiscard]] Camera *camera() const noexcept;
+    [[nodiscard]] Sensor *camera() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;

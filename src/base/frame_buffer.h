@@ -66,7 +66,7 @@ void foreach_neighbor(const TPixel &pixel, Func func, const Int2 &radius = make_
     };
 }
 
-class Camera;
+class Sensor;
 
 class ScreenBuffer : public RegistrableManaged<float4>,
                      public enable_shared_from_this<ScreenBuffer> {

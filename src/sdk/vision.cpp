@@ -28,7 +28,7 @@ public:
     void clear_geometries() override;
     void add_instance(const Instance &instance, const char *mat) override;
     void build_accel() override;
-    void update_camera(vision::sdk::Camera camera) override;
+    void update_camera(vision::sdk::Sensor camera) override;
     void update_resolution(uint32_t width, uint32_t height) override;
     void download_radiance(void *data) override;
 };
@@ -201,7 +201,7 @@ void VisionRendererImpl::build_accel() {
     OC_INFO("build accel_");
 }
 
-void VisionRendererImpl::update_camera(vision::sdk::Camera c) {
+void VisionRendererImpl::update_camera(vision::sdk::Sensor c) {
     float4x4 o2w = from_array(c.c2w.m);
     auto camera = _pipeline->scene().camera();
     camera->set_mat(o2w);

@@ -8,7 +8,7 @@
 
 namespace vision {
 
-class VisualSystem : public Camera {
+class VisualSystem : public Sensor {
 
 };
 

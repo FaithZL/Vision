@@ -8,7 +8,7 @@
 
 namespace vision {
 
-class Camera : public Photosensory {
+class Sensor : public Photosensory {
 public:
     constexpr static float fov_max = 120.f;
     constexpr static float fov_min = 15.f;
@@ -39,8 +39,8 @@ protected:
     [[nodiscard]] virtual RayVar generate_ray_in_camera_space(const SensorSample &ss) const noexcept;
 
 public:
-    Camera() = default;
-    explicit Camera(const SensorDesc &desc);
+    Sensor() = default;
+    explicit Sensor(const SensorDesc &desc);
     OC_ENCODABLE_FUNC(Photosensory, tan_fov_y_over_2_, c2w_, prev_w2c_,
                          raster_to_camera_, prev_c2r_, prev_pos_)
     VS_HOTFIX_MAKE_RESTORE(Photosensory, position_, yaw_,pitch_,velocity_,sensitivity_,
@@ -112,6 +112,6 @@ public:
     [[nodiscard]] RayState generate_ray(const SensorSample &ss) const noexcept override;
 };
 
-using TCamera = TObject<Camera>;
+using TCamera = TObject<Sensor>;
 
 }// namespace vision
