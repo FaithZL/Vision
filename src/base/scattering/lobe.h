@@ -30,6 +30,7 @@ public:
                                                      const Uint &flag, TransportMode tm, Float *eta) const noexcept {
         return evaluate_local(wo, wi, mode, flag, tm);
     }
+    [[nodiscard]] virtual bool is_multi() const noexcept { return false; }
     [[nodiscard]] virtual Float valid_factor(const Float3 &wo, const Float3 &wi) const noexcept;
     [[nodiscard]] virtual BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                                   TSampler &sampler,
@@ -259,9 +260,13 @@ protected:
 public:
     LobeSet() = default;
     explicit LobeSet(Lobes lobes) : lobes_(std::move(lobes)) {
-        normalize_sampled_weights();
+        initialize();
     }
-    void normalize_sampled_weights() noexcept;
+    /// normalize weight and flatten the tree
+    void initialize() noexcept;
+    void normalize_sampled_weight() noexcept;
+    void flatten() noexcept;
+    [[nodiscard]] bool is_multi() const noexcept override { return true; }
     VS_MAKE_LOBE_ASSIGNMENT(LobeSet)
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
@@ -294,6 +299,7 @@ public:
         lobes_.push_back(std::move(wb0));
         lobes_.push_back(std::move(wb1));
         OC_ERROR_IF(lobes_.size() != 2, "MixLobe lobe num must be 2");
+        flatten();
     }
 };
 
@@ -306,8 +312,8 @@ public:
         WeightedLobe wb1{1.f, 1.f, std::move(b1)};
         lobes_.push_back(std::move(wb0));
         lobes_.push_back(std::move(wb1));
-        normalize_sampled_weights();
         OC_ERROR_IF(lobes_.size() != 2, "AddLobe lobe num must be 2");
+        initialize();
     }
 };
 

@@ -363,7 +363,12 @@ WeightedLobe::WeightedLobe(Float sample_weight, Float weight, SP<Lobe> bxdf)
       weight_(std::move(weight)) {
 }
 
-void LobeSet::normalize_sampled_weights() noexcept {
+void LobeSet::initialize() noexcept {
+    normalize_sampled_weight();
+    flatten();
+}
+
+void LobeSet::normalize_sampled_weight() noexcept {
     Float weight_sum = 0;
     for_each([&](WeightedLobe &lobe) {
         weight_sum += lobe.sample_weight();
@@ -371,6 +376,10 @@ void LobeSet::normalize_sampled_weights() noexcept {
     for_each([&](WeightedLobe &lobe) {
         lobe.sample_weight() = lobe.sample_weight() / weight_sum;
     });
+}
+
+void LobeSet::flatten() noexcept {
+
 }
 
 SampledSpectrum LobeSet::albedo(const Float &cos_theta) const noexcept {
