@@ -428,7 +428,6 @@ BSDFSample LobeSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &s
     SampledDirection sd = sample_wi(wo, flag, sampler);
     ret.wi = sd.wi;
     ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag, tm, addressof(ret.eta));
-    $condition_info("  sample_local   {} {} {}, {}, num = {}", ret.eval .f.vec3(), ret.eval.pdfs.as_scalar(), uint(lobes_.size()));
     ret.eval.pdfs *= sd.factor();
     return ret;
 }
