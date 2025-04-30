@@ -379,7 +379,28 @@ void LobeSet::normalize_sampled_weight() noexcept {
 }
 
 void LobeSet::flatten() noexcept {
-
+    Lobes new_lobes;
+    bool has_multi = false;
+    for_each([&](WeightedLobe &lobe) {
+        has_multi = has_multi || lobe->is_multi();
+    });
+    if (!has_multi) {
+        return;
+    }
+    for_each([&](WeightedLobe &lobe) {
+        if (lobe->is_multi()) {
+            LobeSet *lobe_set = static_cast<LobeSet *>(lobe.get());
+            Float parent_weight = lobe.sample_weight();
+            lobe_set->for_each([&](WeightedLobe &sub_lobe) {
+                sub_lobe.sample_weight() *= parent_weight;
+                sub_lobe.weight() *= parent_weight;
+                new_lobes.push_back(sub_lobe);
+            });
+        } else {
+            new_lobes.push_back(lobe);
+        }
+    });
+    lobes_ = std::move(new_lobes);
 }
 
 SampledSpectrum LobeSet::albedo(const Float &cos_theta) const noexcept {
@@ -407,6 +428,7 @@ SampledDirection LobeSet::sample_wi(const Float3 &wo, const Uint &flag,
     Float sum_weights = 0.f;
 
     for_each([&](const WeightedLobe &lobe, uint i) {
+        $condition_info("{:.2f} {}", lobe.sample_weight(), i);
         sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
         sum_weights += lobe.sample_weight();
     });
