@@ -378,7 +378,10 @@ void LobeSet::normalize_sampled_weight() noexcept {
     });
 }
 
+#define VS_LOBE_SET_FLATTEN 0
+
 void LobeSet::flatten() noexcept {
+#if VS_LOBE_SET_FLATTEN
     Lobes new_lobes;
     bool has_multi = false;
     for_each([&](WeightedLobe &lobe) {
@@ -401,6 +404,7 @@ void LobeSet::flatten() noexcept {
         }
     });
     lobes_ = std::move(new_lobes);
+#endif
 }
 
 SampledSpectrum LobeSet::albedo(const Float &cos_theta) const noexcept {
@@ -412,11 +416,16 @@ SampledSpectrum LobeSet::albedo(const Float &cos_theta) const noexcept {
 }
 
 Float LobeSet::valid_factor(const ocarina::Float3 &wo, const ocarina::Float3 &wi) const noexcept {
+#if VS_LOBE_SET_FLATTEN
+    OC_ERROR("LobeSet::valid_factor");
+    return 0;
+#else
     Bool ret = false;
     for_each([&](const WeightedLobe &lobe, uint i) {
         ret = ret | cast<bool>(lobe->valid_factor(wo, wi));
     });
     return ret;
+#endif
 }
 
 SampledDirection LobeSet::sample_wi(const Float3 &wo, const Uint &flag,
