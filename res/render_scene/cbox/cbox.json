@@ -453,7 +453,8 @@
 								1
 							]
 						},
-						"roughness" : [0.001, 0.001]
+						"roughness" : 0.001,
+						"transmission_weight" : 1
 					}
 				},
 				"mat1" : {

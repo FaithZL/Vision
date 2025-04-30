@@ -292,7 +292,7 @@ public:
         INIT_SLOT(metallic, 0.f, Number);
         INIT_SLOT(ior, 1.5f, Number).set_range(1.01, 20.f);
         INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
-        INIT_SLOT(spec_tint, make_float3(0.f), Albedo);
+        INIT_SLOT(spec_tint, make_float3(1.f), Albedo);
         INIT_SLOT(anisotropic, 0.f, Number);
         INIT_SLOT(opcacity, 1.f, Number).set_range(0.f, 1.f);
 
