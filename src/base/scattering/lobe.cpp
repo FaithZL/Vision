@@ -378,7 +378,7 @@ void LobeSet::normalize_sampled_weight() noexcept {
     });
 }
 
-#define VS_LOBE_SET_FLATTEN 0
+#define VS_LOBE_SET_FLATTEN 1
 
 void LobeSet::flatten() noexcept {
 #if VS_LOBE_SET_FLATTEN
@@ -390,6 +390,7 @@ void LobeSet::flatten() noexcept {
     if (!has_multi) {
         return;
     }
+    comment("LobeSet::flatten start");
     for_each([&](WeightedLobe &lobe) {
         if (lobe->is_multi()) {
             LobeSet *lobe_set = static_cast<LobeSet *>(lobe.get());
@@ -404,6 +405,7 @@ void LobeSet::flatten() noexcept {
         }
     });
     lobes_ = std::move(new_lobes);
+    comment("LobeSet::flatten end");
 #endif
 }
 
