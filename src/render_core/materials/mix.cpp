@@ -31,10 +31,12 @@ public:
         frac_.set(Slot::create_slot(desc.slot("frac", 0.5f, Number)));
         init_slot_cursor(addressof(frac_), 1);
     }
+
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_HOTFIX_MAKE_RESTORE(Material, frac_, mat0_, mat1_)
     VS_MAKE_GUI_STATUS_FUNC(Material, frac_, mat0_, mat1_)
     OC_ENCODABLE_FUNC(Material, *mat0_, *mat1_)
+    
     [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
         return hash64(mat0_->topology_hash(), mat1_->topology_hash(), frac_.topology_hash());
     }
