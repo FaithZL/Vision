@@ -59,19 +59,9 @@ public:
     }
 
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        WeightedLobe wb0{1, 1, mat0_->create_lobe_set(it, swl)};
-        LobeSet::Lobes lobes;
-        lobes.push_back(std::move(wb0));
-        auto ret = make_unique<LobeSet>(std::move(lobes));;
-        return ret;
-
-
-
-
-        return mat0_->create_lobe_set(it, swl);
-//        Float frac = frac_.evaluate(it, swl)[0];
-//        return make_unique<MixLobe>(frac, mat0_->create_lobe_set(it, swl),
-//                                    mat1_->create_lobe_set(it, swl));
+        Float frac = frac_.evaluate(it, swl)[0];
+        return make_unique<MixLobe>(frac, mat0_->create_lobe_set(it, swl),
+                                    mat1_->create_lobe_set(it, swl));
     }
 };
 

@@ -381,6 +381,14 @@ SampledSpectrum LobeSet::albedo(const Float &cos_theta) const noexcept {
     return ret;
 }
 
+Float LobeSet::valid_factor(const ocarina::Float3 &wo, const ocarina::Float3 &wi) const noexcept {
+    Bool ret = false;
+    for_each([&](const WeightedLobe &lobe, uint i) {
+        ret = ret | cast<bool>(lobe->valid_factor(wo, wi));
+    });
+    return ret;
+}
+
 SampledDirection LobeSet::sample_wi(const Float3 &wo, const Uint &flag,
                                     TSampler &sampler) const noexcept {
     Float uc = sampler->next_1d();
@@ -446,17 +454,8 @@ ScatterEval LobeSet::evaluate_local(const Float3 &wo, const Float3 &wi,
             ret.f += se.f;
             ret.pdfs += se.pdfs;
             ret.flags = ret.flags | se.flags;
-            string cn = lobe->class_name();
-            if (eta) {
-                $condition_info(cn + " LobeSet    {} {} {}, {}, eta = {}", ret.f.vec3(), ret.pdfs.as_scalar(), *eta);
-            }
-
         });
     });
-    if (eta) {
-        $condition_info("  LobeSet sum    {} {} {}, {}, num = {},  eta = {}", ret.f.vec3(), ret.pdfs.as_scalar(), uint(lobes_.size()), *eta);
-    }
-
     return ret;
 }
 
