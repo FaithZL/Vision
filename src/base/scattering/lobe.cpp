@@ -439,7 +439,6 @@ SampledDirection LobeSet::sample_wi(const Float3 &wo, const Uint &flag,
     Float sum_weights = 0.f;
 
     for_each([&](const WeightedLobe &lobe, uint i) {
-        $condition_info("{:.2f} {}", lobe.sample_weight(), i);
         sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
         sum_weights += lobe.sample_weight();
     });
