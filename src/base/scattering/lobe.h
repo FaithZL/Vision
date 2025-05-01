@@ -21,6 +21,13 @@ public:
     static constexpr float alpha_lower = 0.001f;
     static constexpr float alpha_upper = 1.f;
 
+protected:
+    [[nodiscard]] virtual SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
+                                                          TSampler &sampler) const noexcept {
+        OC_ASSERT(false);
+        return {};
+    }
+
 public:
     Lobe() = default;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
@@ -35,11 +42,8 @@ public:
     [[nodiscard]] virtual BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                                   TSampler &sampler,
                                                   TransportMode tm) const noexcept;
-    [[nodiscard]] virtual SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
-                                                     TSampler &sampler) const noexcept {
-        OC_ASSERT(false);
-        return {};
-    }
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+                                                  TSampler &sampler) const noexcept;
     [[nodiscard]] virtual BSDFSample sample_delta_local(const Float3 &wo,
                                                         TSampler &sampler) const noexcept {
         return BSDFSample{1u, 1u};
@@ -99,7 +103,7 @@ public:
     [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
                                                 TSampler &sampler) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
 };
 
@@ -130,7 +134,7 @@ public:
                                              MaterialEvalMode mode,
                                              const Uint &flag,
                                              TransportMode tm) const noexcept override;
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
 };
 
@@ -200,7 +204,7 @@ public:
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override { return flag_; }
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
     [[nodiscard]] Float to_ratio_z() const noexcept override {
         Float ior = fresnel_->eta().average();
@@ -268,7 +272,7 @@ public:
                                              const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override;
     Float valid_factor(const ocarina::Float3 &wo, const ocarina::Float3 &wi) const noexcept override;
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override { return lobes_[0]->swl(); }
     void for_each(const std::function<void(const WeightedLobe &)> &func) const;

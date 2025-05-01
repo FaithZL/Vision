@@ -95,7 +95,7 @@ public:
                            v.z);
     }
 
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override {
 
         Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
@@ -104,7 +104,7 @@ public:
         sd.wi = normalize(wi);
         return sd;
     }
-    
+
     [[nodiscard]] Float eval_ltc(Float3 wi) const noexcept {
         wi = inv_M(wi);
         Float length = ocarina::length(wi);

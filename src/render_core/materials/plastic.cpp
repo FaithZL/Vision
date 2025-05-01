@@ -49,7 +49,7 @@ public:
         return ret;
     }
 
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override {
         Float3 wh = microfacet()->sample_wh(wo, sampler->next_2d());
         auto fresnel = fresnel_.ptr();
