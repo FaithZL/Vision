@@ -43,7 +43,6 @@ private:
     MaterialRegistry *material_registry_{&MaterialRegistry::instance()};
     MeshRegistry *mesh_registry_{&MeshRegistry::instance()};
     TSpectrum spectrum_{};
-    TObject<Medium> global_medium_{};
     SP<Material> black_body_{};
     float min_radius_{};
     friend class Pipeline;
@@ -64,7 +63,6 @@ public:
     OC_MAKE_MEMBER_GETTER_SETTER(integrator, &)
     OC_MAKE_MEMBER_GETTER_SETTER(sensor, &)
     OC_MAKE_MEMBER_GETTER_SETTER(spectrum, &)
-    OC_MAKE_MEMBER_GETTER(global_medium, )
     OC_MAKE_MEMBER_GETTER(groups, &)
     OC_MAKE_MEMBER_GETTER(instances, &)
 
@@ -91,7 +89,7 @@ public:
         warper_desc.sub_type += "2d";
         return Node::create_shared<Warper2D>(warper_desc);
     }
-    [[nodiscard]] bool has_medium() const noexcept { return !mediums().empty(); }
+    [[nodiscard]] bool process_mediums() const noexcept { return medium_registry_->process_mediums(); }
     void load_shapes(const vector<ShapeDesc> &descs);
     void add_shape(const SP<ShapeGroup> &group, ShapeDesc desc = {});
     void clear_shapes() noexcept;

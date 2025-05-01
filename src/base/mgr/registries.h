@@ -50,17 +50,20 @@ public:
     [[nodiscard]] bool has_dispersive() const noexcept;
 };
 
+struct MediumsDesc;
 class MediumRegistry : public TRegistry<Medium> {
 private:
     OC_MAKE_INSTANCE_CONSTRUCTOR(MediumRegistry, s_medium_registry)
-    bool process_mediums_{false};
+    bool process_mediums_{true};
     TObject<Medium> global_medium_{};
 
 public:
     OC_MAKE_INSTANCE_FUNC_DECL(MediumRegistry)
     string_view UI_title() const noexcept override { return "mediums"; }
-    OC_MAKE_MEMBER_GETTER_SETTER(process_mediums,)
-    OC_MAKE_MEMBER_GETTER_SETTER(global_medium, &)
+    [[nodiscard]] bool process_mediums() const noexcept;
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
+    OC_MAKE_MEMBER_GETTER(global_medium, &)
+    void load_mediums(const MediumsDesc &md) noexcept;
 };
 
 }// namespace vision

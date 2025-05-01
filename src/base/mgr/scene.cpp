@@ -129,7 +129,7 @@ void Scene::add_shape(const SP<vision::ShapeGroup> &group, ShapeDesc desc) {
             TObject<IAreaLight> light = load_light<IAreaLight>(desc.emission);
             instance->set_emission(light);
         }
-        if (has_medium()) {
+        if (process_mediums()) {
             auto inside = mediums().find_if([&](SP<Medium> &medium) {
                 return medium->name() == instance->inside_name();
             });
@@ -170,7 +170,7 @@ void Scene::fill_instances() {
             instance->update_light_id(light_sampler_->lights().encode_id(emission->index(), emission));
         }
         instance->fill_mesh_id();
-        if (has_medium()) {
+        if (process_mediums()) {
             if (instance->has_inside()) {
                 const Medium *inside = instance->inside().get();
                 instance->update_inside_medium_id(mediums().encode_id(inside->index(), inside));
@@ -184,19 +184,7 @@ void Scene::fill_instances() {
 }
 
 void Scene::load_mediums(const MediumsDesc &md) {
-    global_medium_.name = md.global;
-    for (uint i = 0; i < md.mediums.size(); ++i) {
-        const MediumDesc &desc = md.mediums[i];
-        auto medium = Node::create_shared<Medium>(desc);
-        medium->set_index(i);
-        medium_registry().push_back(medium);
-    }
-    uint index = mediums().get_index([&](const SP<Medium> &medium) {
-        return medium->name() == global_medium_.name;
-    });
-    if (index != InvalidUI32) {
-        global_medium_.init(mediums()[index]);
-    }
+    medium_registry().load_mediums(md);
 }
 
 void Scene::prepare_materials() {

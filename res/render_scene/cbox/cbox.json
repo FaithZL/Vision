@@ -963,22 +963,22 @@
 	"warper" : {
 		"type" : "alias_table"
 	},
-	"mediums" : {
-		"global" : "fog",
-		"process" : true,
-		"list": [
-			{
-				"type" : "homogeneous",
-				"name" : "fog",
-				"param" : {
-					"g" : 0,
-					"scale" : 0.0221,
-					"sigma_s" : [1, 1, 1],
-					"sigma_a" : [0, 0, 0]
-				}
-			}
-		]
-	},
+//	"mediums" : {
+//		"global" : "fog",
+//		"process" : true,
+//		"list": [
+//			{
+//				"type" : "homogeneous",
+//				"name" : "fog",
+//				"param" : {
+//					"g" : 0,
+//					"scale" : 0.0221,
+//					"sigma_s" : [1, 1, 1],
+//					"sigma_a" : [0, 0, 0]
+//				}
+//			}
+//		]
+//	},
 	"light_sampler" : {
 		"type" : "uniform",
 //				"type" : "power",

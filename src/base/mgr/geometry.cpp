@@ -76,7 +76,7 @@ void Geometry::clear() noexcept {
 }
 
 Interaction Geometry::compute_surface_interaction(const TriangleHitVar &hit, bool is_complete) const noexcept {
-    Interaction it{Global::instance().pipeline()->scene().has_medium()};
+    Interaction it{Global::instance().pipeline()->scene().process_mediums()};
     it.prim_id = hit.prim_id;
     Var inst = instances_.read(hit.inst_id);
     Var mesh = mesh_handles_.read(inst.mesh_id);
@@ -187,7 +187,7 @@ SampledSpectrum Geometry::Tr(Scene &scene, const SampledWavelengths &swl,
                              const RayState &ray_state) const noexcept {
     TSampler &sampler = scene.sampler();
     SampledSpectrum ret{swl.dimension(), 1.f};
-    if (scene.has_medium()) {
+    if (scene.process_mediums()) {
         $if(ray_state.in_medium()) {
             scene.mediums().dispatch(ray_state.medium, [&](const Medium *medium) {
                 ret = medium->Tr(ray_state.ray, swl, sampler);

@@ -253,8 +253,8 @@ void ShapeGroup::post_init(const vision::ShapeDesc &desc) {
         });
     } else {
         for_each([&](SP<ShapeInstance> instance, uint i) {
-            instance->set_inside(scene().global_medium());
-            instance->set_outside(scene().global_medium());
+            instance->set_inside(scene().medium_registry().global_medium());
+            instance->set_outside(scene().medium_registry().global_medium());
             instance->set_material_name(mat_name);
             instance->set_o2w(desc.o2w.mat);
             instance->init_aabb();

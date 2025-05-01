@@ -4,6 +4,7 @@
 
 #include "registries.h"
 #include "pipeline.h"
+#include "core/scene_desc.h"
 
 namespace vision {
 
@@ -32,8 +33,8 @@ void TRegistry<T>::update_runtime_object(const vision::IObjectConstructor *const
 }
 
 template<typename T>
-void TRegistry<T>::push_back(SP<element_ty> material) noexcept {
-    elements_.push_back(ocarina::move(material));
+void TRegistry<T>::push_back(SP<element_ty> element) noexcept {
+    elements_.push_back(ocarina::move(element));
 }
 
 template<typename T>
@@ -181,5 +182,30 @@ void MaterialRegistry::precompute_albedo() noexcept {
 ///#endregion
 
 OC_MAKE_INSTANCE_FUNC_DEF_WITH_HOTFIX(MediumRegistry, s_medium_registry)
+
+bool MediumRegistry::process_mediums() const noexcept {
+    return process_mediums_ && !elements_.empty();
+}
+
+void MediumRegistry::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    widgets->check_box("process_mediums_", addressof(process_mediums_));
+    TRegistry<Medium>::render_sub_UI(widgets);
+}
+
+void MediumRegistry::load_mediums(const MediumsDesc &md) noexcept {
+    global_medium_.name = md.global;
+    for (uint i = 0; i < md.mediums.size(); ++i) {
+        const MediumDesc &desc = md.mediums[i];
+        auto medium = Node::create_shared<Medium>(desc);
+        medium->set_index(i);
+        push_back(medium);
+    }
+    uint index = elements_.get_index([&](const SP<Medium> &medium) {
+        return medium->name() == global_medium_.name;
+    });
+    if (index != InvalidUI32) {
+        global_medium_.init(elements_[index]);
+    }
+}
 
 }// namespace vision

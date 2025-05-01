@@ -119,7 +119,7 @@ SampledSpectrum IlluminationIntegrator::evaluate_miss(RayState &rs, const Float3
         p_ref.pos = rs.origin();
         p_ref.ng = normal;
         SampledSpectrum tr = spectrum()->one();
-        if (scene().has_medium()) {
+        if (scene().process_mediums()) {
             rs.ray.dir_max.w = scene().world_diameter();
             tr = geometry.Tr(scene(), swl, rs);
         }
@@ -141,7 +141,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
     const Geometry &geometry = rp->geometry();
 
     TriangleHitVar hit;
-    Interaction it{scene().has_medium()};
+    Interaction it{scene().process_mediums()};
     Float3 prev_surface_ng = rs.direction();
 
     Float3 ret = make_float3(0.f);
@@ -168,7 +168,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
         frame_buffer().visualizer()->condition_add_line_segment(rs.origin(), it.pos);
         //        };
 
-        if (scene().has_medium()) {
+        if (scene().process_mediums()) {
             $if(rs.in_medium()) {
                 scene().mediums().dispatch(rs.medium, [&](const Medium *medium) {
                     SampledSpectrum medium_throughput = medium->sample(rs, it, sampler, swl);
@@ -240,7 +240,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
             });
         };
 
-        if (scene().has_medium()) {
+        if (scene().process_mediums()) {
             $if(it.has_phase()) {
                 PhaseSample ps{swl.dimension()};
                 Ld = direct_light_mis(it, it.phase(), light_sample, occluded, sampler, swl, ps);

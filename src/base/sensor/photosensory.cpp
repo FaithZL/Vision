@@ -14,14 +14,14 @@ Photosensory::Photosensory(const SensorDesc &desc)
       filter_(desc.filter_desc),
       film_(Node::create_shared<Film>(desc.film_desc)),
       medium_id_(desc.medium.id) {
-    if (!scene().has_medium()) {
+    if (!scene().process_mediums()) {
         return;
     }
     TObject<Medium> medium_;
     if (desc.contains("medium")) {
         medium_.name = desc["medium"].as_string();
     } else {
-        medium_ = scene().global_medium();
+        medium_ = scene().medium_registry().global_medium();
     }
     auto &mediums = scene().mediums();
     auto iter = std::find_if(mediums.begin(), mediums.end(), [&](const SP<Medium> &medium) {
