@@ -53,10 +53,14 @@ public:
 class MediumRegistry : public TRegistry<Medium> {
 private:
     OC_MAKE_INSTANCE_CONSTRUCTOR(MediumRegistry, s_medium_registry)
+    bool process_mediums_{false};
+    TObject<Medium> global_medium_{};
 
 public:
     OC_MAKE_INSTANCE_FUNC_DECL(MediumRegistry)
     string_view UI_title() const noexcept override { return "mediums"; }
+    OC_MAKE_MEMBER_GETTER_SETTER(process_mediums,)
+    OC_MAKE_MEMBER_GETTER_SETTER(global_medium, &)
 };
 
 }// namespace vision

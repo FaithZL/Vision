@@ -13,6 +13,7 @@ using namespace ocarina;
 
 struct MediumsDesc {
     vector<MediumDesc> mediums;
+    bool process{false};
     string global;
 };
 

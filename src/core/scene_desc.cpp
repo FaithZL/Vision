@@ -24,11 +24,9 @@ void SceneDesc::init_shape_descs(const DataWrap &shapes) noexcept {
 }
 
 void SceneDesc::init_medium_descs(const DataWrap &mediums) noexcept {
-    if (!mediums.value("process", false)) {
-        return;
-    }
     mediums_desc.global = mediums.value("global", "");
-    DataWrap lst = mediums.value("list", DataWrap());
+    mediums_desc.process = mediums.value("process", false);
+    DataWrap lst = mediums.value("list", DataWrap::object());
     for (const auto &elm : lst) {
         MediumDesc desc;
         desc.init(elm);
