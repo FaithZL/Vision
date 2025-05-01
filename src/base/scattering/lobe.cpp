@@ -449,7 +449,9 @@ SampledDirection LobeSet::sample_wi(const Float3 &wo, const Uint &flag,
             $switch(sampling_strategy) {
                 for_each([&](const WeightedLobe &lobe, uint i) {
                     $case(i) {
-                        sd = lobe->sample_wi(wo, flag, sampler);
+                        sd = outline(lobe->class_name(), [&] {
+                            return lobe->sample_wi(wo, flag, sampler);
+                        });
                         $break;
                     };
                 });
