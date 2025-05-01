@@ -49,11 +49,6 @@ public:
         return ret;
     }
 
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler, TransportMode tm) const noexcept override {
-        return Lobe::sample_local(wo, flag, sampler, tm);
-    }
-
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override {
         Float3 wh = microfacet()->sample_wh(wo, sampler->next_2d());

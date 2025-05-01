@@ -142,11 +142,6 @@ ScatterEval DiffuseLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
     return bxdf_->safe_evaluate(wo, wi, nullptr, mode, tm);
 }
 
-BSDFSample DiffuseLobe::sample_local(const Float3 &wo, const Uint &flag,
-                                     TSampler &sampler, TransportMode tm) const noexcept {
-    return bxdf_->sample(wo, sampler, nullptr, tm);
-}
-
 SampledDirection DiffuseLobe::sample_wi(const Float3 &wo, const Uint &flag,
                                         TSampler &sampler) const noexcept {
     return bxdf_->sample_wi(wo, sampler->next_2d(), nullptr);

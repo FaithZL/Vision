@@ -130,9 +130,6 @@ public:
                                              MaterialEvalMode mode,
                                              const Uint &flag,
                                              TransportMode tm) const noexcept override;
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler,
-                                          TransportMode tm) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
 };
@@ -318,15 +315,6 @@ public:
     [[nodiscard]] virtual Float compensate_factor(const Float3 &wo) const noexcept;
     [[nodiscard]] virtual bool compensate() const noexcept { return false; }
     static void prepare();
-
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
-                                          TransportMode tm) const noexcept override {
-        BSDFSample bs = MicrofacetLobe::sample_local(wo, flag, sampler, tm);
-        if (compensate()) {
-            bs.eval.f *= compensate_factor(wo);
-        }
-        return bs;
-    }
 
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm) const noexcept override {

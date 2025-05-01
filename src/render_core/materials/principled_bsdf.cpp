@@ -12,8 +12,6 @@
 
 namespace vision {
 
-
-
 /// reference https://tizianzeltner.com/projects/Zeltner2022Practical/
 /// reference https://github.com/tizian/ltc-sheen
 class SheenLTC : public Lobe {
@@ -70,15 +68,6 @@ public:
         ret.f = select(cos_theta_i < 0 || cos_theta_o < 0, 0.f, ret.f);
         return ret;
     }
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
-                                          TransportMode tm) const noexcept override {
-        BSDFSample ret{*swl()};
-        SampledDirection sd = sample_wi(wo, flag, sampler);
-        ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag, tm);
-        ret.wi = sd.wi;
-        ret.eval.pdfs *= sd.factor();
-        return ret;
-    }
 
     /**
      *     [[1/a    0      -b/a   ]
@@ -115,6 +104,7 @@ public:
         sd.wi = normalize(wi);
         return sd;
     }
+    
     [[nodiscard]] Float eval_ltc(Float3 wi) const noexcept {
         wi = inv_M(wi);
         Float length = ocarina::length(wi);
