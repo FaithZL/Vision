@@ -487,7 +487,9 @@ ScatterEval LobeSet::evaluate_local(const Float3 &wo, const Float3 &wi,
     ScatterEval ret{*swl()};
     outline("LobeSet::evaluate_local", [&] {
         for_each([&](const WeightedLobe &lobe) {
-            ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm, eta);
+            ScatterEval se = outline(lobe->class_name(), [&] {
+                return lobe->evaluate_local(wo, wi, mode, flag, tm, eta);
+            });
             se.f *= lobe.weight() * lobe->valid_factor(wo, wi);
             se.pdfs *= lobe.sample_weight() * lobe->valid_factor(wo, wi);
 
