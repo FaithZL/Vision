@@ -37,6 +37,22 @@ Float Lobe::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
     return cast<float>(valid);
 }
 
+ScatterEval Lobe::evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                 const Uint &flag, TransportMode tm) const noexcept {
+    string label = string(class_name()) + "::evaluate_local";
+    return outline(label, [&] {
+        return evaluate_local_impl(wo, wi, mode, flag, tm);
+    });
+}
+
+ScatterEval Lobe::evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                 const Uint &flag, TransportMode tm, Float *eta) const noexcept {
+    string label = string(class_name()) + "::evaluate_local with eta";
+    return outline(label, [&] {
+        return evaluate_local_impl(wo, wi, mode, flag, tm, eta);
+    });
+}
+
 SampledDirection Lobe::sample_wi(const Float3 &wo, const Uint &flag,
                                  TSampler &sampler) const noexcept {
     string label = string(class_name()) + "::sample_wi";
@@ -120,10 +136,10 @@ SampledSpectrum MicrofacetLobe::albedo(const Float &cos_theta) const noexcept {
     return bxdf_->albedo(cos_theta) * fresnel_->evaluate(cos_theta);
 }
 
-ScatterEval MicrofacetLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                           vision::MaterialEvalMode mode,
-                                           const Uint &flag,
-                                           TransportMode tm) const noexcept {
+ScatterEval MicrofacetLobe::evaluate_local_impl(const Float3 &wo, const Float3 &wi,
+                                                vision::MaterialEvalMode mode,
+                                                const Uint &flag,
+                                                TransportMode tm) const noexcept {
     return bxdf_->safe_evaluate(wo, wi, fresnel_.ptr(), mode, tm);
 }
 
@@ -144,9 +160,9 @@ SampledDirection MicrofacetLobe::sample_wi_impl(const Float3 &wo,
 ///#endregion
 
 ///#region DiffuseLobe
-ScatterEval DiffuseLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                        MaterialEvalMode mode, const Uint &flag,
-                                        TransportMode tm) const noexcept {
+ScatterEval DiffuseLobe::evaluate_local_impl(const Float3 &wo, const Float3 &wi,
+                                             MaterialEvalMode mode, const Uint &flag,
+                                             TransportMode tm) const noexcept {
     return bxdf_->safe_evaluate(wo, wi, nullptr, mode, tm);
 }
 
@@ -281,9 +297,9 @@ Float DielectricLobe::valid_factor(const Float3 &wo, const Float3 &wi) const noe
     return 1.f;
 }
 
-ScatterEval DielectricLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                           MaterialEvalMode mode, const Uint &flag,
-                                           TransportMode tm) const noexcept {
+ScatterEval DielectricLobe::evaluate_local_impl(const Float3 &wo, const Float3 &wi,
+                                                MaterialEvalMode mode, const Uint &flag,
+                                                TransportMode tm) const noexcept {
     SP<Fresnel> fresnel = fresnel_.ptr();
     Bool reflect = same_hemisphere(wo, wi);
     Float eta_p = ocarina::select(reflect, 1.f, fresnel->eta()[0]);
@@ -291,8 +307,8 @@ ScatterEval DielectricLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
     return evaluate_impl(wo, wh, wi, fresnel, mode, tm);
 }
 
-ScatterEval DielectricLobe::evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                           const Uint &flag, TransportMode tm, Float *eta) const noexcept {
+ScatterEval DielectricLobe::evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                                const Uint &flag, TransportMode tm, Float *eta) const noexcept {
     SP<Fresnel> fresnel = fresnel_.ptr();
     Bool reflect = same_hemisphere(wo, wi);
     Float eta_p = ocarina::select(reflect, 1.f, fresnel->eta()[0]);
@@ -461,30 +477,26 @@ Uint LobeSet::flag() const noexcept {
     return ret;
 }
 
-ScatterEval LobeSet::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                    MaterialEvalMode mode, const Uint &flag,
-                                    TransportMode tm, Float *eta) const noexcept {
+ScatterEval LobeSet::evaluate_local_impl(const Float3 &wo, const Float3 &wi,
+                                         MaterialEvalMode mode, const Uint &flag,
+                                         TransportMode tm, Float *eta) const noexcept {
     ScatterEval ret{*swl()};
-    outline("LobeSet::evaluate_local", [&] {
-        for_each([&](const WeightedLobe &lobe) {
-            ScatterEval se = outline(lobe->class_name(), [&] {
-                return lobe->evaluate_local(wo, wi, mode, flag, tm, eta);
-            });
-            se.f *= lobe.weight() * lobe->valid_factor(wo, wi);
-            se.pdfs *= lobe.sample_weight() * lobe->valid_factor(wo, wi);
+    for_each([&](const WeightedLobe &lobe) {
+        ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm, eta);
+        se.f *= lobe.weight() * lobe->valid_factor(wo, wi);
+        se.pdfs *= lobe.sample_weight() * lobe->valid_factor(wo, wi);
 
-            ret.f += se.f;
-            ret.pdfs += se.pdfs;
-            ret.flags = ret.flags | se.flags;
-        });
+        ret.f += se.f;
+        ret.pdfs += se.pdfs;
+        ret.flags = ret.flags | se.flags;
     });
     return ret;
 }
 
-ScatterEval LobeSet::evaluate_local(const Float3 &wo, const Float3 &wi,
-                                    MaterialEvalMode mode, const Uint &flag,
-                                    TransportMode tm) const noexcept {
-    return evaluate_local(wo, wi, mode, flag, tm, nullptr);
+ScatterEval LobeSet::evaluate_local_impl(const Float3 &wo, const Float3 &wi,
+                                         MaterialEvalMode mode, const Uint &flag,
+                                         TransportMode tm) const noexcept {
+    return evaluate_local_impl(wo, wi, mode, flag, tm, nullptr);
 }
 ///#endregion
 

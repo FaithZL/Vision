@@ -55,7 +55,7 @@ public:
     }
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
 
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode, const Uint &flag,
                                              TransportMode tm) const noexcept override {
         ScatterEval ret{*swl_};

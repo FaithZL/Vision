@@ -14,7 +14,7 @@ private:
 public:
     explicit BlackBodyLobe(const SampledWavelengths &swl) : swl_(&swl) {}
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::Diffuse; }
-    [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
+    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode, const Uint &flag,
                                              TransportMode tm) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override;
@@ -30,7 +30,7 @@ const SampledWavelengths *BlackBodyLobe::swl() const {
     return swl_;
 }
 
-ScatterEval BlackBodyLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
+ScatterEval BlackBodyLobe::evaluate_local_impl(const Float3 &wo, const Float3 &wi,
                                           MaterialEvalMode mode, const Uint &flag,
                                           TransportMode tm) const noexcept {
     ScatterEval ret{*swl_};
