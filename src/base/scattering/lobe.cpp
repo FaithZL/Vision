@@ -119,12 +119,6 @@ ScatterEval MicrofacetLobe::evaluate_local(const Float3 &wo, const Float3 &wi,
     return bxdf_->safe_evaluate(wo, wi, fresnel_.ptr(), mode, tm);
 }
 
-BSDFSample MicrofacetLobe::sample_local(const Float3 &wo, const Uint &flag,
-                                        vision::TSampler &sampler,
-                                        TransportMode tm) const noexcept {
-    return bxdf_->sample(wo, sampler, fresnel_.ptr(), tm);
-}
-
 BSDFSample MicrofacetLobe::sample_delta_local(const Float3 &wo,
                                               TSampler &sampler) const noexcept {
     Float3 wi = make_float3(-wo.xy(), wo.z);
@@ -327,11 +321,6 @@ SampledDirection DielectricLobe::sample_wi(const Float3 &wo, const Uint &flag,
     return sd;
 }
 
-BSDFSample DielectricLobe::sample_local(const Float3 &wo, const Uint &flag,
-                                        TSampler &sampler,
-                                        TransportMode tm) const noexcept {
-    return Lobe::sample_local(wo, flag, sampler, tm);
-}
 ///#endregion
 
 ///#region LobeSet
@@ -463,16 +452,6 @@ SampledDirection LobeSet::sample_wi(const Float3 &wo, const Uint &flag,
         }
     });
     return sd;
-}
-
-BSDFSample LobeSet::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
-                                 TransportMode tm) const noexcept {
-    BSDFSample ret{*swl()};
-    SampledDirection sd = sample_wi(wo, flag, sampler);
-    ret.wi = sd.wi;
-    ret.eval = evaluate_local(wo, sd.wi, MaterialEvalMode::All, flag, tm, addressof(ret.eta));
-    ret.eval.pdfs *= sd.factor();
-    return ret;
 }
 
 Uint LobeSet::flag() const noexcept {

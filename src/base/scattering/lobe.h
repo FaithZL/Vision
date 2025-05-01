@@ -96,9 +96,6 @@ public:
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi,
                                              MaterialEvalMode mode, const Uint &flag,
                                              TransportMode tm) const noexcept override;
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler,
-                                          TransportMode tm) const noexcept override;
     [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
                                                 TSampler &sampler) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
@@ -208,8 +205,6 @@ public:
     [[nodiscard]] Uint flag() const noexcept override { return flag_; }
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
-                                          TransportMode tm) const noexcept override;
     [[nodiscard]] Float to_ratio_z() const noexcept override {
         Float ior = fresnel_->eta().average();
         return inverse_lerp(ior, ior_lower, ior_upper);
@@ -278,8 +273,6 @@ public:
     Float valid_factor(const ocarina::Float3 &wo, const ocarina::Float3 &wi) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept override;
-    [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag,
-                                          TSampler &sampler, TransportMode tm) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override { return lobes_[0]->swl(); }
     void for_each(const std::function<void(const WeightedLobe &)> &func) const;
     void for_each(const std::function<void(WeightedLobe &)> &func);
