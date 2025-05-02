@@ -120,6 +120,12 @@ protected:
     [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
         return bxdf_->topology_hash();
     }
+    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi,
+                                                  MaterialEvalMode mode,
+                                                  const Uint &flag,
+                                                  TransportMode tm) const noexcept override;
+    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
+                                                  TSampler &sampler) const noexcept override;
 
 public:
     DiffuseLobe(const SampledSpectrum &kr, const SampledWavelengths &swl)
@@ -131,16 +137,7 @@ public:
     [[nodiscard]] const SampledWavelengths *swl() const override {
         return &bxdf_->swl();
     }
-    // clang-format off
     VS_MAKE_LOBE_ASSIGNMENT(DiffuseLobe)
-    // clang-format on
-
-    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi,
-                                                  MaterialEvalMode mode,
-                                                  const Uint &flag,
-                                                  TransportMode tm) const noexcept override;
-    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
-                                                  TSampler &sampler) const noexcept override;
 };
 
 [[nodiscard]] inline Float ior_to_ratio_z(const Float &ior) {
@@ -188,6 +185,12 @@ protected:
                                             TransportMode tm) const noexcept;
     [[nodiscard]] Float refl_prob(const SampledSpectrum &F) const noexcept;
     [[nodiscard]] Float trans_prob(const SampledSpectrum &F) const noexcept;
+    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                                  const Uint &flag, TransportMode tm) const noexcept override;
+    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                                  const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
+    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
+                                                  TSampler &sampler) const noexcept override;
 
 public:
     DielectricLobe(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
@@ -197,20 +200,14 @@ public:
           flag_(std::move(flag)) {}
     VS_MAKE_LOBE_ASSIGNMENT(DielectricLobe)
     [[nodiscard]] virtual bool compensate() const noexcept { return true; }
-
     static void prepare() noexcept;
     [[nodiscard]] Float valid_factor(const Float3 &wo, const Float3 &wi) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override { return fresnel_->swl(); }
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }
     [[nodiscard]] Bool splittable() const noexcept override { return true; }
-    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                                  const Uint &flag, TransportMode tm) const noexcept override;
-    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                                  const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
+
     [[nodiscard]] Uint flag() const noexcept override { return flag_; }
-    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
-                                                  TSampler &sampler) const noexcept override;
     [[nodiscard]] Float to_ratio_z() const noexcept override {
         Float ior = fresnel_->eta().average();
         return inverse_lerp(ior, ior_lower, ior_upper);
@@ -257,6 +254,12 @@ protected:
         });
         return ret;
     }
+    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                                  const Uint &flag, TransportMode tm) const noexcept override;
+    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                                  const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
+    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
+                                                  TSampler &sampler) const noexcept override;
 
 public:
     LobeSet() = default;
@@ -273,14 +276,8 @@ public:
     VS_MAKE_LOBE_ASSIGNMENT(LobeSet)
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
-    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                                  const Uint &flag, TransportMode tm) const noexcept override;
-    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                                  const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override;
     Float valid_factor(const ocarina::Float3 &wo, const ocarina::Float3 &wi) const noexcept override;
-    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
-                                                  TSampler &sampler) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override { return lobes_[0]->swl(); }
     void for_each(const std::function<void(const WeightedLobe &)> &func) const;
     void for_each(const std::function<void(WeightedLobe &)> &func);
@@ -289,6 +286,10 @@ public:
 };
 
 class PureReflectionLobe : public MicrofacetLobe {
+protected:
+    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                                  const Uint &flag, TransportMode tm) const noexcept override;
+
 public:
     using MicrofacetLobe::MicrofacetLobe;
     static constexpr const char *lut_name = "PureReflectionLobe::lut";
@@ -296,15 +297,6 @@ public:
     [[nodiscard]] virtual Float compensate_factor(const Float3 &wo) const noexcept;
     [[nodiscard]] virtual bool compensate() const noexcept { return false; }
     static void prepare();
-
-    [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                                  const Uint &flag, TransportMode tm) const noexcept override {
-        ScatterEval se = MicrofacetLobe::evaluate_local_impl(wo, wi, mode, flag, tm);
-        if (compensate()) {
-            se.f *= compensate_factor(wo);
-        }
-        return se;
-    }
 
     /// for precompute begin
     static constexpr const char *name = "PureReflectionLobe";

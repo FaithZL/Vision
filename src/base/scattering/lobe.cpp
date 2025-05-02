@@ -535,6 +535,15 @@ Float PureReflectionLobe::compensate_factor(const ocarina::Float3 &wo) const noe
     return 1.f / ret;
 }
 
+ScatterEval PureReflectionLobe::evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
+                                                    const Uint &flag, TransportMode tm) const noexcept  {
+    ScatterEval se = MicrofacetLobe::evaluate_local_impl(wo, wi, mode, flag, tm);
+    if (compensate()) {
+        se.f *= compensate_factor(wo);
+    }
+    return se;
+}
+
 void PureReflectionLobe::prepare() {
     MaterialLut::instance().load_lut(lut_name, make_uint2(lut_res),
                                      PixelStorage::FLOAT1,
