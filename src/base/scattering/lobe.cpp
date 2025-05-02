@@ -510,10 +510,11 @@ ScatterEval LobeSet::evaluate_local_impl(const Float3 &wo, const Float3 &wi,
                                          TransportMode tm, Float *eta) const noexcept {
     ScatterEval ret{*swl()};
     for_each([&](const WeightedLobe &lobe) {
+        /// for custom function auto merge
+        Float weight = lobe.weight();
         ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm, eta);
-        se.f *= lobe.weight() * lobe->valid_factor(wo, wi);
+        se.f *= weight * lobe->valid_factor(wo, wi);
         se.pdfs *= lobe.sample_weight() * lobe->valid_factor(wo, wi);
-
         ret.f += se.f;
         ret.pdfs += se.pdfs;
         ret.flags = ret.flags | se.flags;
