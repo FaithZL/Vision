@@ -265,6 +265,8 @@ public:
     }
     /// normalize weight and flatten the tree
     void initialize() noexcept;
+    static UP<LobeSet> create_mix(const Float &frac, SP<Lobe> b0, SP<Lobe> b1) noexcept;
+    static UP<LobeSet> create_add(SP<Lobe> b0, SP<Lobe> b1) noexcept;
     void normalize_sampled_weight() noexcept;
     void flatten() noexcept;
     [[nodiscard]] bool is_multi() const noexcept override { return true; }
@@ -284,36 +286,6 @@ public:
     void for_each(const std::function<void(WeightedLobe &)> &func);
     void for_each(const std::function<void(const WeightedLobe &, uint)> &func) const;
     void for_each(const std::function<void(WeightedLobe &, uint)> &func);
-};
-
-class MixLobe : public LobeSet {
-public:
-    using LobeSet::LobeSet;
-    MixLobe() = default;
-    MixLobe(const Float &frac, SP<Lobe> b0, SP<Lobe> b1) {
-        Float w0 = 1 - frac;
-        Float w1 = frac;
-        WeightedLobe wb0{w0, w0, std::move(b0)};
-        WeightedLobe wb1{w1, w1, std::move(b1)};
-        lobes_.push_back(std::move(wb0));
-        lobes_.push_back(std::move(wb1));
-        OC_ERROR_IF(lobes_.size() != 2, "MixLobe lobe num must be 2");
-        flatten();
-    }
-};
-
-class AddLobe : public LobeSet {
-public:
-    using LobeSet::LobeSet;
-    AddLobe() = default;
-    AddLobe(SP<Lobe> b0, SP<Lobe> b1) {
-        WeightedLobe wb0{1.f, 1.f, std::move(b0)};
-        WeightedLobe wb1{1.f, 1.f, std::move(b1)};
-        lobes_.push_back(std::move(wb0));
-        lobes_.push_back(std::move(wb1));
-        OC_ERROR_IF(lobes_.size() != 2, "AddLobe lobe num must be 2");
-        initialize();
-    }
 };
 
 class PureReflectionLobe : public MicrofacetLobe {

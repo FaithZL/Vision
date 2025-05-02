@@ -377,6 +377,34 @@ void LobeSet::initialize() noexcept {
     flatten();
 }
 
+UP<LobeSet> LobeSet::create_mix(const Float &frac, SP<Lobe> b0, SP<Lobe> b1) noexcept {
+    Float w0 = 1 - frac;
+    Float w1 = frac;
+    WeightedLobe wb0{w0, w0, std::move(b0)};
+    WeightedLobe wb1{w1, w1, std::move(b1)};
+    Lobes lobes;
+    lobes.push_back(std::move(wb0));
+    lobes.push_back(std::move(wb1));
+    OC_ERROR_IF(lobes.size() != 2, "MixLobe lobe num must be 2");
+    UP<LobeSet> ret = make_unique<LobeSet>();
+    ret->lobes_ = std::move(lobes);
+    ret->flatten();
+    return ret;
+}
+
+UP<LobeSet> LobeSet::create_add(SP<vision::Lobe> b0, SP<vision::Lobe> b1) noexcept {
+    WeightedLobe wb0{1.f, 1.f, std::move(b0)};
+    WeightedLobe wb1{1.f, 1.f, std::move(b1)};
+    Lobes lobes;
+    lobes.push_back(std::move(wb0));
+    lobes.push_back(std::move(wb1));
+    OC_ERROR_IF(lobes.size() != 2, "AddLobe lobe num must be 2");
+    UP<LobeSet> ret = make_unique<LobeSet>();
+    ret->lobes_ = std::move(lobes);
+    ret->initialize();
+    return ret;
+}
+
 void LobeSet::normalize_sampled_weight() noexcept {
     Float weight_sum = 0;
     for_each([&](WeightedLobe &lobe) {

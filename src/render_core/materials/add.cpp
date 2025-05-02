@@ -15,7 +15,7 @@ private:
     SP<Material> mat1_{};
 
 protected:
-    VS_MAKE_MATERIAL_EVALUATOR(AddLobe)
+    VS_MAKE_MATERIAL_EVALUATOR(LobeSet)
 
 public:
     AddMaterial() = default;
@@ -49,8 +49,8 @@ public:
         return hash64(mat0_->topology_hash(), mat1_->topology_hash());
     }
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        return make_unique<AddLobe>(mat0_->create_lobe_set(it, swl),
-                                    mat1_->create_lobe_set(it, swl));
+        return LobeSet::create_add(mat0_->create_lobe_set(it, swl),
+                                   mat1_->create_lobe_set(it, swl));
     }
 };
 
