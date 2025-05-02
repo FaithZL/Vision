@@ -146,7 +146,10 @@ public:
 class InputNode : public ShaderNode {
 public:
     InputNode() = default;
-    [[nodiscard]] virtual float_array attribute(const string &key, const Interaction &it) const noexcept = 0;
+    [[nodiscard]] virtual AttrEvalContext apply(const AttrEvalContext &ctx,
+                                                const string &key) const noexcept {
+        return ctx;
+    }
 };
 
 }// namespace vision
