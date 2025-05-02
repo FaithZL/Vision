@@ -6,7 +6,7 @@
 #include "GUI/widgets.h"
 
 namespace vision {
-class NumberInput : public ShaderNode {
+class NumberArray : public ShaderNode {
 private:
     EncodedData<vector<float>> value_;
     float min_{0.f};
@@ -18,8 +18,8 @@ protected:
     [[nodiscard]] uint64_t compute_topology_hash() const noexcept override { return hash64(value_.hv().size(), min_, max_); }
 
 public:
-    NumberInput() = default;
-    explicit NumberInput(const ShaderNodeDesc &desc)
+    NumberArray() = default;
+    explicit NumberArray(const ShaderNodeDesc &desc)
         : ShaderNode(desc),
           value_(desc["value"].as_vector<float>()),
           min_(desc["min"].as_float(0.f)),
@@ -110,5 +110,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR_HOTFIX(vision, NumberInput)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, NumberArray)
 VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-number.dll")

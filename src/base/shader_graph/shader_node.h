@@ -39,7 +39,7 @@ public:
     OC_MAKE_MEMBER_GETTER(dim, )
     OC_MAKE_MEMBER_GETTER(channel_mask, )
     OC_MAKE_MEMBER_GETTER(attr_name, )
-    OC_MAKE_MEMBER_GETTER_SETTER(attr_tag,)
+    OC_MAKE_MEMBER_GETTER_SETTER(attr_tag, )
     [[nodiscard]] virtual const ShaderNode *node() const noexcept = 0;
     [[nodiscard]] virtual ShaderNode *node() noexcept = 0;
     [[nodiscard]] const ShaderNode *operator->() const noexcept { return node(); }
@@ -110,7 +110,7 @@ public:
     virtual bool render_UI_by_tag(Widgets *widgets, AttrTag attr_tag) noexcept {
         return render_UI(widgets);
     }
-    ShaderNode& set_graph(const SP<ShaderGraph> &graph) noexcept;
+    ShaderNode &set_graph(const SP<ShaderGraph> &graph) noexcept;
     [[nodiscard]] ShaderGraph &graph() const noexcept;
     [[nodiscard]] virtual uint dim() const noexcept { return 4; }
     [[nodiscard]] virtual bool near_zero() const noexcept { return false; }
@@ -142,4 +142,11 @@ public:
     }
     [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }
 };
+
+class InputNode : public ShaderNode {
+public:
+    InputNode() = default;
+    [[nodiscard]] virtual float_array attribute(const string &key, const Interaction &it) const noexcept = 0;
+};
+
 }// namespace vision
