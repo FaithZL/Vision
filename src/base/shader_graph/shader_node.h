@@ -127,16 +127,22 @@ public:
      * @return
      */
     [[nodiscard]] virtual bool is_uniform() const noexcept { return false; }
-    [[nodiscard]] virtual ocarina::vector<float> average() const noexcept = 0;
+    [[nodiscard]] virtual ocarina::vector<float> average() const noexcept {
+        OC_ERROR("call error");
+        return {};
+    }
 
-    ///#region for NumberInput
+    ///#region for NumberArray
     virtual ShaderNode &set_range(float lower, float upper) noexcept { return *this; }
     virtual ShaderNode &update_value(vector<float> values) noexcept { return *this; }
     virtual float normalize() noexcept { return 1.f; }
     ///#endregion
 
     [[nodiscard]] virtual DynamicArray<float> evaluate(const AttrEvalContext &ctx,
-                                                       const SampledWavelengths &swl) const noexcept = 0;
+                                                       const SampledWavelengths &swl) const noexcept {
+        OC_ERROR("call error");
+        return {};
+    }
     virtual void for_each_pixel(const function<Image::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
     }
