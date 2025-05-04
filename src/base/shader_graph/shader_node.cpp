@@ -222,23 +222,20 @@ uint64_t RootSlot::compute_topology_hash() const noexcept {
     return hash64(Slot::compute_topology_hash(), input_->topology_hash(), key_);
 }
 
-float_array RootSlot::evaluate(const AttrEvalContext &ctx,
-                               const SampledWavelengths &swl) const noexcept {
-    return Slot::evaluate(input_->apply(ctx, swl, key_), swl);
-}
+#define VS_ROOT_SLOT_FUNC_IMPL(Ret, func_name)                              \
+    Ret RootSlot::func_name(const AttrEvalContext &ctx,                     \
+                            const SampledWavelengths &swl) const noexcept { \
+        if (input_) {                                                       \
+            return Slot::func_name(input_->apply(ctx, swl, key_), swl);     \
+        }                                                                   \
+        return Slot::func_name(ctx, swl);                                   \
+    }
 
-ColorDecode RootSlot::eval_albedo_spectrum(const AttrEvalContext &ctx,
-                                           const SampledWavelengths &swl) const noexcept {
-    return Slot::eval_albedo_spectrum(input_->apply(ctx, swl, key_), swl);
-}
+VS_ROOT_SLOT_FUNC_IMPL(float_array, evaluate)
+VS_ROOT_SLOT_FUNC_IMPL(ColorDecode, eval_albedo_spectrum)
+VS_ROOT_SLOT_FUNC_IMPL(ColorDecode, eval_unbound_spectrum)
+VS_ROOT_SLOT_FUNC_IMPL(ColorDecode, eval_illumination_spectrum)
 
-ColorDecode RootSlot::eval_unbound_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
-    return Slot::eval_unbound_spectrum(input_->apply(ctx, swl, key_), swl);
-}
-
-ColorDecode RootSlot::eval_illumination_spectrum(const AttrEvalContext &ctx,
-                                                 const SampledWavelengths &swl) const noexcept {
-    return Slot::eval_illumination_spectrum(input_->apply(ctx, swl, key_), swl);
-}
+#undef VS_ROOT_SLOT_FUNC_IMPL
 
 }// namespace vision
