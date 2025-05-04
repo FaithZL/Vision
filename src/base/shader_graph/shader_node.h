@@ -151,7 +151,7 @@ public:
 
 class InputNode : public ShaderNode {
 public:
-    InputNode() = default;
+    using ShaderNode::ShaderNode;
     [[nodiscard]] virtual AttrEvalContext apply(const AttrEvalContext &ctx,
                                                 const string &key) const noexcept {
         return ctx;
