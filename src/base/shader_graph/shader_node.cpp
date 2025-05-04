@@ -55,7 +55,7 @@ SlotWeakRef::SlotWeakRef(const vision::Slot &slot)
 
 ///#region Slot
 Slot::Slot(SP<vision::ShaderNode> input, std::string channels, AttrTag attr_tag)
-    : SlotBase(0, std::move(channels),attr_tag), node_(std::move(input)) {
+    : SlotBase(0, std::move(channels), attr_tag), node_(std::move(input)) {
     OC_ASSERT(dim_ <= 4);
 }
 
@@ -212,6 +212,33 @@ ShaderNode &ShaderNode::add_to(ShaderGraph &graph) noexcept {
 ShaderNode &ShaderNode::add_to(const std::string &name, vision::ShaderGraph &graph) noexcept {
     graph.add_node(name, shared_from_this());
     return *this;
+}
+
+uint64_t RootSlot::compute_hash() const noexcept {
+    return hash64(Slot::compute_hash(), input_->hash(), key_);
+}
+
+uint64_t RootSlot::compute_topology_hash() const noexcept {
+    return hash64(Slot::compute_topology_hash(), input_->topology_hash(), key_);
+}
+
+float_array RootSlot::evaluate(const AttrEvalContext &ctx,
+                               const SampledWavelengths &swl) const noexcept {
+    return Slot::evaluate(input_->apply(ctx, swl, key_), swl);
+}
+
+ColorDecode RootSlot::eval_albedo_spectrum(const AttrEvalContext &ctx,
+                                           const SampledWavelengths &swl) const noexcept {
+    return Slot::eval_albedo_spectrum(input_->apply(ctx, swl, key_), swl);
+}
+
+ColorDecode RootSlot::eval_unbound_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
+    return Slot::eval_unbound_spectrum(input_->apply(ctx, swl, key_), swl);
+}
+
+ColorDecode RootSlot::eval_illumination_spectrum(const AttrEvalContext &ctx,
+                                                 const SampledWavelengths &swl) const noexcept {
+    return Slot::eval_illumination_spectrum(input_->apply(ctx, swl, key_), swl);
 }
 
 }// namespace vision

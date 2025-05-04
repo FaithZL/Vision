@@ -28,7 +28,7 @@ protected:
     string attr_name_{};
     AttrTag attr_tag_{};
 
-private:
+protected:
     [[nodiscard]] uint64_t compute_hash() const noexcept override;
     [[nodiscard]] uint64_t compute_topology_hash() const noexcept override;
 
@@ -49,7 +49,7 @@ public:
 class SlotWeakRef;
 
 class Slot : public GUI, public Observer, public SlotBase {
-private:
+protected:
     SP<ShaderNode> node_{};
     friend class SlotWeakRef;
 
@@ -63,18 +63,18 @@ public:
     bool has_changed() noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
-    [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
-                                               const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual DynamicArray<float> evaluate(const AttrEvalContext &ctx,
+                                                       const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] vector<float> average() const noexcept;
     [[nodiscard]] float luminance() const noexcept;
     [[nodiscard]] bool valid() const noexcept { return node_ != nullptr; }
     [[nodiscard]] explicit operator bool() const noexcept { return valid(); }
-    [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
-                                                   const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
-                                                    const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
-                                                         const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
+                                                           const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
+                                                            const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
+                                                                 const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] const ShaderNode *node() const noexcept override { return node_.get(); }
     [[nodiscard]] ShaderNode *node() noexcept override { return node_.get(); }
 };
@@ -153,9 +153,34 @@ class InputNode : public ShaderNode {
 public:
     using ShaderNode::ShaderNode;
     [[nodiscard]] virtual AttrEvalContext apply(const AttrEvalContext &ctx,
+                                                const SampledWavelengths &swl,
                                                 const string &key) const noexcept {
         return ctx;
     }
+};
+
+/**
+ * Root Slot for material or light's attribute
+ */
+class RootSlot : public Slot {
+private:
+    SP<InputNode> input_;
+    string key_;
+
+protected:
+    [[nodiscard]] uint64_t compute_hash() const noexcept override;
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override;
+
+public:
+    using Slot::Slot;
+    [[nodiscard]] float_array evaluate(const AttrEvalContext &ctx,
+                                       const SampledWavelengths &swl) const noexcept override;
+    [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
+                                                   const SampledWavelengths &swl) const noexcept override;
+    [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
+                                                    const SampledWavelengths &swl) const noexcept override;
+    [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
+                                                         const SampledWavelengths &swl) const noexcept override;
 };
 
 }// namespace vision
