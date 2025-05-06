@@ -363,12 +363,12 @@ struct AttrEvalContext {
     Float2 uv;
     optional<float_array> data;
     AttrEvalContext() = default;
-    AttrEvalContext(const Float3 &pos)
-        : pos(pos) {}
+    AttrEvalContext(Float3 pos)
+        : pos(std::move(pos)) {}
     AttrEvalContext(const Interaction &it)
         : pos(it.pos), uv(it.uv) {}
-    AttrEvalContext(const Float2 &uv)
-        : uv(uv) {}
+    AttrEvalContext(Float2 uv)
+        : uv(std::move(uv)) {}
 };
 
 struct MaterialEvalContext : public AttrEvalContext {
