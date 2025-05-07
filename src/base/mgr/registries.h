@@ -44,7 +44,7 @@ private:
 public:
     OC_MAKE_INSTANCE_FUNC_DECL(MaterialRegistry)
     OC_MAKE_MEMBER_GETTER(flatten_lobes, &)
-    string_view UI_title() const noexcept override { return "materials"; }
+    [[nodiscard]] string_view UI_title() const noexcept override { return "materials"; }
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     void precompute_albedo() noexcept;
     [[nodiscard]] bool has_dispersive() const noexcept;
@@ -59,11 +59,16 @@ private:
 
 public:
     OC_MAKE_INSTANCE_FUNC_DECL(MediumRegistry)
-    string_view UI_title() const noexcept override { return "mediums"; }
+    [[nodiscard]] string_view UI_title() const noexcept override { return "mediums"; }
     [[nodiscard]] bool process_mediums() const noexcept;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     OC_MAKE_MEMBER_GETTER(global_medium, &)
     void load_mediums(const MediumsDesc &md) noexcept;
+};
+
+class SensorRegistry : public TRegistry<Sensor> {
+public:
+    [[nodiscard]] string_view UI_title() const noexcept override { return "sensors"; }
 };
 
 }// namespace vision
