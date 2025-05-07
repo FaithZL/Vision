@@ -6,6 +6,7 @@
 
 #include "base/scattering/material.h"
 #include "base/scattering/medium.h"
+#include "base/sensor/sensor.h"
 #include "UI/polymorphic.h"
 #include "hotfix/hotfix.h"
 
