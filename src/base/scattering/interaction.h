@@ -359,9 +359,8 @@ struct LightSampleContext : public SpacePoint {
 };
 
 struct AttrEvalContext {
-    Float3 pos;
     Float2 uv;
-    optional<float_array> data;
+    optional<Float3> pos;
     AttrEvalContext() = default;
     AttrEvalContext(Float3 pos)
         : pos(std::move(pos)) {}
