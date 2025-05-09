@@ -6,9 +6,9 @@
 
 namespace vision {
 
-class TextureCoordinate : public InputNode {
+class TextureCoordinate : public SourceNode {
 public:
-    using InputNode::InputNode;
+    using SourceNode::SourceNode;
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] AttrEvalContext apply(const AttrEvalContext &ctx, const SampledWavelengths &swl,
                                         const string &key) const noexcept override {

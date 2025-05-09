@@ -215,18 +215,18 @@ ShaderNode &ShaderNode::add_to(const std::string &name, vision::ShaderGraph &gra
 }
 
 uint64_t RootSlot::compute_hash() const noexcept {
-    return hash64(Slot::compute_hash(), input_->hash(), key_);
+    return hash64(Slot::compute_hash(), src_node_->hash(), key_);
 }
 
 uint64_t RootSlot::compute_topology_hash() const noexcept {
-    return hash64(Slot::compute_topology_hash(), input_->topology_hash(), key_);
+    return hash64(Slot::compute_topology_hash(), src_node_->topology_hash(), key_);
 }
 
 #define VS_ROOT_SLOT_FUNC_IMPL(Ret, func_name)                              \
     Ret RootSlot::func_name(const AttrEvalContext &ctx,                     \
                             const SampledWavelengths &swl) const noexcept { \
-        if (input_) {                                                       \
-            return Slot::func_name(input_->apply(ctx, swl, key_), swl);     \
+        if (src_node_) {                                                       \
+            return Slot::func_name(src_node_->apply(ctx, swl, key_), swl);     \
         }                                                                   \
         return Slot::func_name(ctx, swl);                                   \
     }

@@ -149,7 +149,7 @@ public:
     [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }
 };
 
-class InputNode : public ShaderNode {
+class SourceNode : public ShaderNode {
 public:
     using ShaderNode::ShaderNode;
     [[nodiscard]] virtual AttrEvalContext apply(const AttrEvalContext &ctx,
@@ -164,7 +164,7 @@ public:
  */
 class RootSlot : public Slot {
 private:
-    SP<InputNode> input_;
+    SP<SourceNode> src_node_;
     string key_;
 
 protected:
