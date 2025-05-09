@@ -49,22 +49,22 @@ uint SlotBase::calculate_mask(string channels) noexcept {
 ///#endregion
 
 ///#region OutputSlot
-OutputSlot::OutputSlot(const vision::Slot &slot)
+OutputSlot::OutputSlot(const vision::InputSlot &slot)
     : SlotBase(static_cast<const SlotBase &>(slot)), node_(slot.node_) {}
 ///#endregion
 
 ///#region Slot
-Slot::Slot(SP<vision::ShaderNode> input, std::string channels, AttrTag attr_tag)
+InputSlot::InputSlot(SP<vision::ShaderNode> input, std::string channels, AttrTag attr_tag)
     : SlotBase(0, std::move(channels), attr_tag), node_(std::move(input)) {
     OC_ASSERT(dim_ <= 4);
 }
 
-Slot Slot::create_slot(const vision::SlotDesc &desc) {
+InputSlot InputSlot::create_slot(const vision::SlotDesc &desc) {
     SP<ShaderNode> shader_node = Node::create_shared<ShaderNode>(desc.node);
-    return Slot(shader_node, desc.channels, desc.attr_tag);
+    return InputSlot(shader_node, desc.channels, desc.attr_tag);
 }
 
-ShaderNode &Slot::set(const vision::Slot &other) noexcept {
+ShaderNode &InputSlot::set(const vision::InputSlot &other) noexcept {
     string old_name = attr_name_;
     *this = other;
     if (other.attr_name_.empty()) {
@@ -73,32 +73,32 @@ ShaderNode &Slot::set(const vision::Slot &other) noexcept {
     return *node_;
 }
 
-void Slot::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
+void InputSlot::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
     if (node_) {
         HotfixSystem::replace_objects(constructor, std::tuple{addressof(node_)});
     }
 }
 
-void Slot::reset_status() noexcept {
+void InputSlot::reset_status() noexcept {
     if (node_) {
         node_->reset_status();
     }
 }
 
-bool Slot::has_changed() noexcept {
+bool InputSlot::has_changed() noexcept {
     if (node_) {
         return node_->has_changed();
     }
     return false;
 }
 
-void Slot::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+void InputSlot::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     if (node_) {
         node_->render_sub_UI(widgets);
     }
 }
 
-bool Slot::render_UI(ocarina::Widgets *widgets) noexcept {
+bool InputSlot::render_UI(ocarina::Widgets *widgets) noexcept {
     if (node_) {
         if (!attr_name_.empty()) {
             node_->set_name(attr_name_);
@@ -108,7 +108,7 @@ bool Slot::render_UI(ocarina::Widgets *widgets) noexcept {
     return false;
 }
 
-DynamicArray<float> Slot::evaluate(const AttrEvalContext &ctx,
+DynamicArray<float> InputSlot::evaluate(const AttrEvalContext &ctx,
                                    const SampledWavelengths &swl) const noexcept {
     switch (dim_) {
         case 1: {
@@ -135,7 +135,7 @@ DynamicArray<float> Slot::evaluate(const AttrEvalContext &ctx,
     return node_->evaluate(ctx, swl);
 }
 
-vector<float> Slot::average() const noexcept {
+vector<float> InputSlot::average() const noexcept {
     switch (dim_) {
         case 1: {
             switch (channel_mask_) {
@@ -162,7 +162,7 @@ vector<float> Slot::average() const noexcept {
     return {};
 }
 
-float Slot::luminance() const noexcept {
+float InputSlot::luminance() const noexcept {
     switch (dim_) {
         case 1: return average()[0];
         case 2:
@@ -177,19 +177,19 @@ float Slot::luminance() const noexcept {
     return 0;
 }
 
-ColorDecode Slot::eval_albedo_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
+ColorDecode InputSlot::eval_albedo_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(dim_ == 3);
     Float3 val = evaluate(ctx, swl).as_vec3();
     return node_->spectrum()->decode_to_albedo(val, swl);
 }
 
-ColorDecode Slot::eval_unbound_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
+ColorDecode InputSlot::eval_unbound_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(dim_ == 3);
     Float3 val = evaluate(ctx, swl).as_vec3();
     return node_->spectrum()->decode_to_unbound_spectrum(val, swl);
 }
 
-ColorDecode Slot::eval_illumination_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
+ColorDecode InputSlot::eval_illumination_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(dim_ == 3);
     Float3 val = evaluate(ctx, swl).as_vec3();
     return node_->spectrum()->decode_to_illumination(val, swl);
@@ -215,20 +215,20 @@ ShaderNode &ShaderNode::add_to(const std::string &name, vision::ShaderGraph &gra
 }
 
 uint64_t RootSlot::compute_hash() const noexcept {
-    return hash64(Slot::compute_hash(), src_node_->hash(), key_);
+    return hash64(InputSlot::compute_hash(), src_node_->hash(), key_);
 }
 
 uint64_t RootSlot::compute_topology_hash() const noexcept {
-    return hash64(Slot::compute_topology_hash(), src_node_->topology_hash(), key_);
+    return hash64(InputSlot::compute_topology_hash(), src_node_->topology_hash(), key_);
 }
 
 #define VS_ROOT_SLOT_FUNC_IMPL(Ret, func_name)                              \
     Ret RootSlot::func_name(const AttrEvalContext &ctx,                     \
                             const SampledWavelengths &swl) const noexcept { \
         if (src_node_) {                                                       \
-            return Slot::func_name(src_node_->apply(ctx, swl, key_), swl);     \
+            return InputSlot::func_name(src_node_->apply(ctx, swl, key_), swl);     \
         }                                                                   \
-        return Slot::func_name(ctx, swl);                                   \
+        return InputSlot::func_name(ctx, swl);                                   \
     }
 
 VS_ROOT_SLOT_FUNC_IMPL(float_array, evaluate)

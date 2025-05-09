@@ -14,7 +14,7 @@ namespace vision {
 
 class ShaderNode;
 class ShaderGraph;
-#define VS_MAKE_SLOT(attr_name) Slot attr_name##_{#attr_name};
+#define VS_MAKE_SLOT(attr_name) InputSlot attr_name##_{#attr_name};
 #define INIT_SLOT(name, default_value, type) \
     name##_.set(graph().construct_slot(desc, #name, default_value, type))
 
@@ -48,16 +48,17 @@ public:
 
 class OutputSlot;
 
-class Slot : public GUI, public Observer, public SlotBase {
+class InputSlot : public GUI, public Observer, public SlotBase {
 protected:
     SP<ShaderNode> node_{};
+    string key_;
     friend class OutputSlot;
 
 public:
-    [[nodiscard]] static Slot create_slot(const SlotDesc &desc);
-    explicit Slot(string attr_name = "") : SlotBase(std::move(attr_name)) {}
-    ShaderNode &set(const Slot &other) noexcept;
-    explicit Slot(SP<ShaderNode> input, string channels, AttrTag attr_tag);
+    [[nodiscard]] static InputSlot create_slot(const SlotDesc &desc);
+    explicit InputSlot(string attr_name = "") : SlotBase(std::move(attr_name)) {}
+    ShaderNode &set(const InputSlot &other) noexcept;
+    explicit InputSlot(SP<ShaderNode> input, string channels, AttrTag attr_tag);
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     void reset_status() noexcept override;
     bool has_changed() noexcept override;
@@ -82,9 +83,10 @@ public:
 class OutputSlot : public SlotBase {
 private:
     weak_ptr<ShaderNode> node_{};
+    string key_;
 
 public:
-    explicit OutputSlot(const Slot &slot);
+    explicit OutputSlot(const InputSlot &slot);
     [[nodiscard]] const ShaderNode *node() const noexcept override { return node_.lock().get(); }
     [[nodiscard]] ShaderNode *node() noexcept override { return node_.lock().get(); }
 };
@@ -102,7 +104,7 @@ public:
     ShaderNode() = default;
     explicit ShaderNode(const ShaderNodeDesc &desc)
         : Node(desc) {}
-    ShaderNode &add_output(const Slot &slot) noexcept {
+    ShaderNode &add_output(const InputSlot &slot) noexcept {
         outputs_.emplace_back(slot);
         return *this;
     }
@@ -162,7 +164,7 @@ public:
 /**
  * Root Slot for material or light's attribute
  */
-class RootSlot : public Slot {
+class RootSlot : public InputSlot {
 private:
     SP<SourceNode> src_node_;
     string key_;
@@ -172,7 +174,7 @@ protected:
     [[nodiscard]] uint64_t compute_topology_hash() const noexcept override;
 
 public:
-    using Slot::Slot;
+    using InputSlot::InputSlot;
     [[nodiscard]] float_array evaluate(const AttrEvalContext &ctx,
                                        const SampledWavelengths &swl) const noexcept override;
     [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,

@@ -40,8 +40,8 @@ public:
     MultiplyNode() = default;
     explicit MultiplyNode(const ShaderNodeDesc &desc)
         : ShaderNode(desc) {
-        lhs_.set(Slot::create_slot(*desc.slot("lhs")));
-        rhs_.set(Slot::create_slot(*desc.slot("rhs")));
+        lhs_.set(InputSlot::create_slot(*desc.slot("lhs")));
+        rhs_.set(InputSlot::create_slot(*desc.slot("rhs")));
     }
 
     OC_ENCODABLE_FUNC(ShaderNode, lhs_, rhs_)

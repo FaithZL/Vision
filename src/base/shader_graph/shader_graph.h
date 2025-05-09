@@ -20,7 +20,7 @@ public:
     void clear() noexcept;
     void init_node_map(const map<string, ShaderNodeDesc> &tab) noexcept;
     template<typename T>
-    [[nodiscard]] Slot construct_slot(const MaterialDesc &desc, const string &attr_name,
+    [[nodiscard]] InputSlot construct_slot(const MaterialDesc &desc, const string &attr_name,
                                       T val, AttrTag tag) noexcept;
     [[nodiscard]] ShaderGraph &graph() noexcept { return *this; }
     [[nodiscard]] SP<ShaderNode> get_node(const string &name) const noexcept {

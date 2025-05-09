@@ -28,7 +28,7 @@ public:
         VS_CAST_DESC
         mat0_->initialize_(*desc.mat0);
         mat1_->initialize_(*desc.mat1);
-        frac_.set(Slot::create_slot(desc.slot("frac", 0.5f, Number)));
+        frac_.set(InputSlot::create_slot(desc.slot("frac", 0.5f, Number)));
         init_slot_cursor(addressof(frac_), 1);
     }
 

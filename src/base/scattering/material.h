@@ -111,21 +111,21 @@ protected:
     vector<weak_ptr<ShapeInstance>> shape_instances;
 
 protected:
-    static constexpr uint stride = sizeof(Slot);
+    static constexpr uint stride = sizeof(InputSlot);
     struct SlotCursor {
         // The offset of the first slot in the object
         uint offset{0u};
         uint num{0u};
     };
     SlotCursor slot_cursor_;
-    const Slot &get_slot(uint index) const noexcept {
-        const Slot *head = reinterpret_cast<const Slot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
+    const InputSlot &get_slot(uint index) const noexcept {
+        const InputSlot *head = reinterpret_cast<const InputSlot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
         return head[index];
     }
 
-    Slot &get_slot(uint index) noexcept {
-        const Slot *head = reinterpret_cast<const Slot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
-        return (const_cast<Slot *>(head))[index];
+    InputSlot &get_slot(uint index) noexcept {
+        const InputSlot *head = reinterpret_cast<const InputSlot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
+        return (const_cast<InputSlot *>(head))[index];
     }
     static TSampler &get_sampler() noexcept;
 
@@ -181,12 +181,12 @@ public:
     [[nodiscard]] virtual bool is_dispersive() const noexcept { return false; }
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
-    void init_slot_cursor(const Slot *ptr, uint num) noexcept {
+    void init_slot_cursor(const InputSlot *ptr, uint num) noexcept {
         uint offset = reinterpret_cast<const char *>(ptr) - reinterpret_cast<char *>(this);
         slot_cursor_.offset = offset;
         slot_cursor_.num = num;
     }
-    void init_slot_cursor(const Slot *head, const Slot *back) noexcept {
+    void init_slot_cursor(const InputSlot *head, const InputSlot *back) noexcept {
         uint offset = reinterpret_cast<const char *>(head) - reinterpret_cast<char *>(this);
         slot_cursor_.offset = offset;
         slot_cursor_.num = (back - head) + 1;
@@ -204,7 +204,7 @@ public:
             ret = func(ret, bump_scale_);
         }
         for (int i = 0; i < slot_cursor_.num; ++i) {
-            const Slot &slot = get_slot(i);
+            const InputSlot &slot = get_slot(i);
             if (slot) {
                 ret = func(ret, slot);
             }
@@ -222,7 +222,7 @@ public:
             ret = func(ret, bump_scale_);
         }
         for (int i = 0; i < slot_cursor_.num; ++i) {
-            Slot &slot = get_slot(i);
+            InputSlot &slot = get_slot(i);
             if (slot) {
                 ret = func(ret, slot);
             }
@@ -239,7 +239,7 @@ public:
             func(bump_scale_);
         }
         for (int i = 0; i < slot_cursor_.num; ++i) {
-            const Slot &slot = get_slot(i);
+            const InputSlot &slot = get_slot(i);
             if (slot) {
                 func(slot);
             }
@@ -255,7 +255,7 @@ public:
             func(bump_scale_);
         }
         for (int i = 0; i < slot_cursor_.num; ++i) {
-            Slot &slot = get_slot(i);
+            InputSlot &slot = get_slot(i);
             if (slot) {
                 func(slot);
             }

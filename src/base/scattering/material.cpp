@@ -155,8 +155,8 @@ uint Material::exp_of_two_ = 10;
 
 Material::Material(const vision::MaterialDesc &desc) : Node(desc) {
     if (desc.has_attr("bump")) {
-        bump_.set(Slot::create_slot(desc.slot("bump", 1.f, Number)));
-        bump_scale_.set(Slot::create_slot(desc.slot("bump_scale", 1.f, Number)));
+        bump_.set(InputSlot::create_slot(desc.slot("bump", 1.f, Number)));
+        bump_scale_.set(InputSlot::create_slot(desc.slot("bump_scale", 1.f, Number)));
     }
 }
 
@@ -176,7 +176,7 @@ bool Material::render_UI(ocarina::Widgets *widgets) noexcept {
 
 void Material::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     widgets->drag_uint("exp of 2", addressof(exp_of_two_), 1, 1, 20);
-    for_each_slot([&](Slot &slot) {
+    for_each_slot([&](InputSlot &slot) {
         slot.render_UI(widgets);
     });
 }
@@ -190,8 +190,8 @@ void Material::restore(vision::RuntimeObject *old_obj) noexcept {
     Node::restore(old_obj);
     VS_HOTFIX_MOVE_ATTRS(index_, slot_cursor_, bump_, bump_scale_)
     for (int i = 0; i < slot_cursor_.num; ++i) {
-        Slot &slot = get_slot(i);
-        Slot &old_slot = old_obj_->get_slot(i);
+        InputSlot &slot = get_slot(i);
+        InputSlot &old_slot = old_obj_->get_slot(i);
         slot = ocarina::move(old_slot);
     }
     for (const auto &item : old_obj_->shape_instances) {
@@ -203,55 +203,55 @@ void Material::restore(vision::RuntimeObject *old_obj) noexcept {
 
 ///#region encodable
 uint Material::compacted_size() const noexcept {
-    return reduce_slots(0u, [&](uint size, const Slot &slot) {
+    return reduce_slots(0u, [&](uint size, const InputSlot &slot) {
         return size + slot->compacted_size();
     });
 }
 
 uint Material::cal_offset(ocarina::uint prev_size) const noexcept {
-    return reduce_slots(prev_size, [&](uint size, const Slot &slot) {
+    return reduce_slots(prev_size, [&](uint size, const InputSlot &slot) {
         return slot->cal_offset(size);
     });
 }
 
 uint Material::alignment() const noexcept {
-    return reduce_slots(0u, [&](uint align, const Slot &slot) {
+    return reduce_slots(0u, [&](uint align, const InputSlot &slot) {
         return ocarina::max(align, slot->alignment());
     });
 }
 
 bool Material::has_device_value() const noexcept {
-    return reduce_slots(true, [&](bool b, const Slot &slot) {
+    return reduce_slots(true, [&](bool b, const InputSlot &slot) {
         return b && slot->has_device_value();
     });
 }
 
 void Material::invalidate() const noexcept {
-    for_each_slot([&](const Slot &slot) {
+    for_each_slot([&](const InputSlot &slot) {
         slot->invalidate();
     });
 }
 
 void Material::after_decode() const noexcept {
-    for_each_slot([&](const Slot &slot) {
+    for_each_slot([&](const InputSlot &slot) {
         slot->after_decode();
     });
 }
 
 void Material::encode(RegistrableManaged<buffer_ty> &data) const noexcept {
-    for_each_slot([&](const Slot &slot) {
+    for_each_slot([&](const InputSlot &slot) {
         slot->encode(data);
     });
 }
 
 void Material::decode(const DataAccessor *da) const noexcept {
-    for_each_slot([&](const Slot &slot) {
+    for_each_slot([&](const InputSlot &slot) {
         slot->decode(da);
     });
 }
 
 void Material::decode(const DynamicArray<ocarina::buffer_ty> &array) const noexcept {
-    for_each_slot([&](const Slot &slot) {
+    for_each_slot([&](const InputSlot &slot) {
         slot->decode(array);
     });
 }
@@ -259,14 +259,14 @@ void Material::decode(const DynamicArray<ocarina::buffer_ty> &array) const noexc
 ///#endregion
 
 void Material::reset_status() noexcept {
-    for_each_slot([&](Slot &slot) {
+    for_each_slot([&](InputSlot &slot) {
         slot.reset_status();
     });
     Node::reset_status();
 }
 
 bool Material::has_changed() noexcept {
-    return Node::has_changed() || reduce_slots(false, [&](bool b, Slot &slot) {
+    return Node::has_changed() || reduce_slots(false, [&](bool b, InputSlot &slot) {
                return b || slot->has_changed();
            });
 }
@@ -280,7 +280,7 @@ namespace detail {
     return normalize(w_refl_clip + w);
 }
 
-void compute_by_normal_map(const Slot &normal_map, const Slot &scale,
+void compute_by_normal_map(const InputSlot &normal_map, const InputSlot &scale,
                            Interaction *it,
                            const SampledWavelengths &swl) noexcept {
     Float3 normal = normal_map.evaluate(*it, swl).as_vec3() * 2.f - make_float3(1.f);
@@ -294,7 +294,7 @@ void compute_by_normal_map(const Slot &normal_map, const Slot &scale,
     it->shading.update(world_normal);
 }
 
-void compute_by_bump_map(const Slot &bump_map, const Slot &scale,
+void compute_by_bump_map(const InputSlot &bump_map, const InputSlot &scale,
                          Interaction *it,
                          const SampledWavelengths &swl) noexcept {
     static constexpr float d = 0.0005f;
@@ -418,7 +418,7 @@ vector<PrecomputedLobeTable> Material::precompute() const noexcept {
 
 uint64_t Material::compute_topology_hash() const noexcept {
     uint64_t ret = Hash64::default_seed;
-    reduce_slots(ret, [&](uint64_t hash, const Slot &slot) {
+    reduce_slots(ret, [&](uint64_t hash, const InputSlot &slot) {
         return hash64(hash, slot.topology_hash());
     });
     return ret;
@@ -426,7 +426,7 @@ uint64_t Material::compute_topology_hash() const noexcept {
 
 uint64_t Material::compute_hash() const noexcept {
     uint64_t ret = Hash64::default_seed;
-    reduce_slots(ret, [&](uint64_t hash, const Slot &slot) {
+    reduce_slots(ret, [&](uint64_t hash, const InputSlot &slot) {
         return hash64(hash, slot.hash());
     });
     return ret;
