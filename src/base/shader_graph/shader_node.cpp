@@ -48,8 +48,8 @@ uint SlotBase::calculate_mask(string channels) noexcept {
 }
 ///#endregion
 
-///#region SlotWeakRef
-SlotWeakRef::SlotWeakRef(const vision::Slot &slot)
+///#region OutputSlot
+OutputSlot::OutputSlot(const vision::Slot &slot)
     : SlotBase(static_cast<const SlotBase &>(slot)), node_(slot.node_) {}
 ///#endregion
 

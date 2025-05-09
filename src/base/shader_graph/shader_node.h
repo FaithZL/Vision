@@ -46,12 +46,12 @@ public:
     [[nodiscard]] ShaderNode *operator->() noexcept { return node(); }
 };
 
-class SlotWeakRef;
+class OutputSlot;
 
 class Slot : public GUI, public Observer, public SlotBase {
 protected:
     SP<ShaderNode> node_{};
-    friend class SlotWeakRef;
+    friend class OutputSlot;
 
 public:
     [[nodiscard]] static Slot create_slot(const SlotDesc &desc);
@@ -79,19 +79,19 @@ public:
     [[nodiscard]] ShaderNode *node() noexcept override { return node_.get(); }
 };
 
-class SlotWeakRef : public SlotBase {
+class OutputSlot : public SlotBase {
 private:
     weak_ptr<ShaderNode> node_{};
 
 public:
-    explicit SlotWeakRef(const Slot &slot);
+    explicit OutputSlot(const Slot &slot);
     [[nodiscard]] const ShaderNode *node() const noexcept override { return node_.lock().get(); }
     [[nodiscard]] ShaderNode *node() noexcept override { return node_.lock().get(); }
 };
 
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
 protected:
-    vector<SlotWeakRef> outputs_{};
+    vector<OutputSlot> outputs_{};
     weak_ptr<ShaderGraph> graph_;
 
 public:
