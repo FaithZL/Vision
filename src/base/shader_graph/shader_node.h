@@ -134,6 +134,12 @@ public:
         return {};
     }
 
+    [[nodiscard]] virtual float_array output(const string &key, const AttrEvalContext &ctx,
+                                             const SampledWavelengths &swl) const noexcept {
+        OC_ERROR("call error");
+        return {};
+    }
+
     ///#region for NumberArray
     virtual ShaderNode &set_range(float lower, float upper) noexcept { return *this; }
     virtual ShaderNode &update_value(vector<float> values) noexcept { return *this; }

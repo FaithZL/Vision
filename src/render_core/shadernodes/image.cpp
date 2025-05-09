@@ -58,10 +58,17 @@ public:
         return true;
     }
 
+    [[nodiscard]] float_array output(const string &key, const AttrEvalContext &ctx,
+                                     const SampledWavelengths &swl) const noexcept override {
+        return {};
+    }
+
+    [[nodiscard]] uint channel_num() const noexcept { return texture_->host_tex().channel_num(); }
+
     [[nodiscard]] float_array evaluate(const AttrEvalContext &ctx,
                                        const SampledWavelengths &swl) const noexcept override {
         if (!cache_) {
-            float_array value = pipeline()->tex_var(*tex_id_).sample(texture_->host_tex().channel_num(), ctx.uv);
+            float_array value = pipeline()->tex_var(*tex_id_).sample(channel_num(), ctx.uv);
             cache_.emplace(value);
         }
         return *cache_;
