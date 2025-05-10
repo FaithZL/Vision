@@ -342,9 +342,10 @@ struct LightEvalContext : public GeometrySurfacePoint {
     using GeometrySurfacePoint::GeometrySurfacePoint;
     LightEvalContext() = default;
     LightEvalContext(const GeometrySurfacePoint &gsp, Float PDF_pos)
-        : GeometrySurfacePoint(gsp), PDF_pos(PDF_pos) {}
+        : GeometrySurfacePoint(gsp), PDF_pos(std::move(PDF_pos)) {}
     LightEvalContext(Float3 p, Float3 ng, Float2 uv, Float PDF_pos)
-        : GeometrySurfacePoint{p, ng, uv}, PDF_pos(PDF_pos) {}
+        : GeometrySurfacePoint{std::move(p), std::move(ng), std::move(uv)},
+          PDF_pos(std::move(PDF_pos)) {}
     LightEvalContext(const Interaction &it)
         : GeometrySurfacePoint{it, it.uv}, PDF_pos(1.f / it.prim_area) {}
 };
@@ -355,7 +356,8 @@ struct LightSampleContext : public SpacePoint {
     LightSampleContext(const Interaction &it)
         : SpacePoint(it), ns(it.shading.normal()) {}
     LightSampleContext(Float3 p, Float3 ng, Float3 ns)
-        : SpacePoint{p, ng}, ns(ns) {}
+        : SpacePoint{std::move(p), std::move(ng)},
+          ns(std::move(ns)) {}
 };
 
 struct AttrEvalContext {
