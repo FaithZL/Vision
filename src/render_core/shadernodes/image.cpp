@@ -58,8 +58,9 @@ public:
         return true;
     }
 
-    [[nodiscard]] float_array output(const string &key, const AttrEvalContext &ctx,
-                                     const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] float_array evaluate(const string &key, const AttrEvalContext &ctx,
+                                       const SampledWavelengths &swl) const noexcept override {
+        
         return {};
     }
 

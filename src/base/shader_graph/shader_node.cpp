@@ -109,7 +109,7 @@ bool InputSlot::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 DynamicArray<float> InputSlot::evaluate(const AttrEvalContext &ctx,
-                                   const SampledWavelengths &swl) const noexcept {
+                                        const SampledWavelengths &swl) const noexcept {
     switch (dim_) {
         case 1: {
             switch (channel_mask_) {
@@ -222,13 +222,13 @@ uint64_t RootSlot::compute_topology_hash() const noexcept {
     return hash64(InputSlot::compute_topology_hash(), src_node_->topology_hash(), key_);
 }
 
-#define VS_ROOT_SLOT_FUNC_IMPL(Ret, func_name)                              \
-    Ret RootSlot::func_name(const AttrEvalContext &ctx,                     \
-                            const SampledWavelengths &swl) const noexcept { \
-        if (src_node_) {                                                       \
-            return InputSlot::func_name(src_node_->apply(ctx, swl, key_), swl);     \
-        }                                                                   \
-        return InputSlot::func_name(ctx, swl);                                   \
+#define VS_ROOT_SLOT_FUNC_IMPL(Ret, func_name)                                  \
+    Ret RootSlot::func_name(const AttrEvalContext &ctx,                         \
+                            const SampledWavelengths &swl) const noexcept {     \
+        if (src_node_) {                                                        \
+            return InputSlot::func_name(src_node_->apply(ctx, swl, key_), swl); \
+        }                                                                       \
+        return InputSlot::func_name(ctx, swl);                                  \
     }
 
 VS_ROOT_SLOT_FUNC_IMPL(float_array, evaluate)
