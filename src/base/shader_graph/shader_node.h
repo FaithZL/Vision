@@ -51,7 +51,7 @@ class OutputSlot;
 class InputSlot : public GUI, public Observer, public SlotBase {
 protected:
     SP<ShaderNode> node_{};
-    string key_;
+    string node_key_;
     friend class OutputSlot;
 
 public:
@@ -172,7 +172,7 @@ public:
 class RootSlot : public InputSlot {
 private:
     SP<SourceNode> src_node_;
-    string key_;
+    string src_key_;
 
 protected:
     [[nodiscard]] uint64_t compute_hash() const noexcept override;

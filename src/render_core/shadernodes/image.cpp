@@ -68,10 +68,8 @@ public:
             return value.w();
         } else if (key == "Color") {
             return value.xyz();
-        } else {
-            OC_ERROR("key is invalid");
         }
-        return {};
+        return value;
     }
 
     [[nodiscard]] uint channel_num() const noexcept { return texture_->host_tex().channel_num(); }

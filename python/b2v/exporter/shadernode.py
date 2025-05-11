@@ -28,7 +28,7 @@ def parse_image_node(exporter, link, dim, node_tab):
     elif fs.name == "Alpha":
         channels = "w" if dim == 1 else "www"
         
-    key = str(link.from_node)
+    node_name = str(link.from_node)
     
     val = {
             "type": "image",
@@ -40,10 +40,12 @@ def parse_image_node(exporter, link, dim, node_tab):
         
     ret = {
         "channels": channels,
-        "node": key,
+        "output_key" : fs.name, 
+        "node": node_name,
     }
-    if not (key in node_tab):
-        node_tab[key] = val
+    
+    if not (node_name in node_tab):
+        node_tab[node_name] = val
     return ret
 
 
