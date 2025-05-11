@@ -60,7 +60,17 @@ public:
 
     [[nodiscard]] float_array evaluate(const string &key, const AttrEvalContext &ctx,
                                        const SampledWavelengths &swl) const noexcept override {
-        
+        float_array value = evaluate(ctx, swl);
+        if (key == "Alpha") {
+            if (channel_num() < 4) {
+                return float_array::create(0);
+            }
+            return value.w();
+        } else if (key == "Color") {
+            return value.xyz();
+        } else {
+            OC_ERROR("key is invalid");
+        }
         return {};
     }
 
