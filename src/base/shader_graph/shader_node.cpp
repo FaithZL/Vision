@@ -110,6 +110,9 @@ bool InputSlot::render_UI(ocarina::Widgets *widgets) noexcept {
 
 DynamicArray<float> InputSlot::evaluate(const AttrEvalContext &ctx,
                                         const SampledWavelengths &swl) const noexcept {
+    if (!node_key_.empty()) {
+        return node_->evaluate(node_key_, ctx, swl);
+    }
     switch (dim_) {
         case 1: {
             switch (channel_mask_) {

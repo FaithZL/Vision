@@ -147,8 +147,7 @@ public:
     }
     [[nodiscard]] virtual float_array evaluate(const string &key, const AttrEvalContext &ctx,
                                                const SampledWavelengths &swl) const noexcept {
-        OC_ERROR("call error");
-        return {};
+        return evaluate(ctx, swl);
     }
     virtual void for_each_pixel(const function<Image::foreach_signature> &func) const noexcept {
         OC_ERROR("call error");
