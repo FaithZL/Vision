@@ -185,6 +185,7 @@ public:
         return "";
     }
     string channels;
+    string output_key;
     AttrTag attr_tag{};
     ShaderNodeDesc node;
     [[nodiscard]] uint dim() const noexcept { return channels.size(); }

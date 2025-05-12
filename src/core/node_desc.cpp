@@ -129,6 +129,7 @@ void SlotDesc::init(const ParameterSet &ps) noexcept {
     if (data.contains("channels")) {
         channels = ps["channels"].as_string();
         node.init(ps["node"]);
+        output_key = ps.value("output_key").as_string();
     } else {
         node.init(ps);
     }

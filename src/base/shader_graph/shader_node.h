@@ -51,7 +51,7 @@ class OutputSlot;
 class InputSlot : public GUI, public Observer, public SlotBase {
 protected:
     SP<ShaderNode> node_{};
-    string node_key_;
+    string output_key_;
     friend class OutputSlot;
 
 public:
