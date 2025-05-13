@@ -141,14 +141,21 @@ protected:
 public:
     using Observer::Observer;
     OC_MAKE_MEMBER_GETTER_SETTER(element, &)
+
+    [[nodiscard]] virtual bool custom(T &new_obj, T &old_obj) noexcept {
+        return true;
+    }
+
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override {
         if (!element_->match(constructor)) {
             T new_obj = constructor->construct_shared<raw_type>();
-            new_obj->restore(element_->get());
             if constexpr (std::derived_from<T, Observer>) {
                 HotfixSystem::instance().defer_delete(element_);
             }
-            element_ = std::move(new_obj);
+            if (custom(new_obj, element_)) {
+                new_obj->restore(element_->get());
+                element_ = std::move(new_obj);
+            }
         }
     }
 };
