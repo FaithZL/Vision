@@ -58,7 +58,7 @@ public:
     [[nodiscard]] static InputSlot create_slot(const SlotDesc &desc);
     explicit InputSlot(string attr_name = "") : SlotBase(std::move(attr_name)) {}
     ShaderNode &set(const InputSlot &other) noexcept;
-    explicit InputSlot(SP<ShaderNode> input, string channels, AttrTag attr_tag, string key = "");
+    explicit InputSlot(SP<ShaderNode> input, string channels, AttrTag attr_tag, string key);
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     void reset_status() noexcept override;
     bool has_changed() noexcept override;
