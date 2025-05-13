@@ -222,14 +222,14 @@ public:
     }
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         return widgets->use_folding_header(Super::impl()->category().data(), [&] {
-            //            auto names = extract_name_list();
-            //            for (int i = 0; i < names.size(); ++i) {
-            //                if (Super::impl()->plugin_name() + ".dll" == names[i]) {
-            //                    current_item_ = i;
-            //                    break;
-            //                }
-            //            }
-            //            widgets->combo(Super::impl()->category().data(), &current_item_, names);
+            auto names = extract_name_list();
+            for (int i = 0; i < names.size(); ++i) {
+                if (Super::impl()->plugin_name() + ".dll" == names[i]) {
+                    current_item_ = i;
+                    break;
+                }
+            }
+            widgets->combo("item", &current_item_, names);
             Super::impl()->render_UI(widgets);
         });
     }
