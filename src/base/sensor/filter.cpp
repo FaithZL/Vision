@@ -34,7 +34,7 @@ bool Filter::render_UI(ocarina::Widgets *widgets) noexcept {
         ocarina::format("{} filter", impl_type().data()),
         [&] {
             float2 &r = radius_.hv();
-            changed_ |= widgets->drag_float("radius", addressof(r.x), 0.1,0.f,10);
+            changed_ |= widgets->drag_float("radius", addressof(r.x), 0.1, 0.001f, 10);
             r.y = r.x;
             render_sub_UI(widgets);
         });
