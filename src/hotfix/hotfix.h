@@ -127,4 +127,29 @@ public:
     static void destroy_instance() noexcept;
 };
 
+template<typename T>
+requires is_ptr_v<T>
+class HotfixSlot : public Observer {
+public:
+    using ptr_type = ptr_t<T>;
+    using raw_type = std::remove_pointer<ptr_type>;
+    static_assert(std::derived_from<raw_type, RuntimeObject>);
+
+protected:
+    T element_;
+
+public:
+    using Observer::Observer;
+    OC_MAKE_MEMBER_GETTER_SETTER(element, &)
+    void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override {
+        if (!element_->match(constructor)) {
+            T new_obj = constructor->construct_shared<raw_type>();
+            new_obj->restore(element_->get());
+            if constexpr (std::derived_from<T, Observer>) {
+                HotfixSystem::instance().defer_delete(element_);
+            }
+            element_ = std::move(new_obj);
+        }
+    }
+};
 }// namespace vision::inline hotfix
