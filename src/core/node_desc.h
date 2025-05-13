@@ -191,7 +191,7 @@ public:
     [[nodiscard]] uint dim() const noexcept { return channels.size(); }
     VISION_DESC_COMMON(Slot)
     SlotDesc(ShaderNodeDesc node, uint dim, AttrTag tag)
-        : node(node), channels(default_channels(dim)),
+        : node(std::move(node)), channels(default_channels(dim)),
           attr_tag(tag) {}
 
     SlotDesc(AttrTag tag, uint dim)

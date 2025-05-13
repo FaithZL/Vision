@@ -54,14 +54,16 @@ OutputSlot::OutputSlot(const vision::InputSlot &slot)
 ///#endregion
 
 ///#region Slot
-InputSlot::InputSlot(SP<vision::ShaderNode> input, std::string channels, AttrTag attr_tag)
-    : SlotBase(0, std::move(channels), attr_tag), node_(std::move(input)) {
+InputSlot::InputSlot(SP<vision::ShaderNode> input, std::string channels, AttrTag attr_tag, string key)
+    : SlotBase(0, std::move(channels), attr_tag),
+      node_(std::move(input)),
+      output_key_(std::move(key)) {
     OC_ASSERT(dim_ <= 4);
 }
 
 InputSlot InputSlot::create_slot(const vision::SlotDesc &desc) {
     SP<ShaderNode> shader_node = Node::create_shared<ShaderNode>(desc.node);
-    return InputSlot(shader_node, desc.channels, desc.attr_tag);
+    return InputSlot(shader_node, desc.channels, desc.attr_tag, desc.output_key);
 }
 
 ShaderNode &InputSlot::set(const vision::InputSlot &other) noexcept {

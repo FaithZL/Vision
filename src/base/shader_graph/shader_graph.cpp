@@ -37,7 +37,7 @@ template<typename T>
     InputSlot slot;
     if (data.contains("node") && data["node"].is_string()) {
         SP<ShaderNode> shader_node = get_node(data["node"]);
-        slot = InputSlot(shader_node, data["channels"], tag);
+        slot = InputSlot(shader_node, data["channels"], tag, ps.value("output_key").as_string());
     } else {
         SlotDesc slot_desc = desc.slot(attr_name, val, tag);
         slot = InputSlot::create_slot(slot_desc);
