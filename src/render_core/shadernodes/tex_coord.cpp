@@ -6,14 +6,17 @@
 
 namespace vision {
 
-class TextureCoordinate : public SourceNode {
+class TextureCoordinate : public ShaderNode {
 public:
-    using SourceNode::SourceNode;
+    using ShaderNode::ShaderNode;
     VS_MAKE_PLUGIN_NAME_FUNC
-    [[nodiscard]] AttrEvalContext apply(const AttrEvalContext &ctx, const SampledWavelengths &swl,
-                                        const string &key) const noexcept override {
 
-        return ctx;
+    [[nodiscard]] float_array evaluate(const string &key, const AttrEvalContext &ctx,
+                                       const SampledWavelengths &swl) const noexcept override {
+        if (key == "UV") {
+            return float_array::create(ctx.uv);
+        }
+        return {};
     }
 };
 

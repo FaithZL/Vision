@@ -155,38 +155,4 @@ public:
     [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }
 };
 
-class SourceNode : public ShaderNode {
-public:
-    using ShaderNode::ShaderNode;
-    [[nodiscard]] virtual AttrEvalContext apply(const AttrEvalContext &ctx,
-                                                const SampledWavelengths &swl,
-                                                const string &key) const noexcept {
-        return ctx;
-    }
-};
-
-/**
- * Root Slot for material or light's attribute
- */
-class RootSlot : public InputSlot {
-private:
-    SP<SourceNode> src_node_;
-    string src_key_;
-
-protected:
-    [[nodiscard]] uint64_t compute_hash() const noexcept override;
-    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override;
-
-public:
-    using InputSlot::InputSlot;
-    [[nodiscard]] float_array evaluate(const AttrEvalContext &ctx,
-                                       const SampledWavelengths &swl) const noexcept override;
-    [[nodiscard]] ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
-                                                   const SampledWavelengths &swl) const noexcept override;
-    [[nodiscard]] ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
-                                                    const SampledWavelengths &swl) const noexcept override;
-    [[nodiscard]] ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
-                                                         const SampledWavelengths &swl) const noexcept override;
-};
-
 }// namespace vision

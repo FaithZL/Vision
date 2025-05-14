@@ -219,28 +219,4 @@ ShaderNode &ShaderNode::add_to(const std::string &name, vision::ShaderGraph &gra
     return *this;
 }
 
-uint64_t RootSlot::compute_hash() const noexcept {
-    return hash64(InputSlot::compute_hash(), src_node_->hash(), src_key_);
-}
-
-uint64_t RootSlot::compute_topology_hash() const noexcept {
-    return hash64(InputSlot::compute_topology_hash(), src_node_->topology_hash(), src_key_);
-}
-
-#define VS_ROOT_SLOT_FUNC_IMPL(Ret, func_name)                                  \
-    Ret RootSlot::func_name(const AttrEvalContext &ctx,                         \
-                            const SampledWavelengths &swl) const noexcept {     \
-        if (src_node_) {                                                        \
-            return InputSlot::func_name(src_node_->apply(ctx, swl, src_key_), swl); \
-        }                                                                       \
-        return InputSlot::func_name(ctx, swl);                                  \
-    }
-
-VS_ROOT_SLOT_FUNC_IMPL(float_array, evaluate)
-VS_ROOT_SLOT_FUNC_IMPL(ColorDecode, eval_albedo_spectrum)
-VS_ROOT_SLOT_FUNC_IMPL(ColorDecode, eval_unbound_spectrum)
-VS_ROOT_SLOT_FUNC_IMPL(ColorDecode, eval_illumination_spectrum)
-
-#undef VS_ROOT_SLOT_FUNC_IMPL
-
 }// namespace vision
