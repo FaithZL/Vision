@@ -29,7 +29,6 @@ class RuntimeObject : public RTTI {
 public:
     RuntimeObject() = default;
     virtual void restore(RuntimeObject *old_obj) noexcept {
-
     }
     virtual ~RuntimeObject() = default;
 };
@@ -68,6 +67,22 @@ public:
     }
     [[nodiscard]] virtual string_view class_name() const = 0;
     virtual ~IObjectConstructor() = default;
+};
+
+template<typename T>
+class TSlot {
+protected:
+    T impl_;
+
+public:
+    OC_MAKE_MEMBER_GETTER(impl, &)
+    [[nodiscard]] operator bool() const noexcept { return impl().get() != nullptr; }
+    [[nodiscard]] auto get() const noexcept { return impl_.get(); }
+    [[nodiscard]] auto get() noexcept { return impl_.get(); }
+    [[nodiscard]] auto operator->() const noexcept { return impl_.get(); }
+    [[nodiscard]] auto operator->() noexcept { return impl_.get(); }
+    [[nodiscard]] decltype(auto) operator*() const noexcept { return *impl_.get(); }
+    [[nodiscard]] decltype(auto) operator*() noexcept { return *impl_.get(); }
 };
 
 template<typename T>

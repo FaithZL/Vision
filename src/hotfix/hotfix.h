@@ -129,32 +129,28 @@ public:
 
 template<typename T>
 requires is_ptr_v<T>
-class HotfixSlot : public Observer {
+class HotfixSlot : public TSlot<T>, public Observer {
 public:
     using ptr_type = ptr_t<T>;
     using raw_type = std::remove_pointer<ptr_type>;
     static_assert(std::derived_from<raw_type, RuntimeObject>);
 
-protected:
-    T element_;
-
 public:
     using Observer::Observer;
-    OC_MAKE_MEMBER_GETTER_SETTER(element, &)
 
     [[nodiscard]] virtual bool custom(T &new_obj, T &old_obj) noexcept {
         return true;
     }
 
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override {
-        if (!element_->match(constructor)) {
+        if (!TSlot<T>::impl_->match(constructor)) {
             T new_obj = constructor->construct_shared<raw_type>();
             if constexpr (std::derived_from<T, Observer>) {
-                HotfixSystem::instance().defer_delete(element_);
+                HotfixSystem::instance().defer_delete(TSlot<T>::impl_);
             }
-            if (custom(new_obj, element_)) {
-                new_obj->restore(element_->get());
-                element_ = std::move(new_obj);
+            if (custom(new_obj, TSlot<T>::impl_)) {
+                new_obj->restore(TSlot<T>::impl_.get());
+                TSlot<T>::impl_ = std::move(new_obj);
             }
         }
     }
