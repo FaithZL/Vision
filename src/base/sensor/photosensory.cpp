@@ -35,7 +35,7 @@ Photosensory::Photosensory(const SensorDesc &desc)
 
 void Photosensory::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
     std::tuple tp = {addressof(filter_.impl()),
-        addressof(film_)};
+                     addressof(film_.impl())};
     HotfixSystem::replace_objects(constructor, tp);
 }
 

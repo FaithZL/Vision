@@ -132,7 +132,7 @@ requires is_ptr_v<T>
 class HotfixSlot : public TSlot<T>, public Observer {
 public:
     using ptr_type = ptr_t<T>;
-    using raw_type = std::remove_pointer<ptr_type>;
+    using raw_type = std::remove_pointer_t<ptr_type>;
     static_assert(std::derived_from<raw_type, RuntimeObject>);
 
 public:
