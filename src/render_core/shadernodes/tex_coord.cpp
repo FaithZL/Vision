@@ -3,6 +3,7 @@
 //
 
 #include "base/shader_graph/shader_node.h"
+#include "base/mgr/scene.h"
 
 namespace vision {
 
@@ -13,10 +14,21 @@ public:
 
     [[nodiscard]] float_array evaluate(const string &key, const AttrEvalContext &ctx,
                                        const SampledWavelengths &swl) const noexcept override {
+        Float2 uv;
         if (key == "UV") {
-            return float_array::create(ctx.uv);
+            uv = ctx.uv;
+        } else if (key == "Camera") {
+            TSensor sensor = scene().sensor();
+            uv = sensor->device_position().xy();
+        } else if (key == "Object") {
+            uv = ctx.pos->xy();
+        } else if (key == "Window") {
+            uv = make_float2(dispatch_idx().xy()) / dispatch_dim().xy();
+        } else {
+            OC_WARNING_FORMAT("{} is unknown, fallback to uv", key.c_str());
+            uv = ctx.uv;
         }
-        return {};
+        return float_array::from_vec(uv);
     }
 };
 
