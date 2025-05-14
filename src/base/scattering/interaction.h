@@ -370,7 +370,7 @@ struct AttrEvalContext {
         : pos(it.pos), uv(it.uv) {}
     AttrEvalContext(Float2 uv)
         : uv(std::move(uv)) {}
-    AttrEvalContext(const float_array f_array)
+    AttrEvalContext(const float_array &f_array)
         : uv{f_array.as_vec2()} {
         if (f_array.size() == 5) {
             pos.emplace(f_array.sub(2, 3).as_vec3());
