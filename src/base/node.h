@@ -132,47 +132,37 @@ SP<impl_t> Node::create_shared(const Desc &desc) {
     VS_MAKE_PLUGIN_CATEGORY
 
 template<typename impl_t, typename desc_t = typename impl_t::Desc>
-class TObject {
+class TObject : public TSlot<SP<impl_t>> {
 public:
     using Impl = impl_t;
     using Desc = desc_t;
-
-protected:
-    SP<Impl> impl_;
+    using Super = TSlot<SP<impl_t>>;
 
 public:
     string name;
     TObject() = default;
-    TObject(SP<Impl> sp) : impl_(ocarina::move(sp)) {}
-    explicit TObject(const desc_t &desc) : impl_(Node::create_shared<Impl>(desc)) {}
-    void init(const desc_t &desc) noexcept { impl_ = Node::create_shared<Impl>(desc); }
-    void init(SP<Impl> sp) { impl_ = ocarina::move(sp); }
+    TObject(SP<Impl> sp) : Super(ocarina::move(sp)) {}
+    explicit TObject(const desc_t &desc) : Super(Node::create_shared<Impl>(desc)) {}
+    void init(const desc_t &desc) noexcept { Super::impl_ = Node::create_shared<Impl>(desc); }
+    void init(SP<Impl> sp) { Super::impl_ = ocarina::move(sp); }
 
     template<class U>
     requires std::is_base_of_v<Impl, U>
     TObject(const TObject<U, Desc> &other) {
-        impl_ = other.impl();
+        Super::impl_ = other.impl();
         name = other.name;
     }
 
     template<class U>
     requires std::is_base_of_v<Impl, U>
     TObject &operator=(const TObject<U, Desc> &other) {
-        impl_ = other.impl();
+        Super::impl_ = other.impl();
         name = other.name;
         return *this;
     }
 
-    OC_MAKE_MEMBER_GETTER(impl, &)
-    [[nodiscard]] operator bool() const noexcept { return impl_.get() != nullptr; }
-    [[nodiscard]] const Impl *get() const noexcept { return impl_.get(); }
-    [[nodiscard]] Impl *get() noexcept { return impl_.get(); }
-    [[nodiscard]] const Impl *operator->() const noexcept { return impl_.get(); }
-    [[nodiscard]] Impl *operator->() noexcept { return impl_.get(); }
-    [[nodiscard]] const Impl &operator*() const noexcept { return *impl_.get(); }
-    [[nodiscard]] Impl &operator*() noexcept { return *impl_.get(); }
     template<typename... Args>
-    void reset(Args &&...args) noexcept { impl_.reset(OC_FORWARD(args)...); }
+    void reset(Args &&...args) noexcept { Super::impl_.reset(OC_FORWARD(args)...); }
 };
 
 template<typename To, typename From, typename Desc>

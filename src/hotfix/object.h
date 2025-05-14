@@ -76,6 +76,8 @@ protected:
 
 public:
     OC_MAKE_MEMBER_GETTER(impl, &)
+    TSlot() = default;
+    TSlot(T impl) : impl_(std::move(impl)) {}
     [[nodiscard]] operator bool() const noexcept { return impl().get() != nullptr; }
     [[nodiscard]] auto get() const noexcept { return impl_.get(); }
     [[nodiscard]] auto get() noexcept { return impl_.get(); }
