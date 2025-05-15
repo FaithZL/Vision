@@ -206,7 +206,7 @@ class StructType:
         for name, type_ in self.member_dict.items():
             setattr(self, name, type_())
             member_desc += "," + desc(type_())
-        return f"struct<{self.alignment},false,false" + member_desc + ">"
+        return f"struct<PyStruct,{self.alignment},false,false" + member_desc + ">"
     
     def __call__(self):
         Type = self
