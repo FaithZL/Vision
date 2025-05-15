@@ -53,21 +53,13 @@ int main(int argc, char *argv[]) {
     Env::printer().init(device);
     uint count = 1;
     Kernel kernel = [&](Uint _) {
-        auto arr = DynamicArray<float>{count};
-//        auto arr = SampledSpectrum{count};;
-//        Float a = 0;
-//        RayVar r;
-        outline("principled transmission", [&] {
-            rcp(arr);
+        outline("principled diffuse2-----",[&] {
+            float_array ccc{3u};
+            outline("principled diffuse2", [&] {
+                Float a = ccc[1];
+            });
 
         });
-//        $outline {
-//            rcp(arr);
-//
-////            arr.map([&](uint i, const Float& elm) {
-////                return arr[i] + elm;
-////            });
-//        };
     };
     auto shader = device.compile(kernel);
     stream << shader(1u).dispatch(1) << Env::printer().retrieve()<< synchronize() << commit();
