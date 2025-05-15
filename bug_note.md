@@ -15,3 +15,7 @@ ocarina中有一个bug是由于CallExpr中arguments的结构为vector，pushback
 之前元素的地址失效，就导致了function corrector中的无效指针的问题
 
 ocarina中function corrector第二个问题，主要是由于处理subscript expr时，漏了处理range
+
+2025.5.15
+1.subscript expr处理时，range传入的时候通过range()传入，并没有吧range_指针的引用传入，导致无法修改range_
+2.subscript_expr处理时只需要处理其index以及range即可，不需要对subscript_expr本身进行处理，如果处理了，会产生多余的参数替换，导致需要函数遍历多次才能完成校正

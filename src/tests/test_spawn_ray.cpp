@@ -53,10 +53,18 @@ int main(int argc, char *argv[]) {
     Env::printer().init(device);
     uint count = 1;
     Kernel kernel = [&](Uint _) {
-        outline("principled diffuse2-----",[&] {
-            float_array ccc{3u};
-            outline("principled diffuse2", [&] {
-                Float a = ccc[1];
+        outline("a",[&] {
+            float_array ccc{123u};
+//            ccc[122] = 256;
+            outline("b", [&] {
+                Uint i = 122;
+                Float a = ccc[i];
+////                $info("a = {} ---------", a);
+////                outline("c", [&] {
+////                    Uint i = 122;
+////                    Float a = ccc[i];
+////                    $info("a = {} ", a);
+////                });
             });
 
         });
