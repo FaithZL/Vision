@@ -61,21 +61,19 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIS
     SampledSpectrum f{swl.dimension()};
     TSampler &sampler = scene().sampler();
     if (!bsdf) {
-        outline([&] {
+        outline("ReSTIRDI::Li from bsdf", [&] {
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 MaterialEvaluator bsdf = material->create_evaluator(it, swl);
                 if (flag) { *flag = bsdf.flag(); }
                 swl.check_dispersive(spectrum, bsdf);
                 *bs = bsdf.sample(it.wo, sampler);
             });
-        },
-                "ReSTIRDI::Li from bsdf");
+        });
     } else {
-        outline([&] {
+        outline("ReSTIRDI::Li from bsdf", [&] {
             *bs = bsdf->sample(it.wo, sampler);
             if (flag) { *flag = bsdf->flag(); }
-        },
-                "ReSTIRDI::Li from bsdf");
+        });
     }
     RayVar ray = it.spawn_ray(bs->wi);
     TriangleHitVar hit = geometry.trace_closest(ray);
@@ -100,7 +98,7 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, DIS
             lsp.bary = hit.bary;
             (*sample)->set_lsp(lsp);
             (*sample)->set_pos(next_it.robust_position(it.pos - next_it.pos));
-            bs->eval.pdfs =le.pdf;
+            bs->eval.pdfs = le.pdf;
             f = bs->eval.f * le.L;
         };
     }
@@ -134,21 +132,19 @@ SampledSpectrum ReSTIRDI::Li(const Interaction &it, MaterialEvaluator *bsdf, con
     Float3 wi = normalize(ls.p_light - it.pos);
     ScatterEval eval{swl.dimension(), 1};
     if (!bsdf) {
-        outline([&] {
+        outline("ReSTIRDI::Li from light", [&] {
             scene().materials().dispatch(it.material_id(), [&](const Material *material) {
                 MaterialEvaluator bsdf = material->create_evaluator(it, swl);
                 swl.check_dispersive(spectrum, bsdf);
                 eval = bsdf.evaluate(it.wo, wi);
             });
             f = eval.f * ls.eval.L;
-        },
-                "ReSTIRDI::Li from light");
+        });
     } else {
-        outline([&] {
+        outline("ReSTIRDI::Li from light", [&] {
             eval = bsdf->evaluate(it.wo, wi);
             f = eval.f * ls.eval.L;
-        },
-                "ReSTIRDI::Li from light");
+        });
     }
 
     if (bsdf_pdf_point) {

@@ -185,21 +185,21 @@ Float GGXMicrofacet::bsdf_D(Float3 wh) const noexcept {
     auto func = [&] {
         return microfacet::bsdf_D<D>(wh, alpha_x_, alpha_y_, type);
     };
-    return outline(func, "GGXMicrofacet::D");
+    return outline("GGXMicrofacet::D", func);
 }
 
 Float3 GGXMicrofacet::sample_wh(const Float3 &wo, const Float2 &u) const noexcept {
     auto func = [&] {
         return microfacet::sample_wh<D>(wo, u, alpha_x_, alpha_y_, sample_visible_, type);
     };
-    return outline(func, "GGXMicrofacet::sample_wh");
+    return outline("GGXMicrofacet::sample_wh", func);
 }
 Float GGXMicrofacet::PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept {
     auto func = [&] {
         return microfacet::PDF_wh<D>(wo, wh, alpha_x_, alpha_y_,
                                      sample_visible_, type);
     };
-    return outline(func, "GGXMicrofacet::PDF_wh");
+    return outline("GGXMicrofacet::PDF_wh", func);
 }
 
 Float GGXMicrofacet::PDF_wi_reflection(const Float &pdf_wh, const Float3 &wo,
@@ -207,7 +207,7 @@ Float GGXMicrofacet::PDF_wi_reflection(const Float &pdf_wh, const Float3 &wo,
     auto func = [&] {
         return microfacet::PDF_wi_reflection<D>(pdf_wh, wo, wh);
     };
-    return outline(func, "GGXMicrofacet::PDF_wi_reflection");
+    return outline("GGXMicrofacet::PDF_wi_reflection", func);
 }
 
 Float GGXMicrofacet::PDF_wi_reflection(const Float3 &wo, const Float3 &wh) const noexcept {
@@ -219,7 +219,7 @@ Float GGXMicrofacet::PDF_wi_transmission(const Float &pdf_wh, const Float3 &wo, 
     auto func = [&] {
         return microfacet::PDF_wi_transmission<D>(pdf_wh, wo, wh, wi, eta);
     };
-    return outline(func, "GGXMicrofacet::PDF_wi_transmission");
+    return outline("GGXMicrofacet::PDF_wi_transmission", func);
 }
 
 Float GGXMicrofacet::PDF_wi_transmission(const Float3 &wo, const Float3 &wh,
@@ -232,7 +232,7 @@ GGXMicrofacet::TSpectrum GGXMicrofacet::BRDF(const Float3 &wo, const Float3 &wh,
     auto func = [&] {
         return microfacet::BRDF_div_fr<D>(wo, wh, wi, alpha_x_, alpha_y_, type);
     };
-    return outline(func, "GGXMicrofacet::BRDF_div_fr") * Fr;
+    return outline("GGXMicrofacet::BRDF_div_fr", func) * Fr;
 }
 
 GGXMicrofacet::TSpectrum GGXMicrofacet::BRDF(const Float3 &wo, const Float3 &wi,
@@ -247,7 +247,7 @@ GGXMicrofacet::TSpectrum GGXMicrofacet::BTDF(const Float3 &wo, const Float3 &wh,
     auto func = [&] {
         return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type, tm);
     };
-    return outline(func, "GGXMicrofacet::BTDF_div_ft") * Ft;
+    return outline("GGXMicrofacet::BTDF_div_ft", func) * Ft;
 }
 
 Float GGXMicrofacet::BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
@@ -256,7 +256,7 @@ Float GGXMicrofacet::BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
     auto func = [&] {
         return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type, tm);
     };
-    return outline(func, "GGXMicrofacet::BTDF_div_ft") * Ft;
+    return outline("GGXMicrofacet::BTDF_div_ft", func) * Ft;
 }
 
 GGXMicrofacet::TSpectrum GGXMicrofacet::BTDF(const Float3 &wo, const Float3 &wi,
@@ -270,21 +270,21 @@ Float BeckmannMicrofacet::bsdf_D(Float3 wh) const noexcept {
     auto func = [&] {
         return microfacet::bsdf_D<D>(wh, alpha_x_, alpha_y_, type);
     };
-    return outline(func, "BeckmannMicrofacet::D");
+    return outline("BeckmannMicrofacet::D", func);
 }
 
 Float3 BeckmannMicrofacet::sample_wh(const Float3 &wo, const Float2 &u) const noexcept {
     auto func = [&] {
         return microfacet::sample_wh<D>(wo, u, alpha_x_, alpha_y_, sample_visible_, type);
     };
-    return outline(func, "BeckmannMicrofacet::sample_wh");
+    return outline("BeckmannMicrofacet::sample_wh", func);
 }
 Float BeckmannMicrofacet::PDF_wh(const Float3 &wo, const Float3 &wh) const noexcept {
     auto func = [&] {
         return microfacet::PDF_wh<D>(wo, wh, alpha_x_, alpha_y_,
                                      sample_visible_, type);
     };
-    return outline(func, "BeckmannMicrofacet::PDF_wh");
+    return outline("BeckmannMicrofacet::PDF_wh", func);
 }
 
 Float BeckmannMicrofacet::PDF_wi_reflection(const Float &pdf_wh, const Float3 &wo,
@@ -292,7 +292,7 @@ Float BeckmannMicrofacet::PDF_wi_reflection(const Float &pdf_wh, const Float3 &w
     auto func = [&] {
         return microfacet::PDF_wi_reflection<D>(pdf_wh, wo, wh);
     };
-    return outline(func, "BeckmannMicrofacet::PDF_wi_reflection");
+    return outline("BeckmannMicrofacet::PDF_wi_reflection", func);
 }
 
 Float BeckmannMicrofacet::PDF_wi_reflection(const Float3 &wo, const Float3 &wh) const noexcept {
@@ -304,7 +304,7 @@ Float BeckmannMicrofacet::PDF_wi_transmission(const Float &pdf_wh, const Float3 
     auto func = [&] {
         return microfacet::PDF_wi_transmission<D>(pdf_wh, wo, wh, wi, eta);
     };
-    return outline(func, "BeckmannMicrofacet::PDF_wi_transmission");
+    return outline("BeckmannMicrofacet::PDF_wi_transmission", func);
 }
 
 Float BeckmannMicrofacet::PDF_wi_transmission(const Float3 &wo, const Float3 &wh,
@@ -317,7 +317,7 @@ BeckmannMicrofacet::TSpectrum BeckmannMicrofacet::BRDF(const Float3 &wo, const F
     auto func = [&] {
         return microfacet::BRDF_div_fr<D>(wo, wh, wi, alpha_x_, alpha_y_, type);
     };
-    return outline(func, "BeckmannMicrofacet::BRDF_div_fr") * Fr;
+    return outline("BeckmannMicrofacet::BRDF_div_fr", func) * Fr;
 }
 
 BeckmannMicrofacet::TSpectrum BeckmannMicrofacet::BRDF(const Float3 &wo, const Float3 &wi,
@@ -332,7 +332,7 @@ BeckmannMicrofacet::TSpectrum BeckmannMicrofacet::BTDF(const Float3 &wo, const F
     auto func = [&] {
         return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type, tm);
     };
-    return outline(func, "BeckmannMicrofacet::BTDF_div_ft") * Ft;
+    return outline("BeckmannMicrofacet::BTDF_div_ft", func) * Ft;
 }
 
 Float BeckmannMicrofacet::BTDF(const Float3 &wo, const Float3 &wh, const Float3 &wi,
@@ -341,7 +341,7 @@ Float BeckmannMicrofacet::BTDF(const Float3 &wo, const Float3 &wh, const Float3 
     auto func = [&] {
         return microfacet::BTDF_div_ft<D>(wo, wh, wi, eta, alpha_x_, alpha_y_, type, tm);
     };
-    return outline(func, "BeckmannMicrofacet::BTDF_div_ft") * Ft;
+    return outline("BeckmannMicrofacet::BTDF_div_ft", func) * Ft;
 }
 
 BeckmannMicrofacet::TSpectrum BeckmannMicrofacet::BTDF(const Float3 &wo, const Float3 &wi,
