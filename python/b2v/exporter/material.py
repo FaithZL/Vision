@@ -87,7 +87,18 @@ def export_mirror(exporter, bsdf):
 
 
 def export_mix(exporter, bsdf):
-    ret = {"type": "mix"}
+    node_tab = {}
+    node0 = bsdf.inputs[0].links[0].from_node
+    node1 = bsdf.inputs[1].links[0].from_node
+    node2 = bsdf.inputs[2].links[0].from_node
+    ret = {
+        "type": "mix",
+        "param" :{
+            "frac" : {},
+            "mat0" : {},
+            "mat1" : {},
+        }
+    }
     return ret
 
 
