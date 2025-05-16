@@ -27,23 +27,25 @@ def parse_image_node(exporter, link, dim, node_tab):
         channels = "xyz" if dim == 3 else "x"
     elif fs.name == "Alpha":
         channels = "w" if dim == 1 else "www"
-        
-    node_name = str(link.from_node)
-    
+
+    node_name = str(from_node)
+    # print(from_node.inputs["Vector"])
+    # print(from_node.inputs["Vector"].links[0].from_node.type)
+
     val = {
-            "type": "image",
-            "param": {
-                "fn": r_path,
-                "color_space": color_space,
-            },
-        }
-        
+        "type": "image",
+        "param": {
+            "fn": r_path,
+            "color_space": color_space,
+        },
+    }
+
     ret = {
         "channels": channels,
-        "output_key" : fs.name, 
+        "output_key": fs.name,
         "node": node_name,
     }
-    
+
     if not (node_name in node_tab):
         node_tab[node_name] = val
     return ret
@@ -57,11 +59,20 @@ def parse_add(exporter, link, dim, node_tab):
     pass
 
 
+def parse_tex_coord(exporter, link, dim, node_tab):
+    from_node = link.from_node
+    ret = {
+        "type" : "tex_coord",
+    }
+    return ret
+
+
 func_dict = {
     "TEX_IMAGE": parse_image_node,
     "TEX_ENVIRONMENT": parse_image_node,
     "MIX_SHADER": parse_mix,
     "ADD_SHADER": parse_add,
+    "TEX_COORD": parse_tex_coord,
 }
 
 
