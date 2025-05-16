@@ -139,7 +139,7 @@ public:
     HotfixSlot() : Observer() {}
     HotfixSlot(T arg) : TSlot<T>(std::move(arg)), Observer() {}
 
-    [[nodiscard]] virtual bool custom_replace(T &new_obj, T &old_obj) noexcept {
+    [[nodiscard]] virtual bool auto_replace(T &new_obj, T &old_obj) noexcept {
         return true;
     }
 
@@ -149,7 +149,7 @@ public:
             if constexpr (std::derived_from<T, Observer>) {
                 HotfixSystem::instance().defer_delete(TSlot<T>::impl_);
             }
-            if (custom_replace(new_obj, TSlot<T>::impl_)) {
+            if (auto_replace(new_obj, TSlot<T>::impl_)) {
                 new_obj->restore(TSlot<T>::impl_.get());
                 TSlot<T>::impl_ = std::move(new_obj);
             }
