@@ -33,7 +33,7 @@ public:
 
 protected:
     TFilter filter_{};
-    TSlot<SP<Film>> film_{};
+    HotfixSlot<SP<Film>> film_{};
     EncodedData<uint> medium_id_{InvalidUI32};
 
 public:

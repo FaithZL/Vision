@@ -136,14 +136,15 @@ public:
     static_assert(std::derived_from<raw_type, RuntimeObject>);
 
 public:
-    using Observer::Observer;
+    HotfixSlot() : Observer() {}
+    HotfixSlot(T arg) : TSlot<T>(std::move(arg)), Observer() {}
 
-    [[nodiscard]] virtual bool custom(T &new_obj, T &old_obj) noexcept {
+    [[nodiscard]] virtual bool custom_replace(T &new_obj, T &old_obj) noexcept {
         return true;
     }
 
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override {
-        if (!TSlot<T>::impl_->match(constructor)) {
+        if (constructor->match(TSlot<T>::impl_.get())) {
             T new_obj = constructor->construct_shared<raw_type>();
             if constexpr (std::derived_from<T, Observer>) {
                 HotfixSystem::instance().defer_delete(TSlot<T>::impl_);
