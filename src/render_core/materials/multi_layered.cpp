@@ -15,14 +15,14 @@ private:
 
 private:
     EncodedData<float> factor_{float_min};
-    InputSlot thickness_;
+    ShaderNodeSlot thickness_;
     SP<Material> bottom_{};
     SP<Material> top_{};
 
 public:
     explicit MultiLayeredMaterial(const MaterialDesc &desc)
         : Material(desc),
-          thickness_(InputSlot::create_slot(desc.slot("thickness_", 1.f, Number))),
+          thickness_(ShaderNodeSlot::create_slot(desc.slot("thickness_", 1.f, Number))),
           bottom_(Node::create_shared<Material>(*desc.mat0)),
           top_(Node::create_shared<Material>(*desc.mat1)) {}
     VS_MAKE_PLUGIN_NAME_FUNC

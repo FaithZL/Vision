@@ -227,7 +227,7 @@ public:
             float ior = (*ior_curve(name))(lambda);
             eta_slot = desc.slot("", ior);
         }
-        ior_ = InputSlot::create_slot(eta_slot);
+        ior_ = ShaderNodeSlot::create_slot(eta_slot);
         ior_->set_range(DielectricLobe::ior_lower, DielectricLobe::ior_upper);
         ior_->set_name("ior");
     }

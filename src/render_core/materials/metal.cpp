@@ -125,8 +125,8 @@ public:
             k_slot = desc.slot("", k);
         }
 
-        eta_.set(InputSlot::create_slot(eta_slot));
-        k_.set(InputSlot::create_slot(k_slot));
+        eta_.set(ShaderNodeSlot::create_slot(eta_slot));
+        k_.set(ShaderNodeSlot::create_slot(k_slot));
     }
 
     void prepare() noexcept override {

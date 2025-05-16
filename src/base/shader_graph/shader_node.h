@@ -14,7 +14,7 @@ namespace vision {
 
 class ShaderNode;
 class ShaderGraph;
-#define VS_MAKE_SLOT(attr_name) InputSlot attr_name##_{#attr_name};
+#define VS_MAKE_SLOT(attr_name) ShaderNodeSlot attr_name##_{#attr_name};
 #define INIT_SLOT(name, default_value, type) \
     name##_.set(graph().construct_slot(desc, #name, default_value, type))
 
@@ -46,19 +46,16 @@ public:
     [[nodiscard]] ShaderNode *operator->() noexcept { return node(); }
 };
 
-class OutputSlot;
-
-class InputSlot : public GUI, public Observer, public SlotBase {
+class ShaderNodeSlot : public GUI, public Observer, public SlotBase {
 protected:
     SP<ShaderNode> node_{};
     string output_key_;
-    friend class OutputSlot;
 
 public:
-    [[nodiscard]] static InputSlot create_slot(const SlotDesc &desc);
-    explicit InputSlot(string attr_name = "") : SlotBase(std::move(attr_name)) {}
-    ShaderNode &set(const InputSlot &other) noexcept;
-    explicit InputSlot(SP<ShaderNode> input, string channels, AttrTag attr_tag, string key);
+    [[nodiscard]] static ShaderNodeSlot create_slot(const SlotDesc &desc);
+    explicit ShaderNodeSlot(string attr_name = "") : SlotBase(std::move(attr_name)) {}
+    ShaderNode &set(const ShaderNodeSlot &other) noexcept;
+    explicit ShaderNodeSlot(SP<ShaderNode> input, string channels, AttrTag attr_tag, string key);
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     void reset_status() noexcept override;
     bool has_changed() noexcept override;
@@ -80,20 +77,8 @@ public:
     [[nodiscard]] ShaderNode *node() noexcept override { return node_.get(); }
 };
 
-class OutputSlot : public SlotBase {
-private:
-    weak_ptr<ShaderNode> node_{};
-    string key_;
-
-public:
-    explicit OutputSlot(const InputSlot &slot);
-    [[nodiscard]] const ShaderNode *node() const noexcept override { return node_.lock().get(); }
-    [[nodiscard]] ShaderNode *node() noexcept override { return node_.lock().get(); }
-};
-
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
 protected:
-    vector<OutputSlot> outputs_{};
     weak_ptr<ShaderGraph> graph_;
 
 public:
@@ -104,11 +89,7 @@ public:
     ShaderNode() = default;
     explicit ShaderNode(const ShaderNodeDesc &desc)
         : Node(desc) {}
-    ShaderNode &add_output(const InputSlot &slot) noexcept {
-        outputs_.emplace_back(slot);
-        return *this;
-    }
-    VS_HOTFIX_MAKE_RESTORE(Node, outputs_, graph_)
+    VS_HOTFIX_MAKE_RESTORE(Node, graph_)
     virtual bool render_UI_by_tag(Widgets *widgets, AttrTag attr_tag) noexcept {
         return render_UI(widgets);
     }

@@ -28,7 +28,7 @@ public:
         VS_CAST_DESC
         mat0_->initialize_(*desc.mat0);
         mat1_->initialize_(*desc.mat1);
-        frac_.set(InputSlot::create_slot(desc.slot("frac", 0.5f, Number)));
+        frac_.set(ShaderNodeSlot::create_slot(desc.slot("frac", 0.5f, Number)));
         init_slot_cursor(addressof(frac_), 1);
     }
 
@@ -63,7 +63,7 @@ public:
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         Float frac = frac_.evaluate(it, swl)[0];
         return LobeSet::create_mix(frac, mat0_->create_lobe_set(it, swl),
-                                    mat1_->create_lobe_set(it, swl));
+                                   mat1_->create_lobe_set(it, swl));
     }
 };
 

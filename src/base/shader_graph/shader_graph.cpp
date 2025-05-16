@@ -29,27 +29,27 @@ void ShaderGraph::init_node_map(const map<string, ShaderNodeDesc> &tab) noexcept
 }
 
 template<typename T>
-[[nodiscard]] InputSlot ShaderGraph::construct_slot(const MaterialDesc &desc, const string &attr_name,
-                                                    T val, AttrTag tag) noexcept {
+[[nodiscard]] ShaderNodeSlot ShaderGraph::construct_slot(const MaterialDesc &desc, const string &attr_name,
+                                                         T val, AttrTag tag) noexcept {
     ParameterSet ps = desc.value(attr_name);
     DataWrap data = ps.data();
     string str = to_string(data);
-    InputSlot slot;
+    ShaderNodeSlot slot;
     if (data.contains("node") && data["node"].is_string()) {
         SP<ShaderNode> shader_node = get_node(data["node"]);
-        slot = InputSlot(shader_node, data["channels"],
-                         tag, ps.value("output_key").as_string());
+        slot = ShaderNodeSlot(shader_node, data["channels"],
+                              tag, ps.value("output_key").as_string());
     } else {
         SlotDesc slot_desc = desc.slot(attr_name, val, tag);
-        slot = InputSlot::create_slot(slot_desc);
+        slot = ShaderNodeSlot::create_slot(slot_desc);
     }
     slot->set_graph(shared_from_this());
     return slot;
 }
 
-#define VS_INSTANCE_CONSTRUCT_SLOT(type)                                                                    \
-    template InputSlot ShaderGraph::construct_slot<type>(const MaterialDesc &desc, const string &attr_name, \
-                                                         type val, AttrTag tag) noexcept;
+#define VS_INSTANCE_CONSTRUCT_SLOT(type)                                                                         \
+    template ShaderNodeSlot ShaderGraph::construct_slot<type>(const MaterialDesc &desc, const string &attr_name, \
+                                                              type val, AttrTag tag) noexcept;
 
 VS_INSTANCE_CONSTRUCT_SLOT(float)
 VS_INSTANCE_CONSTRUCT_SLOT(float2)

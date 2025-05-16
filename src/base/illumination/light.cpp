@@ -10,8 +10,8 @@ namespace vision {
 Light::Light(const LightDesc &desc, LightType light_type)
     : Node(desc), type_(light_type),
       scale_(desc["scale"].as_float(1.f)) {
-    strength_.set(InputSlot::create_slot(desc.strength));
-    color_.set(InputSlot::create_slot(desc.color));
+    strength_.set(ShaderNodeSlot::create_slot(desc.strength));
+    color_.set(ShaderNodeSlot::create_slot(desc.color));
     float factor = color_->normalize();
     scale_ = scale_.hv() * factor;
 }
