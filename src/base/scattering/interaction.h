@@ -363,6 +363,10 @@ struct LightSampleContext : public SpacePoint {
 struct AttrEvalContext {
     Float2 uv;
     optional<Float3> pos;
+    optional<Float3> wo;
+    optional<Float3> ng;
+    optional<Float3> ns;
+    optional<Float3> dp_dus;
     AttrEvalContext() = default;
     AttrEvalContext(Float3 pos)
         : pos(std::move(pos)) {}
@@ -376,19 +380,23 @@ struct AttrEvalContext {
             pos.emplace(f_array.sub(2, 3).as_vec3());
         }
     }
-};
 
-struct MaterialEvalContext : public AttrEvalContext {
-    Float3 wo;
-    Float3 ng, ns;
-    Float3 dp_dus;
-    MaterialEvalContext() = default;
-    MaterialEvalContext(const Interaction &it)
-        : AttrEvalContext(it),
-          wo(it.wo),
-          ng(it.ng),
-          ns(it.shading.normal()),
-          dp_dus(it.shading.dp_du()) {}
+    [[nodiscard]] uint float_num() const noexcept {
+        return 2 + (pos ? 3: 0);
+    }
+
+    [[nodiscard]] float_array to_array() const noexcept {
+        float_array ret{float_num()};
+        ret[0] = uv.x;
+        ret[1] = uv.y;
+        uint cursor = 1;
+        if (pos) {
+            ret[++cursor] = pos->x;
+            ret[++cursor] = pos->y;
+            ret[++cursor] = pos->z;
+        }
+        return ret;
+    }
 };
 
 }// namespace vision

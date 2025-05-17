@@ -107,6 +107,9 @@ bool ShaderNodeSlot::render_UI(ocarina::Widgets *widgets) noexcept {
 
 DynamicArray<float> ShaderNodeSlot::evaluate(const AttrEvalContext &ctx,
                                              const SampledWavelengths &swl) const noexcept {
+    if (!node_) {
+        return ctx.to_array();
+    }
     if (!output_key_.empty()) {
         return node_->evaluate(output_key_, ctx, swl);
     }
