@@ -165,16 +165,6 @@ void GraphDesc::init_node_map(const vision::ParameterSet &ps) noexcept {
     }
 }
 
-void MaterialDesc::init_node_map(const vision::ParameterSet &ps) noexcept {
-    auto data = ps.data();
-    for (const auto& [key, value] : data.items()) {
-        ShaderNodeDesc snd;
-        snd.init(value);
-        auto str = to_string(value);
-        node_map.insert(make_pair(key, snd));
-    }
-}
-
 void MaterialDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     init_node_map(ps.value("node_tab"));
@@ -188,10 +178,6 @@ void MaterialDesc::init(const ParameterSet &ps) noexcept {
     } else {
         set_parameter(ps["param"]);
     }
-}
-
-uint64_t MaterialDesc::compute_hash() const noexcept {
-    return hash64(NodeDesc::compute_hash(), parameter_string());
 }
 
 void MediumDesc::init(const ParameterSet &ps) noexcept {

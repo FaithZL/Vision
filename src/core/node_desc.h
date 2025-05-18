@@ -339,6 +339,9 @@ public:
 
 struct GraphDesc : public NodeDesc {
 public:
+    using NodeDesc::NodeDesc;
+
+public:
     std::map<std::string, ShaderNodeDesc> node_map;
     void init_node_map(const ParameterSet &ps) noexcept;
     void init(const ParameterSet &ps) noexcept override;
@@ -363,37 +366,16 @@ public:
     }
 };
 
-struct MaterialDesc : public NodeDesc {
+struct MaterialDesc : public GraphDesc {
 public:
-    std::map<std::string, ShaderNodeDesc> node_map;
     SP<MaterialDesc> mat0;
     SP<MaterialDesc> mat1;
 
 public:
-    VISION_DESC_COMMON(Material)
-    void init_node_map(const ParameterSet &ps) noexcept;
+    MaterialDesc() : GraphDesc("Material") {}
+    explicit MaterialDesc(string name) : GraphDesc("Material", std::move(name)) {}
+    //    VISION_DESC_COMMON(Material)
     void init(const ParameterSet &ps) noexcept override;
-    [[nodiscard]] uint64_t compute_hash() const noexcept override;
-
-    template<typename T>
-    [[nodiscard]] SlotDesc slot(const string &key, T default_value,
-                                AttrTag tag = AttrTag::Number) const noexcept {
-        ShaderNodeDesc node{default_value, tag};
-        SlotDesc slot_desc{node, type_dimension_v<T>, tag};
-        slot_desc.init(parameter_[key]);
-        slot_desc.node.name = key;
-        return slot_desc;
-    }
-
-    [[nodiscard]] SlotDesc slot(const string &key, const DataWrap &data,
-                                AttrTag tag = AttrTag::Number) const noexcept {
-        ShaderNodeDesc node{data, tag};
-        node.name = key;
-        uint size = data.is_number() ? 1 : data.size();
-        SlotDesc slot_desc{node, size, tag};
-        slot_desc.init(parameter_[key]);
-        return slot_desc;
-    }
 };
 
 struct LightSamplerDesc : public NodeDesc {
