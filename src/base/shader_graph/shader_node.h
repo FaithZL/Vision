@@ -134,24 +134,24 @@ public:
     [[nodiscard]] const ShaderNode *node() const noexcept override { return node_.get(); }
     [[nodiscard]] ShaderNode *node() noexcept override { return node_.get(); }
 
-#define VS_MAKE_ENCODABLE_FUNC(func_name)                         \
-    template<typename... Args>                                    \
-    decltype(auto) func_name(Args &&...args) const noexcept {     \
-        if (node_) {                                              \
-            return node_->func_name(OC_FORWARD(args)...);         \
-        }                                                         \
-        return decltype(node_->func_name(OC_FORWARD(args)...))(); \
+#define VS_MAKE_ENCODABLE_FUNC(RetType, func_name, custom_stmt) \
+    template<typename... Args>                                  \
+    RetType func_name(Args &&...args) const noexcept {          \
+        if (node_) {                                            \
+            return node_->func_name(OC_FORWARD(args)...);       \
+        }                                                       \
+        custom_stmt;                                            \
     }
 
-    VS_MAKE_ENCODABLE_FUNC(compacted_size)
-    VS_MAKE_ENCODABLE_FUNC(encode)
-    VS_MAKE_ENCODABLE_FUNC(update)
-    VS_MAKE_ENCODABLE_FUNC(decode)
-    VS_MAKE_ENCODABLE_FUNC(invalidate)
-    VS_MAKE_ENCODABLE_FUNC(after_decode)
-    VS_MAKE_ENCODABLE_FUNC(has_device_value)
-    VS_MAKE_ENCODABLE_FUNC(cal_offset)
-    VS_MAKE_ENCODABLE_FUNC(alignment)
+    VS_MAKE_ENCODABLE_FUNC(decltype(auto), compacted_size, return 0u)
+    VS_MAKE_ENCODABLE_FUNC(decltype(auto), encode, )
+    VS_MAKE_ENCODABLE_FUNC(decltype(auto), update, )
+    VS_MAKE_ENCODABLE_FUNC(decltype(auto), decode, )
+    VS_MAKE_ENCODABLE_FUNC(decltype(auto), invalidate, )
+    VS_MAKE_ENCODABLE_FUNC(decltype(auto), after_decode, )
+    VS_MAKE_ENCODABLE_FUNC(decltype(auto), has_device_value, return true)
+    VS_MAKE_ENCODABLE_FUNC(uint, cal_offset, return std::get<0>(std::tuple{OC_FORWARD(args)...}))
+    VS_MAKE_ENCODABLE_FUNC(decltype(auto), alignment, return 0u)
 #undef VS_MAKE_ENCODABLE_FUNC
 };
 

@@ -13,10 +13,10 @@ using namespace ocarina;
 
 class ImageNode : public ShaderNode {
 private:
+    VS_MAKE_SLOT(vector);
     RegistrableTexture *texture_{};
     EncodedData<uint> tex_id_{};
     ShaderNodeDesc desc_;
-    VS_MAKE_SLOT(vector);
     mutable optional<float_array> cache_;
 
 public:
@@ -27,9 +27,9 @@ public:
           texture_(&Global::instance().pipeline()->image_pool().obtain_texture(desc)) {
         tex_id_ = texture_->index();
     }
-    OC_ENCODABLE_FUNC(ShaderNode, tex_id_)
+    OC_ENCODABLE_FUNC(ShaderNode, vector_, tex_id_)
     VS_MAKE_PLUGIN_NAME_FUNC
-    VS_HOTFIX_MAKE_RESTORE(ShaderNode, texture_, tex_id_, desc_)
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, vector_, texture_, tex_id_, desc_)
 
     void reload(ocarina::Widgets *widgets) noexcept {
         fs::path path = texture_->host_tex().path();
