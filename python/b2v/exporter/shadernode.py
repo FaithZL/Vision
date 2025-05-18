@@ -29,13 +29,15 @@ def parse_image_node(exporter, link, dim, node_tab):
         channels = "w" if dim == 1 else "www"
 
     node_name = str(from_node)
-    # print(from_node.inputs["Vector"])
+    print(from_node.inputs["Vector"].is_linked)
+    print(from_node.inputs["Vector"])
     # print(from_node.inputs["Vector"].links[0].from_node.type)
 
     val = {
         "type": "image",
         "param": {
             "fn": r_path,
+            "vector": parse_node(exporter, from_node.inputs["Vector"], 2, node_tab),
             "color_space": color_space,
         },
     }
@@ -81,6 +83,8 @@ def parse_node(exporter, socket, dim, node_tab):
         link = socket.links[0]
         func = func_dict[link.from_node.type]
         return func(exporter, link, dim, node_tab)
+    # if link.from_node is None:
+    #     return None
     if dim == 1:
         value = socket.default_value
         return {

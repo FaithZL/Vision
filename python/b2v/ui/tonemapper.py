@@ -2,14 +2,14 @@ from . import base
 from .base import *
 
 dic = {
-    "aces": {
-        "label": "aces",
-        "description": "ACES tone mapping.",
-        "parameters": {},
-    },
     "linear": {
         "label": "linear",
         "description": "linear tone mapping.",
+        "parameters": {},
+    },
+    "aces": {
+        "label": "aces",
+        "description": "ACES tone mapping.",
         "parameters": {},
     },
     "reinhard": {
