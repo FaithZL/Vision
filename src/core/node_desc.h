@@ -115,9 +115,25 @@ public:
 struct SlotDesc;
 struct ShaderNodeDesc;
 
-struct GraphDesc : public NodeDesc {
+struct AttrDesc : public NodeDesc {
 public:
     using NodeDesc::NodeDesc;
+
+public:
+    template<typename T>
+    [[nodiscard]] SlotDesc slot(const string &key, T default_value,
+                                AttrTag tag = AttrTag::Number) const noexcept {
+        ShaderNodeDesc node{default_value, tag};
+        SlotDesc slot_desc{node, type_dimension_v<T>, tag};
+        slot_desc.init(parameter_[key]);
+        slot_desc.node.name = key;
+        return slot_desc;
+    }
+};
+
+struct GraphDesc : public AttrDesc {
+public:
+    using AttrDesc::AttrDesc;
 
 public:
     std::map<std::string, ShaderNodeDesc> node_map;
@@ -128,11 +144,7 @@ public:
     template<typename T>
     [[nodiscard]] SlotDesc slot(const string &key, T default_value,
                                 AttrTag tag = AttrTag::Number) const noexcept {
-        ShaderNodeDesc node{default_value, tag};
-        SlotDesc slot_desc{node, type_dimension_v<T>, tag};
-        slot_desc.init(parameter_[key]);
-        slot_desc.node.name = key;
-        return slot_desc;
+        return AttrDesc::slot(key, default_value, tag);
     }
 
     [[nodiscard]] SlotDesc slot(const string &key, const DataWrap &data,

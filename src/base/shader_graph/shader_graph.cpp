@@ -29,7 +29,7 @@ void ShaderGraph::init_node_map(const map<string, ShaderNodeDesc> &tab) noexcept
 }
 
 template<typename T>
-[[nodiscard]] ShaderNodeSlot ShaderGraph::construct_slot(const GraphDesc &desc, const string &attr_name,
+[[nodiscard]] ShaderNodeSlot ShaderGraph::construct_slot(const AttrDesc &desc, const string &attr_name,
                                                          T val, AttrTag tag) noexcept {
     ParameterSet ps = desc.value(attr_name);
     DataWrap data = ps.data();
@@ -48,7 +48,7 @@ template<typename T>
 }
 
 #define VS_INSTANCE_CONSTRUCT_SLOT(type)                                                                      \
-    template ShaderNodeSlot ShaderGraph::construct_slot<type>(const GraphDesc &desc, const string &attr_name, \
+    template ShaderNodeSlot ShaderGraph::construct_slot<type>(const AttrDesc &desc, const string &attr_name, \
                                                               type val, AttrTag tag) noexcept;
 
 VS_INSTANCE_CONSTRUCT_SLOT(float)
