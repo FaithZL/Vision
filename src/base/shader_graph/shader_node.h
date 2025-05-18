@@ -12,70 +12,10 @@
 
 namespace vision {
 
-class ShaderNode;
 class ShaderGraph;
 #define VS_MAKE_SLOT(attr_name) ShaderNodeSlot attr_name##_{#attr_name};
 #define INIT_SLOT(name, default_value, type) \
     name##_.set(graph().construct_slot(desc, #name, default_value, type))
-
-class SlotBase : public ocarina::Hashable {
-protected:
-    uint dim_{4};
-    uint channel_mask_{};
-#ifndef NDEBUG
-    string channels_;
-#endif
-    string attr_name_{};
-    AttrTag attr_tag_{};
-
-protected:
-    [[nodiscard]] uint64_t compute_hash() const noexcept override;
-    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override;
-
-public:
-    explicit SlotBase(string attr_name = "") : attr_name_(std::move(attr_name)) {}
-    SlotBase(int, string channels, AttrTag attr_tag);
-    [[nodiscard]] static uint calculate_mask(string channels) noexcept;
-    OC_MAKE_MEMBER_GETTER(dim, )
-    OC_MAKE_MEMBER_GETTER(channel_mask, )
-    OC_MAKE_MEMBER_GETTER(attr_name, )
-    OC_MAKE_MEMBER_GETTER_SETTER(attr_tag, )
-    [[nodiscard]] virtual const ShaderNode *node() const noexcept = 0;
-    [[nodiscard]] virtual ShaderNode *node() noexcept = 0;
-    [[nodiscard]] const ShaderNode *operator->() const noexcept { return node(); }
-    [[nodiscard]] ShaderNode *operator->() noexcept { return node(); }
-};
-
-class ShaderNodeSlot : public GUI, public Observer, public SlotBase {
-protected:
-    SP<ShaderNode> node_{};
-    string output_key_;
-
-public:
-    [[nodiscard]] static ShaderNodeSlot create_slot(const SlotDesc &desc);
-    explicit ShaderNodeSlot(string attr_name = "") : SlotBase(std::move(attr_name)) {}
-    ShaderNode &set(const ShaderNodeSlot &other) noexcept;
-    explicit ShaderNodeSlot(SP<ShaderNode> input, string channels, AttrTag attr_tag, string key);
-    void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
-    void reset_status() noexcept override;
-    bool has_changed() noexcept override;
-    bool render_UI(ocarina::Widgets *widgets) noexcept override;
-    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
-    [[nodiscard]] virtual DynamicArray<float> evaluate(const AttrEvalContext &ctx,
-                                                       const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] vector<float> average() const noexcept;
-    [[nodiscard]] float luminance() const noexcept;
-    [[nodiscard]] bool valid() const noexcept { return node_ != nullptr; }
-    [[nodiscard]] explicit operator bool() const noexcept { return valid(); }
-    [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
-                                                           const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
-                                                            const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
-                                                                 const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] const ShaderNode *node() const noexcept override { return node_.get(); }
-    [[nodiscard]] ShaderNode *node() noexcept override { return node_.get(); }
-};
 
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
 protected:
@@ -134,6 +74,85 @@ public:
         OC_ERROR("call error");
     }
     [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }
+};
+
+class SlotBase : public ocarina::Hashable {
+protected:
+    uint dim_{4};
+    uint channel_mask_{};
+#ifndef NDEBUG
+    string channels_;
+#endif
+    string attr_name_{};
+    AttrTag attr_tag_{};
+
+public:
+    explicit SlotBase(string attr_name = "") : attr_name_(std::move(attr_name)) {}
+    SlotBase(int, string channels, AttrTag attr_tag);
+    [[nodiscard]] static uint calculate_mask(string channels) noexcept;
+    OC_MAKE_MEMBER_GETTER(dim, )
+    OC_MAKE_MEMBER_GETTER(channel_mask, )
+    OC_MAKE_MEMBER_GETTER(attr_name, )
+    OC_MAKE_MEMBER_GETTER_SETTER(attr_tag, )
+    [[nodiscard]] virtual const ShaderNode *node() const noexcept = 0;
+    [[nodiscard]] virtual ShaderNode *node() noexcept = 0;
+    [[nodiscard]] const ShaderNode *operator->() const noexcept { return node(); }
+    [[nodiscard]] ShaderNode *operator->() noexcept { return node(); }
+};
+
+class ShaderNodeSlot : public GUI, public Observer, public SlotBase {
+protected:
+    SP<ShaderNode> node_{};
+    string output_key_;
+
+protected:
+    [[nodiscard]] uint64_t compute_hash() const noexcept override;
+    [[nodiscard]] uint64_t compute_topology_hash() const noexcept override;
+
+public:
+    [[nodiscard]] static ShaderNodeSlot create_slot(const SlotDesc &desc);
+    explicit ShaderNodeSlot(string attr_name = "") : SlotBase(std::move(attr_name)) {}
+    ShaderNode &set(const ShaderNodeSlot &other) noexcept;
+    explicit ShaderNodeSlot(SP<ShaderNode> input, string channels, AttrTag attr_tag, string key);
+    void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
+    void reset_status() noexcept override;
+    bool has_changed() noexcept override;
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
+    [[nodiscard]] virtual DynamicArray<float> evaluate(const AttrEvalContext &ctx,
+                                                       const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] vector<float> average() const noexcept;
+    [[nodiscard]] float luminance() const noexcept;
+    [[nodiscard]] bool valid() const noexcept { return node_ != nullptr; }
+    [[nodiscard]] explicit operator bool() const noexcept { return valid(); }
+    [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
+                                                           const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
+                                                            const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
+                                                                 const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] const ShaderNode *node() const noexcept override { return node_.get(); }
+    [[nodiscard]] ShaderNode *node() noexcept override { return node_.get(); }
+
+#define VS_MAKE_ENCODABLE_FUNC(func_name)                         \
+    template<typename... Args>                                    \
+    decltype(auto) func_name(Args &&...args) const noexcept {     \
+        if (node_) {                                              \
+            return node_->func_name(OC_FORWARD(args)...);         \
+        }                                                         \
+        return decltype(node_->func_name(OC_FORWARD(args)...))(); \
+    }
+
+    VS_MAKE_ENCODABLE_FUNC(compacted_size)
+    VS_MAKE_ENCODABLE_FUNC(encode)
+    VS_MAKE_ENCODABLE_FUNC(update)
+    VS_MAKE_ENCODABLE_FUNC(decode)
+    VS_MAKE_ENCODABLE_FUNC(invalidate)
+    VS_MAKE_ENCODABLE_FUNC(after_decode)
+    VS_MAKE_ENCODABLE_FUNC(has_device_value)
+    VS_MAKE_ENCODABLE_FUNC(cal_offset)
+    VS_MAKE_ENCODABLE_FUNC(alignment)
+#undef VS_MAKE_ENCODABLE_FUNC
 };
 
 }// namespace vision

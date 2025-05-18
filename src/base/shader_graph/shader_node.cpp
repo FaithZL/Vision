@@ -20,14 +20,6 @@ SlotBase::SlotBase(int, std::string channels, AttrTag attr_tag)
       attr_tag_(attr_tag) {
 }
 
-uint64_t SlotBase::compute_hash() const noexcept {
-    return hash64(channel_mask_, dim_, node()->hash(), attr_tag_);
-}
-
-uint64_t SlotBase::compute_topology_hash() const noexcept {
-    return hash64(channel_mask_, dim_, node()->topology_hash(), attr_tag_);
-}
-
 uint SlotBase::calculate_mask(string channels) noexcept {
     uint ret{};
     channels = to_lower(channels);
@@ -56,6 +48,14 @@ ShaderNodeSlot::ShaderNodeSlot(SP<vision::ShaderNode> input, std::string channel
     OC_ASSERT(dim_ <= 4);
 }
 
+uint64_t ShaderNodeSlot::compute_hash() const noexcept {
+    return hash64(channel_mask_, dim_, (node_ ? node_->hash() : 0u), attr_tag_);
+}
+
+uint64_t ShaderNodeSlot::compute_topology_hash() const noexcept {
+    return hash64(channel_mask_, dim_, (node_ ? node_->topology_hash() : 0u), attr_tag_);
+}
+
 ShaderNodeSlot ShaderNodeSlot::create_slot(const vision::SlotDesc &desc) {
     SP<ShaderNode> shader_node = Node::create_shared<ShaderNode>(desc.node);
     return ShaderNodeSlot(shader_node, desc.channels, desc.attr_tag, desc.output_key);
@@ -67,6 +67,8 @@ ShaderNode &ShaderNodeSlot::set(const vision::ShaderNodeSlot &other) noexcept {
     if (other.attr_name_.empty()) {
         attr_name_ = old_name;
     }
+    reset_topology_hash();
+    reset_hash();
     return *node_;
 }
 
@@ -205,7 +207,7 @@ ShaderNode &ShaderNode::set_graph(const SP<ShaderGraph> &graph) noexcept {
 }
 
 ShaderGraph &ShaderNode::graph() const noexcept {
-    return *graph_.lock().get();
+    return *graph_.lock();
 }
 
 ShaderNode &ShaderNode::add_to(ShaderGraph &graph) noexcept {
