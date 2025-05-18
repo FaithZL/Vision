@@ -33,8 +33,7 @@ public:
 
     void initialize_(const vision::NodeDesc &node_desc) noexcept override {
         VS_CAST_DESC
-//        vector_.set(graph().construct_slot(desc,"vector",make_float3(0.5f),Albedo))
-//        INIT_SLOT(vector, make_float3(0.5f), Albedo);
+//        INIT_SLOT(vector, make_float2(0.5f), Number);
     }
 
     void reload(ocarina::Widgets *widgets) noexcept {

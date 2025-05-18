@@ -63,10 +63,11 @@ def parse_tex_coord(exporter, link, dim, node_tab):
     ret = {
         "output_key": fs.name,
         "node": node_name,
+        "channels": "xy",
     }
-    val  = {
-        "type" : "tex_coord",
-        "param":{}
+    val = {
+        "type": "tex_coord",
+        "param": {},
     }
     if not (node_name in node_tab):
         node_tab[node_name] = val

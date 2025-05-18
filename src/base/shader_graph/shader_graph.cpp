@@ -47,7 +47,7 @@ template<typename T>
     return slot;
 }
 
-#define VS_INSTANCE_CONSTRUCT_SLOT(type)                                                                      \
+#define VS_INSTANCE_CONSTRUCT_SLOT(type)                                                                     \
     template ShaderNodeSlot ShaderGraph::construct_slot<type>(const AttrDesc &desc, const string &attr_name, \
                                                               type val, AttrTag tag) noexcept;
 

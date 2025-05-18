@@ -911,7 +911,8 @@
                         "fn": "textures/checker.jpg",
                         "vector": {
                             "output_key": "UV",
-                            "node": "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000002F69AE1BB88>"
+                            "node": "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000002F69AE1BB88>",
+                            "channels": "xy"
                         },
                         "color_space": "srgb"
                     }

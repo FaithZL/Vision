@@ -151,36 +151,37 @@ public:
                                 AttrTag tag = AttrTag::Number) const noexcept;
 };
 
-struct ShaderNodeDesc : public NodeDesc {
+struct ShaderNodeDesc : public AttrDesc {
 public:
     AttrTag node_tag{};
+    using Super = AttrDesc;
 
 protected:
     [[nodiscard]] uint64_t compute_hash() const noexcept override;
 
 public:
-    ShaderNodeDesc() : NodeDesc("ShaderNode") {}
+    ShaderNodeDesc() : Super("ShaderNode") {}
     explicit ShaderNodeDesc(AttrTag tag, const string &s_type = "constant")
-        : NodeDesc("ShaderNode"), node_tag(tag) {
+        : Super("ShaderNode"), node_tag(tag) {
         sub_type = s_type;
         parameter_.set_json(DataWrap::object());
     }
     ShaderNodeDesc(string name, AttrTag tag)
-        : NodeDesc("ShaderNode", std::move(name)), node_tag(tag) {
+        : Super("ShaderNode", std::move(name)), node_tag(tag) {
         sub_type = "constant";
         parameter_.set_json(DataWrap::object());
     }
     template<typename Arg>
     requires is_scalar_v<Arg>
     ShaderNodeDesc(Arg v, AttrTag tag)
-        : NodeDesc("ShaderNode"), node_tag(tag) {
+        : Super("ShaderNode"), node_tag(tag) {
         sub_type = "number";
         parameter_.set_json(DataWrap::object());
         parameter_.set_value("value", v);
     }
     template<typename T, size_t N>
     ShaderNodeDesc(Vector<T, N> v, AttrTag tag)
-        : NodeDesc("ShaderNode"), node_tag(tag) {
+        : Super("ShaderNode"), node_tag(tag) {
         sub_type = "number";
         parameter_.set_json(DataWrap::object());
         if constexpr (N == 2) {
@@ -192,7 +193,7 @@ public:
         }
     }
     ShaderNodeDesc(const DataWrap &data, AttrTag tag)
-        : NodeDesc("ShaderNode"), node_tag(tag) {
+        : Super("ShaderNode"), node_tag(tag) {
         sub_type = "number";
         parameter_.set_json(DataWrap::object());
         parameter_.set_value("value", data);
