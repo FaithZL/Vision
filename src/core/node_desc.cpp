@@ -140,28 +140,12 @@ void SlotDesc::init(const ParameterSet &ps) noexcept {
         }
         node.set_value("value", value);
     } else if (node["value"].data().is_array()) {
-//        OC_ASSERT(node["value"].data().size() == dim());
+        //        OC_ASSERT(node["value"].data().size() == dim());
     } else if (data.is_number()) {
         // process scalar
         channels = "x";
         node.sub_type = "number";
         node.set_value("value", data);
-    }
-}
-
-void GraphDesc::init(const vision::ParameterSet &ps) noexcept {
-    NodeDesc::init(ps);
-    init_node_map(ps.value("node_tab"));
-    set_parameter(ps.value("param"));
-}
-
-void GraphDesc::init_node_map(const vision::ParameterSet &ps) noexcept {
-    auto data = ps.data();
-    for (const auto& [key, value] : data.items()) {
-        ShaderNodeDesc snd;
-        snd.init(value);
-        auto str = to_string(value);
-        node_map.insert(make_pair(key, snd));
     }
 }
 
@@ -264,6 +248,31 @@ void DenoiserDesc::init(const vision::ParameterSet &ps) noexcept {
     ParameterSet param = ps.value("param", DataWrap::object());
     auto string = param.data().dump();
     set_parameter(param);
+}
+
+void GraphDesc::init(const vision::ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
+    init_node_map(ps.value("node_tab"));
+    set_parameter(ps.value("param"));
+}
+
+void GraphDesc::init_node_map(const vision::ParameterSet &ps) noexcept {
+    auto data = ps.data();
+    for (const auto &[key, value] : data.items()) {
+        ShaderNodeDesc snd;
+        snd.init(value);
+        auto str = to_string(value);
+        node_map.insert(make_pair(key, snd));
+    }
+}
+
+SlotDesc GraphDesc::slot(const std::string &key, const vision::DataWrap &data, vision::AttrTag tag) const noexcept {
+    ShaderNodeDesc node{data, tag};
+    node.name = key;
+    uint size = data.is_number() ? 1 : data.size();
+    SlotDesc slot_desc{node, size, tag};
+    slot_desc.init(parameter_[key]);
+    return slot_desc;
 }
 
 SP<SlotDesc> ShaderNodeDesc::slot(const std::string &key, AttrTag tag) const noexcept {
