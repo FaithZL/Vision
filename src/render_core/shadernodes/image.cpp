@@ -16,7 +16,7 @@ private:
     RegistrableTexture *texture_{};
     EncodedData<uint> tex_id_{};
     ShaderNodeDesc desc_;
-    VS_MAKE_SLOT(vector_);
+    VS_MAKE_SLOT(vector);
     mutable optional<float_array> cache_;
 
 public:
@@ -78,7 +78,8 @@ public:
     [[nodiscard]] float_array evaluate(const AttrEvalContext &ctx,
                                        const SampledWavelengths &swl) const noexcept override {
         if (!cache_) {
-            float_array value = pipeline()->tex_var(*tex_id_).sample(channel_num(), ctx.uv);
+            AttrEvalContext ctx_processed = vector_.evaluate(ctx, swl);
+            float_array value = pipeline()->tex_var(*tex_id_).sample(channel_num(), ctx_processed.uv);
             cache_.emplace(value);
         }
         return *cache_;
