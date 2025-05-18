@@ -55,20 +55,30 @@ def parse_image_node(exporter, link, dim, node_tab):
     return ret
 
 
+def parse_tex_coord(exporter, link, dim, node_tab):
+    from_node = link.from_node
+    fs = link.from_socket
+    output_key = fs.name
+    node_name = str(from_node)
+    ret = {
+        "output_key": fs.name,
+        "node": node_name,
+    }
+    val  = {
+        "type" : "tex_coord",
+        "param":{}
+    }
+    if not (node_name in node_tab):
+        node_tab[node_name] = val
+    return ret
+
+
 def parse_mix(exporter, link, dim, node_tab):
     pass
 
 
 def parse_add(exporter, link, dim, node_tab):
     pass
-
-
-def parse_tex_coord(exporter, link, dim, node_tab):
-    from_node = link.from_node
-    ret = {
-        "type" : "tex_coord",
-    }
-    return ret
 
 
 func_dict = {

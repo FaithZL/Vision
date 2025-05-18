@@ -901,11 +901,18 @@
                 }
             },
             "node_tab": {
+                "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000002F69AE1BB88>": {
+                    "type": "tex_coord",
+                    "param": {}
+                },
                 "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x000002F61A52A7A0>": {
                     "type": "image",
                     "param": {
                         "fn": "textures/checker.jpg",
-                        "vector": null,
+                        "vector": {
+                            "output_key": "UV",
+                            "node": "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000002F69AE1BB88>"
+                        },
                         "color_space": "srgb"
                     }
                 }
