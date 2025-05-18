@@ -275,6 +275,10 @@ SlotDesc GraphDesc::slot(const std::string &key, const vision::DataWrap &data, v
     return slot_desc;
 }
 
+uint64_t ShaderNodeDesc::compute_hash() const noexcept {
+    return hash64(NodeDesc::compute_hash(), parameter_string());
+}
+
 SP<SlotDesc> ShaderNodeDesc::slot(const std::string &key, AttrTag tag) const noexcept {
     auto data = parameter_[key].data();
     auto str = data.dump();

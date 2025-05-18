@@ -121,6 +121,8 @@ public:
 
 public:
     std::map<std::string, ShaderNodeDesc> node_map;
+
+public:
     void init_node_map(const ParameterSet &ps) noexcept;
     void init(const ParameterSet &ps) noexcept override;
     template<typename T>
@@ -142,9 +144,7 @@ public:
     AttrTag node_tag{};
 
 protected:
-    [[nodiscard]] uint64_t compute_hash() const noexcept override {
-        return hash64(NodeDesc::compute_hash(), parameter_string());
-    }
+    [[nodiscard]] uint64_t compute_hash() const noexcept override;
 
 public:
     ShaderNodeDesc() : NodeDesc("ShaderNode") {}
@@ -407,5 +407,4 @@ struct RenderSettingDesc : public NodeDesc {
     VISION_DESC_COMMON(RenderSetting)
     void init(const ParameterSet &ps) noexcept override;
 };
-
 }// namespace vision
