@@ -337,6 +337,32 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+struct GraphDesc : public NodeDesc {
+public:
+    std::map<std::string, ShaderNodeDesc> node_map;
+    void init_node_map(const ParameterSet &ps) noexcept;
+    void init(const ParameterSet &ps) noexcept override;
+    template<typename T>
+    [[nodiscard]] SlotDesc slot(const string &key, T default_value,
+                                AttrTag tag = AttrTag::Number) const noexcept {
+        ShaderNodeDesc node{default_value, tag};
+        SlotDesc slot_desc{node, type_dimension_v<T>, tag};
+        slot_desc.init(parameter_[key]);
+        slot_desc.node.name = key;
+        return slot_desc;
+    }
+
+    [[nodiscard]] SlotDesc slot(const string &key, const DataWrap &data,
+                                AttrTag tag = AttrTag::Number) const noexcept {
+        ShaderNodeDesc node{data, tag};
+        node.name = key;
+        uint size = data.is_number() ? 1 : data.size();
+        SlotDesc slot_desc{node, size, tag};
+        slot_desc.init(parameter_[key]);
+        return slot_desc;
+    }
+};
+
 struct MaterialDesc : public NodeDesc {
 public:
     std::map<std::string, ShaderNodeDesc> node_map;

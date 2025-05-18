@@ -149,6 +149,22 @@ void SlotDesc::init(const ParameterSet &ps) noexcept {
     }
 }
 
+void GraphDesc::init(const vision::ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
+    init_node_map(ps.value("node_tab"));
+    set_parameter(ps.value("param"));
+}
+
+void GraphDesc::init_node_map(const vision::ParameterSet &ps) noexcept {
+    auto data = ps.data();
+    for (const auto& [key, value] : data.items()) {
+        ShaderNodeDesc snd;
+        snd.init(value);
+        auto str = to_string(value);
+        node_map.insert(make_pair(key, snd));
+    }
+}
+
 void MaterialDesc::init_node_map(const vision::ParameterSet &ps) noexcept {
     auto data = ps.data();
     for (const auto& [key, value] : data.items()) {
