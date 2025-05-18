@@ -905,18 +905,7 @@
                     "type": "image",
                     "param": {
                         "fn": "textures/checker.jpg",
-                        "vector": {
-                            "channels": "xyz",
-                            "node": {
-                                "type": "number",
-                                "param": {
-                                    "value": [
-                                        0.0,
-                                        0.0
-                                    ]
-                                }
-                            }
-                        },
+                        "vector": null,
                         "color_space": "srgb"
                     }
                 }
