@@ -193,6 +193,7 @@ public:
     Float3 wo;
     Float3 time;
     Float3 ng;
+    Float3 ng_local;
 
     Float2 uv;
     Float2 lightmap_uv;

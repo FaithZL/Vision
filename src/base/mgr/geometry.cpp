@@ -129,7 +129,7 @@ Interaction Geometry::compute_surface_interaction(const TriangleHitVar &hit, boo
             Float3 dn_du, dn_dv;
             Float3 normal = hit->triangle_lerp(v0->normal(), v1->normal(), v2->normal());
             it.shading.set_frame(frame);
-
+            it.ng_local = normal;
             $if(!is_zero(normal)) {
                 Float3 ns = normalize(o2w.apply_normal(normal));
                 it.shading.update(ns);

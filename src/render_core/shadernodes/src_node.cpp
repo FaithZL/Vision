@@ -14,7 +14,13 @@ public:
     [[nodiscard]] float_array evaluate(const string &key, const AttrEvalContext &ctx,
                                        const SampledWavelengths &swl) const noexcept override {
         Float2 uv;
-        if (key == "UV") {
+        if (key == "Generated") {
+            uv = ctx.uv;
+        } else if (key == "Normal") {
+            // todo
+            uv = ctx.uv;
+        }
+        else if (key == "UV") {
             uv = ctx.uv;
         } else if (key == "Camera") {
             TSensor sensor = scene().sensor();
