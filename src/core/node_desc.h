@@ -122,13 +122,7 @@ public:
 public:
     template<typename T>
     [[nodiscard]] SlotDesc slot(const string &key, T default_value,
-                                AttrTag tag = AttrTag::Number) const noexcept {
-        ShaderNodeDesc node{default_value, tag};
-        SlotDesc slot_desc{node, type_dimension_v<T>, tag};
-        slot_desc.init(parameter_[key]);
-        slot_desc.node.name = key;
-        return slot_desc;
-    }
+                                AttrTag tag = AttrTag::Number) const noexcept;
 };
 
 struct GraphDesc : public AttrDesc {
@@ -239,6 +233,16 @@ public:
         init(ps);
     }
 };
+
+template<typename T>
+[[nodiscard]] SlotDesc AttrDesc::slot(const string &key, T default_value,
+                                      AttrTag tag) const noexcept {
+    ShaderNodeDesc node{default_value, tag};
+    SlotDesc slot_desc{node, type_dimension_v<T>, tag};
+    slot_desc.init(parameter_[key]);
+    slot_desc.node.name = key;
+    return slot_desc;
+}
 
 struct ImporterDesc : public NodeDesc {
 public:
