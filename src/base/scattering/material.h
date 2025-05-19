@@ -194,69 +194,118 @@ public:
     void initialize_(const vision::NodeDesc &node_desc) noexcept override;
 
     ///region general for each
-    template<typename T, typename F>
+    template<bool check = true, typename T, typename F>
     auto reduce_slots(T &&initial, F &&func) const noexcept {
         T ret = OC_FORWARD(initial);
-        if (bump_) {
+        if constexpr (check) {
+            if (bump_) {
+                ret = func(ret, bump_);
+            }
+        } else {
             ret = func(ret, bump_);
         }
-        if (bump_scale_) {
+        if constexpr (check) {
+            if (bump_scale_) {
+                ret = func(ret, bump_scale_);
+            }
+        } else {
             ret = func(ret, bump_scale_);
         }
         for (int i = 0; i < slot_cursor_.num; ++i) {
             const ShaderNodeSlot &slot = get_slot(i);
-            if (slot) {
+            if constexpr (check) {
+                if (slot) {
+                    ret = func(ret, slot);
+                }
+            } else {
                 ret = func(ret, slot);
             }
         }
         return ret;
     }
 
-    template<typename T, typename F>
+    template<bool check = true, typename T, typename F>
     auto reduce_slots(T &&initial, F &&func) noexcept {
         T ret = OC_FORWARD(initial);
-        if (bump_) {
+        if constexpr (check) {
+            if (bump_) {
+                ret = func(ret, bump_);
+            }
+        } else {
             ret = func(ret, bump_);
         }
-        if (bump_scale_) {
+        if constexpr (check) {
+            if (bump_scale_) {
+                ret = func(ret, bump_scale_);
+            }
+        } else {
             ret = func(ret, bump_scale_);
         }
         for (int i = 0; i < slot_cursor_.num; ++i) {
             ShaderNodeSlot &slot = get_slot(i);
-            if (slot) {
+            if constexpr (check) {
+                if (slot) {
+                    ret = func(ret, slot);
+                }
+            } else {
                 ret = func(ret, slot);
             }
         }
         return ret;
     }
 
-    template<typename F>
+    template<bool check = true, typename F>
     void for_each_slot(F &&func) const noexcept {
-        if (bump_) {
+        if constexpr (check) {
+            if (bump_) {
+                func(bump_);
+            }
+        } else {
             func(bump_);
         }
-        if (bump_scale_) {
+        if constexpr (check) {
+            if (bump_scale_) {
+                func(bump_scale_);
+            }
+        } else {
             func(bump_scale_);
         }
+
         for (int i = 0; i < slot_cursor_.num; ++i) {
             const ShaderNodeSlot &slot = get_slot(i);
-            if (slot) {
+            if constexpr (check) {
+                if (slot) {
+                    func(slot);
+                }
+            } else {
                 func(slot);
             }
         }
     }
 
-    template<typename F>
+    template<bool check = true, typename F>
     void for_each_slot(F &&func) noexcept {
-        if (bump_) {
+        if constexpr (check) {
+            if (bump_) {
+                func(bump_);
+            }
+        } else {
             func(bump_);
         }
-        if (bump_scale_) {
+        if constexpr (check) {
+            if (bump_scale_) {
+                func(bump_scale_);
+            }
+        } else {
             func(bump_scale_);
         }
         for (int i = 0; i < slot_cursor_.num; ++i) {
             ShaderNodeSlot &slot = get_slot(i);
-            if (slot) {
+            if constexpr (check) {
+                if (slot) {
+                    func(slot);
+                }
+            } else {
                 func(slot);
             }
         }
