@@ -38,15 +38,15 @@ namespace vision {
 //        }
 //    }
 //}
-class LerpNode : public ShaderNode {
+class MixNode : public ShaderNode {
 private:
     VS_MAKE_SLOT(t)
     VS_MAKE_SLOT(A)
     VS_MAKE_SLOT(B)
 
 public:
-    LerpNode() = default;
-    explicit LerpNode(const ShaderNodeDesc &desc) : ShaderNode(desc) {}
+    MixNode() = default;
+    explicit MixNode(const ShaderNodeDesc &desc) : ShaderNode(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC
     OC_ENCODABLE_FUNC(ShaderNode, t_, A_, B_)
     VS_HOTFIX_MAKE_RESTORE(ShaderNode, t_, A_, B_)
@@ -72,5 +72,5 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR_HOTFIX(vision, LerpNode)
-VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-lerp.dll")
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, MixNode)
+VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-mix.dll")
