@@ -50,4 +50,4 @@ public:
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, LinearToneMapper, linear)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, ACESToneMapper, aces)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, ReinhardToneMapper, reinhard)
-VS_REGISTER_CURRENT_PATH(0, "vision-tonemapper-impl.dll")
+VS_REGISTER_CURRENT_FILE

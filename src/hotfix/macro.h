@@ -26,6 +26,8 @@ template<typename T>
 
 #define VS_REGISTER_CURRENT_PATH(level, ...) VS_REGISTER_PATH(__FILE__, level, ##__VA_ARGS__)
 
+#define VS_REGISTER_CURRENT_FILE VS_REGISTER_CURRENT_PATH(0, "vision-" VISION_CATEGORY "-" VISION_PLUGIN_NAME ".dll")
+
 #define VS_REGISTER_HOTFIX(NS, Class)                                                  \
     namespace {                                                                        \
     struct Class##ConstructorRegistrar {                                               \
