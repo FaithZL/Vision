@@ -24,8 +24,18 @@ void ShaderGraph::clear() noexcept {
 void ShaderGraph::init_node_map(const map<string, ShaderNodeDesc> &tab) noexcept {
     for (const auto &[key, desc] : tab) {
         auto shader_node = Node::create_shared<ShaderNode>(desc);
-        add_node(key, std::move(shader_node));
+        add_node(key, shader_node);
+        shader_node->initialize_slots(desc);
     }
+}
+
+ShaderNodeSlot ShaderGraph::construct_slot(const vision::ParameterSet &ps, vision::AttrTag tag) const noexcept {
+    DataWrap data = ps.data();
+    string str = to_string(data);
+    SP<ShaderNode> shader_node = get_node(data["node"]);
+    ShaderNodeSlot slot = ShaderNodeSlot(shader_node, data["channels"], tag,
+                                         ps.value("output_key").as_string());
+    return slot;
 }
 
 template<typename T>
@@ -36,15 +46,19 @@ template<typename T>
     string str = to_string(data);
     ShaderNodeSlot slot;
     if (data.contains("node") && data["node"].is_string()) {
-        SP<ShaderNode> shader_node = get_node(data["node"]);
-        slot = ShaderNodeSlot(shader_node, data["channels"], tag,
-                              ps.value("output_key").as_string());
+        slot = construct_slot(ps, tag);
     } else {
         SlotDesc slot_desc = desc.slot(attr_name, val, tag);
         slot = ShaderNodeSlot::create_slot(slot_desc);
         slot->set_graph(shared_from_this());
     }
     return slot;
+}
+
+ShaderNodeSlot ShaderGraph::construct_slot(const AttrDesc &desc, const string &attr_name,
+                                           vision::AttrTag tag) const noexcept {
+    ParameterSet ps = desc.value(attr_name);
+    return construct_slot(ps, tag);
 }
 
 #define VS_INSTANCE_CONSTRUCT_SLOT(type)                                                                     \

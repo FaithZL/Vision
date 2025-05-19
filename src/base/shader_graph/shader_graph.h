@@ -19,6 +19,9 @@ public:
     void add_node(const string &name, SP<ShaderNode> node);
     void clear() noexcept;
     void init_node_map(const map<string, ShaderNodeDesc> &tab) noexcept;
+    [[nodiscard]] ShaderNodeSlot construct_slot(const ParameterSet &ps, AttrTag tag) const noexcept;
+    [[nodiscard]] ShaderNodeSlot construct_slot(const AttrDesc &desc, const string &attr_name,
+                                                AttrTag tag) const noexcept;
     template<typename T>
     [[nodiscard]] ShaderNodeSlot construct_slot(const AttrDesc &desc, const string &attr_name,
                                                 T val, AttrTag tag) noexcept;

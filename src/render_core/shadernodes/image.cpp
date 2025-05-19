@@ -32,7 +32,7 @@ public:
     VS_HOTFIX_MAKE_RESTORE(ShaderNode, vector_, texture_, tex_id_, desc_)
 
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
-
+        vector_.set(graph().construct_slot(desc, "vector", Number));
     }
 
     void reload(ocarina::Widgets *widgets) noexcept {
