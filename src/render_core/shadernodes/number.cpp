@@ -30,11 +30,11 @@ public:
     OC_ENCODABLE_FUNC(ShaderNode, value_)
 
     void update_encode_type() noexcept {
-//        if ((min_ >= 0.f && max_ <= 1.f) || node_tag() == Albedo || node_tag() == Illumination) {
-//            value_.set_encode_type(Uint8);
-//        } else {
-//            value_.set_encode_type(Original);
-//        }
+        //        if ((min_ >= 0.f && max_ <= 1.f) || node_tag() == Albedo || node_tag() == Illumination) {
+        //            value_.set_encode_type(Uint8);
+        //        } else {
+        //            value_.set_encode_type(Original);
+        //        }
     }
 
     [[nodiscard]] float normalize() noexcept override {
@@ -87,7 +87,7 @@ public:
         }
         return true;
     }
-    
+
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] bool near_zero() const noexcept override {
         auto lst = value_.hv();
@@ -103,8 +103,8 @@ public:
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return value_.hv();
     }
-    [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
-                                               const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] AttrEvaluation evaluate(const AttrEvalContext &ctx,
+                                          const SampledWavelengths &swl) const noexcept override {
         return *value_;
     }
 };

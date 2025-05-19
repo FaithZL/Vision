@@ -22,7 +22,7 @@ public:
                                            const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr = color_.eval_albedo_spectrum(it, swl).sample;
         if (sigma_) {
-            Float sigma = sigma_.evaluate(it, swl).as_scalar();
+            Float sigma = sigma_.evaluate(it, swl)->as_scalar();
             return make_unique<DiffuseLobe>(kr, sigma, swl);
         }
         return make_unique<DiffuseLobe>(kr, swl);

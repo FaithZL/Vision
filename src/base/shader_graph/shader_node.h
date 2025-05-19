@@ -62,13 +62,13 @@ public:
     virtual float normalize() noexcept { return 1.f; }
     ///#endregion
 
-    [[nodiscard]] virtual DynamicArray<float> evaluate(const AttrEvalContext &ctx,
-                                                       const SampledWavelengths &swl) const noexcept {
+    [[nodiscard]] virtual AttrEvaluation evaluate(const AttrEvalContext &ctx,
+                                                  const SampledWavelengths &swl) const noexcept {
         OC_ERROR("call error");
         return {};
     }
-    [[nodiscard]] virtual float_array evaluate(const string &key, const AttrEvalContext &ctx,
-                                               const SampledWavelengths &swl) const noexcept {
+    [[nodiscard]] virtual AttrEvaluation evaluate(const string &key, const AttrEvalContext &ctx,
+                                                  const SampledWavelengths &swl) const noexcept {
         return evaluate(ctx, swl);
     }
     virtual void for_each_pixel(const function<Image::foreach_signature> &func) const noexcept {
@@ -120,8 +120,8 @@ public:
     bool has_changed() noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
-    [[nodiscard]] virtual DynamicArray<float> evaluate(const AttrEvalContext &ctx,
-                                                       const SampledWavelengths &swl) const noexcept;
+    [[nodiscard]] virtual AttrEvaluation evaluate(const AttrEvalContext &ctx,
+                                                  const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] vector<float> average() const noexcept;
     [[nodiscard]] float luminance() const noexcept;
     [[nodiscard]] bool valid() const noexcept { return node_ != nullptr; }

@@ -11,16 +11,15 @@ class TextureCoordinate : public ShaderNode {
 public:
     using ShaderNode::ShaderNode;
     VS_MAKE_PLUGIN_NAME_FUNC_(tex_coord)
-    [[nodiscard]] float_array evaluate(const string &key, const AttrEvalContext &ctx,
-                                       const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] AttrEvaluation evaluate(const string &key, const AttrEvalContext &ctx,
+                                          const SampledWavelengths &swl) const noexcept override {
         Float2 uv;
         if (key == "Generated") {
             uv = ctx.uv;
         } else if (key == "Normal") {
             // todo
             uv = ctx.uv;
-        }
-        else if (key == "UV") {
+        } else if (key == "UV") {
             uv = ctx.uv;
         } else if (key == "Camera") {
             TSensor sensor = scene().sensor();
@@ -42,8 +41,8 @@ public:
     using ShaderNode::ShaderNode;
     VS_MAKE_PLUGIN_NAME_FUNC_(geometry)
 
-    [[nodiscard]] float_array evaluate(const string &key, const AttrEvalContext &ctx,
-                                       const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] AttrEvaluation evaluate(const string &key, const AttrEvalContext &ctx,
+                                          const SampledWavelengths &swl) const noexcept override {
         Float2 uv;
         if (key == "Position") {
             uv = ctx.uv;

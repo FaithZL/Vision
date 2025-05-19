@@ -121,8 +121,8 @@ public:
         SampledSpectrum Rd = color_.eval_albedo_spectrum(it, swl).sample;
         SampledSpectrum Rs = spec_.eval_albedo_spectrum(it, swl).sample;
 
-        Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
-        Float anisotropic = ocarina::clamp(anisotropic_.evaluate(it, swl).as_scalar(), -0.9f, 0.9f);
+        Float roughness = ocarina::clamp(roughness_.evaluate(it, swl)->as_scalar(), 0.0001f, 1.f);
+        Float anisotropic = ocarina::clamp(anisotropic_.evaluate(it, swl)->as_scalar(), -0.9f, 0.9f);
 
         roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
         Float2 alpha = calculate_alpha<D>(roughness, anisotropic);

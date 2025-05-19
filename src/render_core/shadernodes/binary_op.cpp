@@ -74,19 +74,19 @@ public:
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return lhs_.average() * rhs_.average();
     }
-    [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
-                                               const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] AttrEvaluation evaluate(const AttrEvalContext &ctx,
+                                          const SampledWavelengths &swl) const noexcept override {
         if (op_ == "Add") {
-            return lhs_.evaluate(ctx, swl) + rhs_.evaluate(ctx, swl);
+            return lhs_.evaluate(ctx, swl).array + rhs_.evaluate(ctx, swl).array;
         } else if (op_ == "Subtract") {
-            return lhs_.evaluate(ctx, swl) - rhs_.evaluate(ctx, swl);
+            return lhs_.evaluate(ctx, swl).array - rhs_.evaluate(ctx, swl).array;
         } else if (op_ == "Multiply") {
-            return lhs_.evaluate(ctx, swl) * rhs_.evaluate(ctx, swl);
+            return lhs_.evaluate(ctx, swl).array * rhs_.evaluate(ctx, swl).array;
         } else if (op_ == "Divide") {
-            return lhs_.evaluate(ctx, swl) / rhs_.evaluate(ctx, swl);
+            return lhs_.evaluate(ctx, swl).array / rhs_.evaluate(ctx, swl).array;
         }
         OC_WARNING("fallback to mul");
-        return lhs_.evaluate(ctx, swl) * rhs_.evaluate(ctx, swl);
+        return lhs_.evaluate(ctx, swl).array * rhs_.evaluate(ctx, swl).array;
     }
 };
 }// namespace vision

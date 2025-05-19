@@ -349,10 +349,10 @@ public:
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         LobeSet::Lobes lobes;
         auto [color, color_lum] = color_.eval_albedo_spectrum(it, swl);
-        DynamicArray<float> iors = ior_.evaluate(it, swl);
+        DynamicArray<float> iors = ior_.evaluate(it, swl).array;
         Float ior = iors.as_scalar();
-        Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
-        Float anisotropic = anisotropic_.evaluate(it, swl).as_scalar();
+        Float roughness = ocarina::clamp(roughness_.evaluate(it, swl)->as_scalar(), 0.0001f, 1.f);
+        Float anisotropic = anisotropic_.evaluate(it, swl)->as_scalar();
         SampledSpectrum specular_tint = spec_tint_.eval_albedo_spectrum(it, swl).sample;
 
         Float aspect = sqrt(1 - anisotropic * 0.9f);
@@ -366,8 +366,8 @@ public:
         if (switches_[ESheen]) {
             outline("principled sheen", [&] {
                 SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
-                Float sheen_weight = sheen_weight_.evaluate(it, swl).as_scalar() * front_factor;
-                Float sheen_roughness = sheen_roughness_.evaluate(it, swl).as_scalar();
+                Float sheen_weight = sheen_weight_.evaluate(it, swl)->as_scalar() * front_factor;
+                Float sheen_roughness = sheen_roughness_.evaluate(it, swl)->as_scalar();
                 UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta,
                                                                sheen_tint * sheen_weight * weight,
                                                                sheen_roughness, swl);
@@ -379,10 +379,10 @@ public:
         }
         if (switches_[ECoat]) {
             outline("principled coat", [&] {
-                Float cc_weight = coat_weight_.evaluate(it, swl).as_scalar() * front_factor;
-                Float cc_roughness = clamp(coat_roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
+                Float cc_weight = coat_weight_.evaluate(it, swl)->as_scalar() * front_factor;
+                Float cc_roughness = clamp(coat_roughness_.evaluate(it, swl)->as_scalar(), 0.0001f, 1.f);
                 cc_roughness = sqr(cc_roughness);
-                Float cc_ior = coat_ior_.evaluate(it, swl).as_scalar();
+                Float cc_ior = coat_ior_.evaluate(it, swl)->as_scalar();
                 SampledSpectrum cc_tint = coat_tint_.eval_albedo_spectrum(it, swl).sample;
                 SP<Fresnel> fresnel_cc = make_shared<FresnelDielectric>(SampledSpectrum(swl, cc_ior), swl);
                 SP<GGXMicrofacet> microfacet_cc = make_shared<GGXMicrofacet>(make_float2(cc_roughness));
@@ -397,7 +397,7 @@ public:
         }
         if (switches_[EMetallic]) {
             outline("principled metallic", [&] {
-                Float metallic = metallic_.evaluate(it, swl).as_scalar() * front_factor;
+                Float metallic = metallic_.evaluate(it, swl)->as_scalar() * front_factor;
                 SP<FresnelF82Tint> fresnel_f82 = make_shared<FresnelF82Tint>(color, swl);
                 fresnel_f82->init_from_F82(specular_tint);
                 UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic,
@@ -410,7 +410,7 @@ public:
         }
         if (switches_[ETrans]) {
             outline("principled transmission", [&] {
-                Float trans_weight = transmission_weight_.evaluate(it, swl).as_scalar();
+                Float trans_weight = transmission_weight_.evaluate(it, swl)->as_scalar();
                 float_array etas = it.correct_eta(iors);
                 Float eta = etas[0];
                 auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl, eta}, swl);

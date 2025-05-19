@@ -365,8 +365,8 @@ struct AttrEvaluation {
     float_array array;
     AttrEvaluation() = default;
     AttrEvaluation(const float_array &array) : array(array) {}
-    [[nodiscard]] const auto &operator->() const noexcept { return array; }
-    [[nodiscard]] auto &operator->() noexcept { return array; }
+    [[nodiscard]] const auto *operator->() const noexcept { return &array; }
+    [[nodiscard]] auto *operator->() noexcept { return &array; }
 };
 
 struct AttrEvalContext {
@@ -389,6 +389,8 @@ struct AttrEvalContext {
             pos.emplace(f_array.sub(2, 3).as_vec3());
         }
     }
+    AttrEvalContext(const AttrEvaluation &ae)
+        : AttrEvalContext(ae.array) {}
 
     [[nodiscard]] uint float_num() const noexcept {
         return 2 + (pos ? 3 : 0);

@@ -61,7 +61,7 @@ public:
     }
 
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        Float frac = frac_.evaluate(it, swl)[0];
+        Float frac = frac_.evaluate(it, swl).array[0];
         return LobeSet::create_mix(frac, mat0_->create_lobe_set(it, swl),
                                    mat1_->create_lobe_set(it, swl));
     }

@@ -137,15 +137,15 @@ public:
 
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum kr{swl.dimension(), 1.f};
-        Float roughness = ocarina::clamp(roughness_.evaluate(it, swl).as_scalar(), 0.0001f, 1.f);
-        Float anisotropic = ocarina::clamp(anisotropic_.evaluate(it, swl).as_scalar(), -0.9f, 0.9f);
+        Float roughness = ocarina::clamp(roughness_.evaluate(it, swl)->as_scalar(), 0.0001f, 1.f);
+        Float anisotropic = ocarina::clamp(anisotropic_.evaluate(it, swl)->as_scalar(), -0.9f, 0.9f);
 
         roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
         Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
 
-        SampledSpectrum eta = SampledSpectrum{eta_.evaluate(it, swl)};
-        SampledSpectrum k = SampledSpectrum{k_.evaluate(it, swl)};
+        SampledSpectrum eta = SampledSpectrum{eta_.evaluate(it, swl).array};
+        SampledSpectrum k = SampledSpectrum{k_.evaluate(it, swl).array};
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl);
 
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);

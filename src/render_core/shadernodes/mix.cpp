@@ -65,9 +65,11 @@ public:
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return ocarina::lerp(t_.average(), A_.average(), B_.average());
     }
-    [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
-                                               const SampledWavelengths &swl) const noexcept override {
-        return ocarina::lerp(t_.evaluate(ctx, swl), A_.evaluate(ctx, swl), B_.evaluate(ctx, swl));
+    [[nodiscard]] AttrEvaluation evaluate(const AttrEvalContext &ctx,
+                                          const SampledWavelengths &swl) const noexcept override {
+        return ocarina::lerp(t_.evaluate(ctx, swl).array,
+                             A_.evaluate(ctx, swl).array,
+                             B_.evaluate(ctx, swl).array);
     }
 };
 }// namespace vision

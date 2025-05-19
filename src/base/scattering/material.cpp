@@ -283,8 +283,8 @@ namespace detail {
 void compute_by_normal_map(const ShaderNodeSlot &normal_map, const ShaderNodeSlot &scale,
                            Interaction *it,
                            const SampledWavelengths &swl) noexcept {
-    Float3 normal = normal_map.evaluate(*it, swl).as_vec3() * 2.f - make_float3(1.f);
-    Float s = scale.evaluate(*it, swl).as_scalar();
+    Float3 normal = normal_map.evaluate(*it, swl)->as_vec3() * 2.f - make_float3(1.f);
+    Float s = scale.evaluate(*it, swl)->as_scalar();
     normal.x *= s;
     normal.y *= s;
     Float3 world_normal = it->shading.to_world(normal);
@@ -306,16 +306,16 @@ void compute_by_bump_map(const ShaderNodeSlot &bump_map, const ShaderNodeSlot &s
     it_eval.pos = it->pos + du * it->shading.dp_du();
     it_eval.uv = it->uv + make_float2(du, 0.f);
     it_eval.ng = normalize(cross(it->shading.dp_du(), it->shading.dp_dv()));
-    Float u_displace = bump_map.evaluate(it_eval, swl).as_scalar();
+    Float u_displace = bump_map.evaluate(it_eval, swl)->as_scalar();
 
     Float dv = 0.5f * (abs(it->dv_dx) + abs(it->dv_dy));
     dv = select(dv == 0.f, d, dv);
     it_eval.pos = it->pos + dv * it->shading.dp_dv();
     it_eval.uv = it->uv + make_float2(0.f, dv);
     it_eval.ng = normalize(cross(it->shading.dp_du(), it->shading.dp_dv()));
-    Float v_displace = bump_map.evaluate(it_eval, swl).as_scalar();
+    Float v_displace = bump_map.evaluate(it_eval, swl)->as_scalar();
 
-    Float displace = bump_map.evaluate(*it, swl).as_scalar();
+    Float displace = bump_map.evaluate(*it, swl)->as_scalar();
 
     Float3 dp_du = it->shading.dp_du() +
                    (u_displace - displace) / du * it->shading.normal() +

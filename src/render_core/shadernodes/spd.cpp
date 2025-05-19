@@ -32,7 +32,7 @@ public:
     void prepare() noexcept override {
         spd_.prepare();
     }
-    [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
+    [[nodiscard]] AttrEvaluation evaluate(const AttrEvalContext &ctx,
                                                const SampledWavelengths &swl) const noexcept override {
         return spd_.eval(swl);
     }
