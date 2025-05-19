@@ -361,6 +361,12 @@ struct LightSampleContext : public SpacePoint {
           ns(std::move(ns)) {}
 };
 
+struct AttrEvaluation {
+    float_array array;
+    AttrEvaluation() = default;
+    AttrEvaluation(const float_array &array) : array(array) {}
+};
+
 struct AttrEvalContext {
     Float2 uv;
     optional<Float3> pos;
@@ -383,7 +389,7 @@ struct AttrEvalContext {
     }
 
     [[nodiscard]] uint float_num() const noexcept {
-        return 2 + (pos ? 3: 0);
+        return 2 + (pos ? 3 : 0);
     }
 
     [[nodiscard]] float_array to_array() const noexcept {
