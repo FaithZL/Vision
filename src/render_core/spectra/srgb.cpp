@@ -61,4 +61,3 @@ public:
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX(vision, SRGBSpectrum)
-//VS_REGISTER_CURRENT_PATH(0, "vision-spectrum-srgb.dll")

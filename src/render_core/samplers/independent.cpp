@@ -45,4 +45,3 @@ public:
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX(vision, IndependentSampler)
-//VS_REGISTER_CURRENT_PATH(0, "vision-sampler-independent.dll")

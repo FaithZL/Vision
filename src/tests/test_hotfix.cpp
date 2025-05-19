@@ -23,7 +23,6 @@ using namespace ocarina;
 
 using namespace vision;
 
-//VS_REGISTER_CURRENT_PATH(0, "vision-test_hotfix.exe")
 
 int main(int argc, char *argv[]) {
     fs::path path(argv[0]);

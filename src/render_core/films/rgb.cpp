@@ -140,4 +140,3 @@ public:
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX(vision, RGBFilm)
-//VS_REGISTER_CURRENT_PATH(0, "vision-film-rgb.dll")

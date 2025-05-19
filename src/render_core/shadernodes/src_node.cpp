@@ -62,4 +62,4 @@ public:
 
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, TextureCoordinate, tex_coord)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, GeometryNode, geometry)
-//VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-src_node.dll")
+VS_REGISTER_CURRENT_FILE
