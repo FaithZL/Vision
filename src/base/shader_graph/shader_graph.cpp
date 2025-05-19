@@ -24,8 +24,7 @@ void ShaderGraph::clear() noexcept {
 void ShaderGraph::init_node_map(const map<string, ShaderNodeDesc> &tab) noexcept {
     for (const auto &[key, desc] : tab) {
         auto shader_node = Node::create_shared<ShaderNode>(desc);
-        shader_node->set_graph(shared_from_this());
-        node_map_.insert(make_pair(key, shader_node));
+        add_node(key, std::move(shader_node));
     }
 }
 
@@ -43,6 +42,7 @@ template<typename T>
     } else {
         SlotDesc slot_desc = desc.slot(attr_name, val, tag);
         slot = ShaderNodeSlot::create_slot(slot_desc);
+        slot->set_graph(shared_from_this());
     }
     return slot;
 }

@@ -31,11 +31,6 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_HOTFIX_MAKE_RESTORE(ShaderNode, vector_, texture_, tex_id_, desc_)
 
-    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
-        VS_CAST_DESC
-//        INIT_SLOT(vector, make_float2(0.5f), Number);
-    }
-
     void reload(ocarina::Widgets *widgets) noexcept {
         fs::path path = texture_->host_tex().path();
         if (Widgets::open_file_dialog(path)) {
