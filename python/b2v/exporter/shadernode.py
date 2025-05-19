@@ -12,6 +12,13 @@ from bpy.props import (
     StringProperty,
 )
 
+def slot_data(node_name, output_key, channels="x"):
+    ret = {
+        "channels": channels,
+        "output_key": output_key,
+        "node": node_name,
+    }
+    return ret
 
 def parse_image_node(exporter, link, dim, node_tab):
     from_node = link.from_node
@@ -44,11 +51,7 @@ def parse_image_node(exporter, link, dim, node_tab):
         },
     }
 
-    ret = {
-        "channels": channels,
-        "output_key": fs.name,
-        "node": node_name,
-    }
+    ret = slot_data(node_name, fs.name, channels)
 
     if not (node_name in node_tab):
         node_tab[node_name] = val
@@ -60,11 +63,7 @@ def parse_tex_coord(exporter, link, dim, node_tab):
     fs = link.from_socket
     output_key = fs.name
     node_name = str(from_node)
-    ret = {
-        "output_key": fs.name,
-        "node": node_name,
-        "channels": "xy",
-    }
+    ret = ret = slot_data(node_name, fs.name)
     val = {
         "type": "tex_coord",
         "param": {},
@@ -75,11 +74,19 @@ def parse_tex_coord(exporter, link, dim, node_tab):
 
 
 def parse_mix(exporter, link, dim, node_tab):
-    pass
+    from_node = link.from_node
+    fs = link.from_socket
+    output_key = fs.name
+    node_name = str(from_node)
+    ret = slot_data(node_name, fs.name)
 
 
 def parse_add(exporter, link, dim, node_tab):
-    pass
+    from_node = link.from_node
+    fs = link.from_socket
+    output_key = fs.name
+    node_name = str(from_node)
+    ret = slot_data(node_name, fs.name)
 
 
 func_dict = {
@@ -96,8 +103,6 @@ def parse_node(exporter, socket, dim, node_tab):
         link = socket.links[0]
         func = func_dict[link.from_node.type]
         return func(exporter, link, dim, node_tab)
-    # if link.from_node is None:
-    #     return None
     if dim == 1:
         value = socket.default_value
         return {
