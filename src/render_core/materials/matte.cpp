@@ -38,9 +38,9 @@ public:
     void initialize_(const vision::NodeDesc &node_desc) noexcept override {
         VS_CAST_DESC
         Material::initialize_(node_desc);
-        INIT_SLOT(color, make_float3(0.5f), Albedo);
+        VS_INIT_SLOT(color, make_float3(0.5f), Albedo);
         if (desc.has_attr("sigma")) {
-            INIT_SLOT(sigma, 0.5f, Number).set_range(0.f, 1.f);
+            VS_INIT_SLOT(sigma, 0.5f, Number).set_range(0.f, 1.f);
         }
         init_slot_cursor(&color_, 2);
     }

@@ -26,10 +26,10 @@ public:
     void initialize_(const vision::NodeDesc &node_desc) noexcept override {
         VS_CAST_DESC
         Material::initialize_(node_desc);
-        INIT_SLOT(color, make_float3(1.f), Albedo);
-        INIT_SLOT(edge_tint, make_float3(1.f), Albedo);
-        INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
-        INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);
+        VS_INIT_SLOT(color, make_float3(1.f), Albedo);
+        VS_INIT_SLOT(edge_tint, make_float3(1.f), Albedo);
+        VS_INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
+        VS_INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);
         init_slot_cursor(&color_, &anisotropic_);
     }
     void prepare() noexcept override {

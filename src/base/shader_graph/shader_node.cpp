@@ -201,6 +201,10 @@ ColorDecode ShaderNodeSlot::eval_illumination_spectrum(const AttrEvalContext &ct
 }
 ///#endregion
 
+void ShaderNode::initialize_slots(const vision::ShaderNodeDesc &desc) noexcept {
+
+}
+
 ShaderNode &ShaderNode::set_graph(const SP<ShaderGraph> &graph) noexcept {
     graph_ = graph;
     return *this;

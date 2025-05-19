@@ -278,28 +278,28 @@ public:
     void initialize_(const vision::NodeDesc &node_desc) noexcept override {
         VS_CAST_DESC
         Material::initialize_(node_desc);
-        INIT_SLOT(color, make_float3(1.f), Albedo);
-        INIT_SLOT(metallic, 0.f, Number);
-        INIT_SLOT(ior, 1.5f, Number).set_range(1.01, 20.f);
-        INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
-        INIT_SLOT(spec_tint, make_float3(1.f), Albedo);
-        INIT_SLOT(anisotropic, 0.f, Number);
-        INIT_SLOT(opcacity, 1.f, Number).set_range(0.f, 1.f);
+        VS_INIT_SLOT(color, make_float3(1.f), Albedo);
+        VS_INIT_SLOT(metallic, 0.f, Number);
+        VS_INIT_SLOT(ior, 1.5f, Number).set_range(1.01, 20.f);
+        VS_INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);
+        VS_INIT_SLOT(spec_tint, make_float3(1.f), Albedo);
+        VS_INIT_SLOT(anisotropic, 0.f, Number);
+        VS_INIT_SLOT(opcacity, 1.f, Number).set_range(0.f, 1.f);
 
-        INIT_SLOT(sheen_weight, 0.f, Number);
-        INIT_SLOT(sheen_roughness, 0.5f, Number);
-        INIT_SLOT(sheen_tint, make_float3(1.f), Albedo);
+        VS_INIT_SLOT(sheen_weight, 0.f, Number);
+        VS_INIT_SLOT(sheen_roughness, 0.5f, Number);
+        VS_INIT_SLOT(sheen_tint, make_float3(1.f), Albedo);
 
-        INIT_SLOT(coat_weight, 0.f, Number);
-        INIT_SLOT(coat_roughness, 0.2f, Number).set_range(0.0001f, 1.f);
-        INIT_SLOT(coat_ior, 1.5f, Number).set_range(1.01, 4.f);
-        INIT_SLOT(coat_tint, make_float3(1.f), Albedo);
+        VS_INIT_SLOT(coat_weight, 0.f, Number);
+        VS_INIT_SLOT(coat_roughness, 0.2f, Number).set_range(0.0001f, 1.f);
+        VS_INIT_SLOT(coat_ior, 1.5f, Number).set_range(1.01, 4.f);
+        VS_INIT_SLOT(coat_tint, make_float3(1.f), Albedo);
 
-        INIT_SLOT(subsurface_weight, 0.3f, Number);
-        INIT_SLOT(subsurface_radius, make_float3(1.f), Number);
-        INIT_SLOT(subsurface_scale, 0.2f, Number);
+        VS_INIT_SLOT(subsurface_weight, 0.3f, Number);
+        VS_INIT_SLOT(subsurface_radius, make_float3(1.f), Number);
+        VS_INIT_SLOT(subsurface_scale, 0.2f, Number);
 
-        INIT_SLOT(transmission_weight, 0.f, Number);
+        VS_INIT_SLOT(transmission_weight, 0.f, Number);
 
         init_slot_cursor(&color_, &transmission_weight_);
     }

@@ -14,7 +14,7 @@ namespace vision {
 
 class ShaderGraph;
 #define VS_MAKE_SLOT(attr_name) ShaderNodeSlot attr_name##_{#attr_name};
-#define INIT_SLOT(name, default_value, type) \
+#define VS_INIT_SLOT(name, default_value, type) \
     name##_.set(graph().construct_slot(desc, #name, default_value, type))
 
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
@@ -33,6 +33,7 @@ public:
     virtual bool render_UI_by_tag(Widgets *widgets, AttrTag attr_tag) noexcept {
         return render_UI(widgets);
     }
+    virtual void initialize_slots(const ShaderNodeDesc &desc) noexcept;
     ShaderNode &set_graph(const SP<ShaderGraph> &graph) noexcept;
     [[nodiscard]] ShaderGraph &graph() const noexcept;
     [[nodiscard]] virtual uint dim() const noexcept { return 4; }
