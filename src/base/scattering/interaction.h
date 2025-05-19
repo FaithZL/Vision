@@ -365,6 +365,8 @@ struct AttrEvaluation {
     float_array array;
     AttrEvaluation() = default;
     AttrEvaluation(const float_array &array) : array(array) {}
+    [[nodiscard]] const auto &operator->() const noexcept { return array; }
+    [[nodiscard]] auto &operator->() noexcept { return array; }
 };
 
 struct AttrEvalContext {
