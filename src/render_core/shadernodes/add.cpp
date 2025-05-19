@@ -81,4 +81,4 @@ public:
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX(vision, AddNode)
-VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-add.dll")
+//VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-add.dll")

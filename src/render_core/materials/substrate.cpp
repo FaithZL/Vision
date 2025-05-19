@@ -141,4 +141,4 @@ public:
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX(vision, SubstrateMaterial)
-VS_REGISTER_CURRENT_PATH(0, "vision-material-substrate.dll")
+//VS_REGISTER_CURRENT_PATH(0, "vision-material-substrate.dll")

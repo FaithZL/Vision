@@ -247,7 +247,8 @@ public:
 
 #define VS_MAKE_CLASS_CREATOR_HOTFIX(NS, Class) \
     VS_REGISTER_HOTFIX(NS, Class)               \
-    VS_MAKE_CLASS_CREATOR(NS::Class)
+    VS_MAKE_CLASS_CREATOR(NS::Class)            \
+    VS_REGISTER_CURRENT_FILE
 
 #define VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(NS, Class, FuncName) \
     VS_REGISTER_HOTFIX(NS, Class)                              \

@@ -46,4 +46,4 @@ public:
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX(vision, PointLight)
-VS_REGISTER_CURRENT_PATH(0, "vision-light-point.dll")
+//VS_REGISTER_CURRENT_PATH(0, "vision-light-point.dll")

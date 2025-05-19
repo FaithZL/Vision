@@ -55,4 +55,4 @@ public:
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX(vision, PowerLightSampler)
-VS_REGISTER_CURRENT_PATH(0, "vision-lightsampler-power.dll")
+//VS_REGISTER_CURRENT_PATH(0, "vision-lightsampler-power.dll")

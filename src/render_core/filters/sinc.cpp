@@ -32,4 +32,4 @@ public:
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX(vision, LanczosSincFilter)
-VS_REGISTER_CURRENT_PATH(0, "vision-filter-sinc.dll")
+//VS_REGISTER_CURRENT_PATH(0, "vision-filter-sinc.dll")

@@ -188,4 +188,4 @@ public:
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX(vision, RayTracingFrameBuffer)
-VS_REGISTER_CURRENT_PATH(0, "vision-framebuffer-rt.dll")
+//VS_REGISTER_CURRENT_PATH(0, "vision-framebuffer-rt.dll")

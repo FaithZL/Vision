@@ -50,4 +50,4 @@ public:
 };
 }// namespace vision
 VS_MAKE_CLASS_CREATOR_HOTFIX(vision, ThinLensCamera)
-VS_REGISTER_CURRENT_PATH(0, "vision-sensor-thin_lens.dll")
+//VS_REGISTER_CURRENT_PATH(0, "vision-sensor-thin_lens.dll")

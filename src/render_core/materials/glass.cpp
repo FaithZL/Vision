@@ -258,4 +258,4 @@ public:
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX(vision, GlassMaterial)
-VS_REGISTER_CURRENT_PATH(0, "vision-material-glass.dll")
+//VS_REGISTER_CURRENT_PATH(0, "vision-material-glass.dll")

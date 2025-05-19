@@ -48,4 +48,4 @@ public:
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX(vision, MitchellFilter)
-VS_REGISTER_CURRENT_PATH(0, "vision-filter-mitchell.dll")
+//VS_REGISTER_CURRENT_PATH(0, "vision-filter-mitchell.dll")
