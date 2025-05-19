@@ -10,8 +10,7 @@ namespace vision {
 class TextureCoordinate : public ShaderNode {
 public:
     using ShaderNode::ShaderNode;
-    VS_MAKE_PLUGIN_NAME_FUNC
-
+    VS_MAKE_PLUGIN_NAME_FUNC_(tex_coord)
     [[nodiscard]] float_array evaluate(const string &key, const AttrEvalContext &ctx,
                                        const SampledWavelengths &swl) const noexcept override {
         Float2 uv;
@@ -34,5 +33,5 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR_HOTFIX(vision, TextureCoordinate)
+VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, TextureCoordinate, tex_coord)
 VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-tex_coord.dll")

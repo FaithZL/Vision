@@ -12,6 +12,7 @@ from bpy.props import (
     StringProperty,
 )
 
+
 def slot_data(node_name, output_key, channels="x"):
     ret = {
         "channels": channels,
@@ -19,6 +20,7 @@ def slot_data(node_name, output_key, channels="x"):
         "node": node_name,
     }
     return ret
+
 
 def parse_image_node(exporter, link, dim, node_tab):
     from_node = link.from_node
@@ -65,7 +67,8 @@ def parse_tex_coord(exporter, link, dim, node_tab):
     node_name = str(from_node)
     ret = ret = slot_data(node_name, fs.name)
     val = {
-        "type": "tex_coord",
+        "type": "src_node",
+        "construct_name": "tex_coord",
         "param": {},
     }
     if not (node_name in node_tab):
