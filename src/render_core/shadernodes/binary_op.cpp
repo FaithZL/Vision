@@ -76,13 +76,13 @@ public:
     }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                                const SampledWavelengths &swl) const noexcept override {
-        if (op_ == "add") {
+        if (op_ == "Add") {
             return lhs_.evaluate(ctx, swl) + rhs_.evaluate(ctx, swl);
-        } else if (op_ == "sub") {
+        } else if (op_ == "Subtract") {
             return lhs_.evaluate(ctx, swl) - rhs_.evaluate(ctx, swl);
-        } else if (op_ == "mul") {
+        } else if (op_ == "Multiply") {
             return lhs_.evaluate(ctx, swl) * rhs_.evaluate(ctx, swl);
-        } else if (op_ == "div") {
+        } else if (op_ == "Divide") {
             return lhs_.evaluate(ctx, swl) / rhs_.evaluate(ctx, swl);
         }
         OC_WARNING("fallback to mul");
