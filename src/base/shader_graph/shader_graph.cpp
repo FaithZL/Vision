@@ -31,6 +31,9 @@ void ShaderGraph::init_node_map(const map<string, ShaderNodeDesc> &tab) noexcept
 
 ShaderNodeSlot ShaderGraph::construct_slot(const vision::ParameterSet &ps, vision::AttrTag tag) const noexcept {
     DataWrap data = ps.data();
+    if (data.is_null()) {
+        return ShaderNodeSlot{};
+    }
     string str = to_string(data);
     SP<ShaderNode> shader_node = get_node(data["node"]);
     ShaderNodeSlot slot = ShaderNodeSlot(shader_node, data["channels"], tag,
