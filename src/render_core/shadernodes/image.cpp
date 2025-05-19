@@ -31,6 +31,10 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_HOTFIX_MAKE_RESTORE(ShaderNode, vector_, texture_, tex_id_, desc_)
 
+    void prepare() noexcept override {
+//        vector_.set(graph().con)
+    }
+
     void reload(ocarina::Widgets *widgets) noexcept {
         fs::path path = texture_->host_tex().path();
         if (Widgets::open_file_dialog(path)) {
