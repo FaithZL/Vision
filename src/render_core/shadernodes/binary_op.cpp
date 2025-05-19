@@ -31,14 +31,15 @@ namespace vision {
 //        }
 //    }
 //}
-class MultiplyNode : public ShaderNode {
+class BinaryOpNode : public ShaderNode {
 private:
     VS_MAKE_SLOT(lhs)
     VS_MAKE_SLOT(rhs)
+    std::string op_;
 
 public:
-    MultiplyNode() = default;
-    explicit MultiplyNode(const ShaderNodeDesc &desc)
+    BinaryOpNode() = default;
+    explicit BinaryOpNode(const ShaderNodeDesc &desc)
         : ShaderNode(desc) {
         lhs_.set(ShaderNodeSlot::create_slot(*desc.slot("lhs")));
         rhs_.set(ShaderNodeSlot::create_slot(*desc.slot("rhs")));
@@ -65,20 +66,30 @@ public:
         return lhs_->is_constant() && rhs_->is_constant();
     }
     [[nodiscard]] uint64_t compute_hash() const noexcept override {
-        return hash64(lhs_.hash(), rhs_.hash());
+        return hash64(lhs_.hash(), rhs_.hash(), op_);
     }
     [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
-        return hash64(lhs_.topology_hash(), rhs_.topology_hash());
+        return hash64(lhs_.topology_hash(), rhs_.topology_hash(), op_);
     }
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return lhs_.average() * rhs_.average();
     }
     [[nodiscard]] DynamicArray<float> evaluate(const AttrEvalContext &ctx,
                                                const SampledWavelengths &swl) const noexcept override {
+        if (op_ == "add") {
+            return lhs_.evaluate(ctx, swl) + rhs_.evaluate(ctx, swl);
+        } else if (op_ == "sub") {
+            return lhs_.evaluate(ctx, swl) - rhs_.evaluate(ctx, swl);
+        } else if (op_ == "mul") {
+            return lhs_.evaluate(ctx, swl) * rhs_.evaluate(ctx, swl);
+        } else if (op_ == "div") {
+            return lhs_.evaluate(ctx, swl) / rhs_.evaluate(ctx, swl);
+        }
+        OC_WARNING("fallback to mul");
         return lhs_.evaluate(ctx, swl) * rhs_.evaluate(ctx, swl);
     }
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR_HOTFIX(vision, MultiplyNode)
-VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-multiply.dll")
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, BinaryOpNode)
+VS_REGISTER_CURRENT_PATH(0, "vision-shadernode-binary_op.dll")
