@@ -386,7 +386,6 @@ struct AttrEvalInput {
     optional<Float3> ng;
     optional<Float3> ng_local;
     optional<Float3> ns;
-    optional<Float3> dp_dus;
     AttrEvalInput() = default;
     AttrEvalInput(Float3 pos)
         : pos(std::move(pos)) {}
@@ -396,29 +395,15 @@ struct AttrEvalInput {
         : uv(std::move(uv)) {}
     AttrEvalInput(const float_array &f_array)
         : uv{f_array.as_vec2()} {
-        if (f_array.size() == 5) {
-            pos.emplace(f_array.sub(2, 3).as_vec3());
-        }
     }
-    AttrEvalInput(const AttrEvalOutput &ae)
-        : AttrEvalInput(ae.array) {}
-
-    [[nodiscard]] uint float_num() const noexcept {
-        return 2 + (pos ? 3 : 0);
+    AttrEvalInput(const AttrEvalOutput &output)
+        : AttrEvalInput(output.array.as_vec2()) {
+        from_output(output);
     }
 
-    [[nodiscard]] float_array to_array() const noexcept {
-        float_array ret{float_num()};
-        ret[0] = uv.x;
-        ret[1] = uv.y;
-        uint cursor = 1;
-        if (pos) {
-            ret[++cursor] = pos->x;
-            ret[++cursor] = pos->y;
-            ret[++cursor] = pos->z;
-        }
-        return ret;
-    }
+    [[nodiscard]] uint float_num() const noexcept;
+    [[nodiscard]] AttrEvalOutput to_output() const noexcept;
+    void from_output(const AttrEvalOutput &input) noexcept;
 };
 
 }// namespace vision

@@ -153,4 +153,35 @@ void Interaction::set_medium(const Uint &inside, const Uint &outside) {
     (*mi_).outside = outside;
 }
 
+uint nonzero_bit_num(GeometryTag tag_) {
+    uint tag = to_underlying(tag_);
+    uint cursor = 1;
+    uint counter = 0;
+    static constexpr uint width = 8;
+    for (int i = 0; i < width; ++i) {
+        counter += uint((cursor << i) | tag);
+    }
+    return counter;
+}
+
+void AttrEvalInput::from_output(const AttrEvalOutput &input) noexcept {
+}
+
+uint AttrEvalInput::float_num() const noexcept {
+    const optional<Float3> *head = addressof(pos);
+    const optional<Float3> *last = addressof(ns);
+    uint counter = 0;
+    for (const optional<Float3> *ptr = head; ptr <= last; ++ptr) {
+        counter += uint(bool(*ptr));
+    }
+    return 2 + counter * 3;
+}
+
+AttrEvalOutput AttrEvalInput::to_output() const noexcept {
+    float_array ret{float_num()};
+    ret[0] = uv.x;
+    ret[1] = uv.y;
+    return ret;
+}
+
 }// namespace vision
