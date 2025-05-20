@@ -62,12 +62,12 @@ public:
     virtual float normalize() noexcept { return 1.f; }
     ///#endregion
 
-    [[nodiscard]] virtual AttrEvalOutput evaluate(const AttrEvalInput &ctx,
+    [[nodiscard]] virtual AttrEvalContext evaluate(const AttrEvalContext &ctx,
                                                   const SampledWavelengths &swl) const noexcept {
         OC_ERROR("call error");
         return {};
     }
-    [[nodiscard]] virtual AttrEvalOutput evaluate(const string &key, const AttrEvalInput &ctx,
+    [[nodiscard]] virtual AttrEvalContext evaluate(const string &key, const AttrEvalContext &ctx,
                                                   const SampledWavelengths &swl) const noexcept {
         return evaluate(ctx, swl);
     }
@@ -120,17 +120,17 @@ public:
     bool has_changed() noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
-    [[nodiscard]] virtual AttrEvalOutput evaluate(const AttrEvalInput &ctx,
+    [[nodiscard]] virtual AttrEvalContext evaluate(const AttrEvalContext &ctx,
                                                   const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] vector<float> average() const noexcept;
     [[nodiscard]] float luminance() const noexcept;
     [[nodiscard]] bool valid() const noexcept { return node_ != nullptr; }
     [[nodiscard]] explicit operator bool() const noexcept { return valid(); }
-    [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const AttrEvalInput &ctx,
+    [[nodiscard]] virtual ColorDecode eval_albedo_spectrum(const AttrEvalContext &ctx,
                                                            const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual ColorDecode eval_unbound_spectrum(const AttrEvalInput &ctx,
+    [[nodiscard]] virtual ColorDecode eval_unbound_spectrum(const AttrEvalContext &ctx,
                                                             const SampledWavelengths &swl) const noexcept;
-    [[nodiscard]] virtual ColorDecode eval_illumination_spectrum(const AttrEvalInput &ctx,
+    [[nodiscard]] virtual ColorDecode eval_illumination_spectrum(const AttrEvalContext &ctx,
                                                                  const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] const ShaderNode *node() const noexcept override { return node_.get(); }
     [[nodiscard]] ShaderNode *node() noexcept override { return node_.get(); }

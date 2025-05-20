@@ -361,25 +361,6 @@ struct LightSampleContext : public SpacePoint {
           ns(std::move(ns)) {}
 };
 
-enum GeometryTag : uint {
-    None = 0,
-    Position = 1 << 0,
-    Wo = 1 << 1,
-    Ng = 1 << 2,
-    NgLocal = 1 << 3,
-    Ns = 1 << 4,
-};
-
-//struct AttrEvalOutput {
-//    GeometryTag tag{None};
-//    float_array array{1u};
-//    AttrEvalOutput() = default;
-//    AttrEvalOutput(const float_array &array) : array(array) {}
-//    AttrEvalOutput(GeometryTag tag, const float_array &array) : array(array), tag(tag) {}
-//    [[nodiscard]] const auto *operator->() const noexcept { return &array; }
-//    [[nodiscard]] auto *operator->() noexcept { return &array; }
-//};
-
 struct AttrEvalContext {
 public:
     enum Tag : uint {
@@ -401,44 +382,5 @@ public:
     [[nodiscard]] const auto *operator->() const noexcept { return &array; }
     [[nodiscard]] auto *operator->() noexcept { return &array; }
 };
-
-using AttrEvalOutput = AttrEvalContext;
-using AttrEvalInput = AttrEvalContext;
-
-//struct AttrEvalInput {
-//    Float2 uv;
-//    optional<Float3> pos;
-//    optional<Float3> wo;
-//    optional<Float3> ng;
-//    optional<Float3> ng_local;
-//    optional<Float3> ns;
-//    AttrEvalInput() = default;
-//    AttrEvalInput(Float3 pos)
-//        : pos(std::move(pos)) {}
-//    AttrEvalInput(const Interaction &it)
-//        : pos(it.pos), uv(it.uv) {}
-//    AttrEvalInput(Float2 uv)
-//        : uv(std::move(uv)) {}
-//    AttrEvalInput(const float_array &f_array)
-//        : uv{f_array.as_vec2()} {
-//    }
-//    AttrEvalInput(const AttrEvalOutput &output)
-//        : AttrEvalInput(output.array.as_vec2()) {
-//        from_output(output);
-//    }
-//    void for_each_optional(const std::function<void(const optional<Float3> &, uint)> &func) const noexcept {
-//        const optional<Float3> *head = addressof(pos);
-//        const optional<Float3> *last = addressof(ns);
-//        uint i = 0;
-//        uint tag = 0;
-//        for (const optional<Float3> *ptr = head; ptr <= last; ++ptr, ++i) {
-//            func(*ptr, i);
-//        }
-//    }
-//    [[nodiscard]] static uint float_num(GeometryTag tag) noexcept;
-//    [[nodiscard]] AttrEvalOutput to_output() const noexcept;
-//    [[nodiscard]] GeometryTag compute_tag() const noexcept;
-//    void from_output(const AttrEvalOutput &input) noexcept;
-//};
 
 }// namespace vision

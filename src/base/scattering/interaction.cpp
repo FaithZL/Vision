@@ -152,55 +152,5 @@ void Interaction::set_medium(const Uint &inside, const Uint &outside) {
     (*mi_).inside = inside;
     (*mi_).outside = outside;
 }
-//
-//uint nonzero_bit_num(GeometryTag tag_) {
-//    uint tag = to_underlying(tag_);
-//    uint counter = 0;
-//    static constexpr uint width = 8;
-//    for (int i = 0; i < width; ++i) {
-//        uint cursor = (1 << i);
-//        counter += uint(bool(cursor & tag));
-//    }
-//    return counter;
-//}
-//
-//void AttrEvalInput::from_output(const AttrEvalOutput &input) noexcept {
-//}
-//
-//uint AttrEvalInput::float_num(GeometryTag tag) noexcept {
-//    return 2 + nonzero_bit_num(tag) * 3;
-//}
-//
-//GeometryTag AttrEvalInput::compute_tag() const noexcept {
-//    const optional<Float3> *head = addressof(pos);
-//    const optional<Float3> *last = addressof(ns);
-//    uint tag = 0;
-//    for_each_optional([&](const optional<Float3> &cursor, uint i) {
-//        bool b = bool(cursor);
-//        if (b) {
-//            tag |= 1 << i;
-//        }
-//    });
-//    return GeometryTag(tag);
-//}
-//
-//AttrEvalOutput AttrEvalInput::to_output() const noexcept {
-//    GeometryTag tag = compute_tag();
-//    float_array array{float_num(tag)};
-//    array[0] = uv.x;
-//    array[1] = uv.y;
-//    uint cursor = 2;
-//    auto fill_func = [](float_array &array, const optional<Float3> &attr, uint &cursor) {
-//        if (attr) {
-//            array[cursor++] = attr->x;
-//            array[cursor++] = attr->y;
-//            array[cursor++] = attr->z;
-//        }
-//    };
-//    for_each_optional([&](const optional<Float3> &attr, uint i) {
-//        fill_func(array, attr, cursor);
-//    });
-//    return {tag, array};
-//}
 
 }// namespace vision
