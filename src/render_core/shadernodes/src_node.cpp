@@ -15,22 +15,22 @@ public:
                                           const SampledWavelengths &swl) const noexcept override {
         Float2 uv;
         if (key == "Generated") {
-            uv = ctx.uv;
+            uv = ctx.uv();
         } else if (key == "Normal") {
             // todo
-            uv = ctx.uv;
+            uv = ctx.uv();
         } else if (key == "UV") {
-            uv = ctx.uv;
+            uv = ctx.uv();
         } else if (key == "Camera") {
             TSensor sensor = scene().sensor();
             uv = sensor->device_position().xy();
         } else if (key == "Object") {
-            uv = ctx.pos->xy();
+            uv = ctx.uv();
         } else if (key == "Window") {
             uv = make_float2(dispatch_idx().xy()) / dispatch_dim().xy();
         } else {
             OC_WARNING_FORMAT("{} is unknown, fallback to uv", key.c_str());
-            uv = ctx.uv;
+            uv = ctx.uv();
         }
         return float_array::from_vec(uv);
     }
@@ -45,19 +45,19 @@ public:
                                           const SampledWavelengths &swl) const noexcept override {
         Float2 uv;
         if (key == "Position") {
-            uv = ctx.uv;
+            uv = ctx.uv();
         } else if (key == "Normal") {
             TSensor sensor = scene().sensor();
             uv = sensor->device_position().xy();
         } else if (key == "Tangent") {
-            uv = ctx.pos->xy();
+            uv = ctx.uv();
         } else if (key == "True Normal") {
             uv = make_float2(dispatch_idx().xy()) / dispatch_dim().xy();
         } else if (key == "Incoming") {
             uv = make_float2(dispatch_idx().xy()) / dispatch_dim().xy();
         } else {
             OC_WARNING_FORMAT("{} is unknown, fallback to uv", key.c_str());
-            uv = ctx.uv;
+            uv = ctx.uv();
         }
         return float_array::from_vec(uv);
     }

@@ -110,7 +110,7 @@ bool ShaderNodeSlot::render_UI(ocarina::Widgets *widgets) noexcept {
 AttrEvalOutput ShaderNodeSlot::evaluate(const AttrEvalInput &ctx,
                                         const SampledWavelengths &swl) const noexcept {
     if (!node_) {
-        return ctx.to_output();
+        return ctx;
     }
     if (!output_key_.empty()) {
         return node_->evaluate(output_key_, ctx, swl);

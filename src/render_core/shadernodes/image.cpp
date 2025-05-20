@@ -83,7 +83,7 @@ public:
                                           const SampledWavelengths &swl) const noexcept override {
         if (!cache_) {
             AttrEvalInput ctx_processed = vector_.evaluate(ctx, swl);
-            float_array value = pipeline()->tex_var(*tex_id_).sample(channel_num(), ctx_processed.uv);
+            float_array value = pipeline()->tex_var(*tex_id_).sample(channel_num(), ctx_processed.uv());
             cache_.emplace(value);
         }
         return *cache_;
