@@ -166,10 +166,11 @@ uint nonzero_bit_num(GeometryTag tag_) {
 }
 
 void AttrEvalInput::from_output(const AttrEvalOutput &input) noexcept {
+
 }
 
-uint AttrEvalInput::float_num() const noexcept {
-    return 2 + nonzero_bit_num(compute_tag()) * 3;
+uint AttrEvalInput::float_num(GeometryTag tag) noexcept {
+    return 2 + nonzero_bit_num(tag) * 3;
 }
 
 GeometryTag AttrEvalInput::compute_tag() const noexcept {
@@ -188,7 +189,8 @@ GeometryTag AttrEvalInput::compute_tag() const noexcept {
 }
 
 AttrEvalOutput AttrEvalInput::to_output() const noexcept {
-    float_array ret{float_num()};
+    GeometryTag tag = compute_tag();
+    float_array ret{float_num(tag)};
     ret[0] = uv.x;
     ret[1] = uv.y;
     return ret;
