@@ -2,7 +2,6 @@
 // Created by Zero on 05/12/2022.
 //
 
-#include <bitset>
 #include "interaction.h"
 #include "base/scattering/medium.h"
 #include "base/sampler.h"
@@ -166,7 +165,6 @@ uint nonzero_bit_num(GeometryTag tag_) {
 }
 
 void AttrEvalInput::from_output(const AttrEvalOutput &input) noexcept {
-
 }
 
 uint AttrEvalInput::float_num(GeometryTag tag) noexcept {
@@ -176,24 +174,33 @@ uint AttrEvalInput::float_num(GeometryTag tag) noexcept {
 GeometryTag AttrEvalInput::compute_tag() const noexcept {
     const optional<Float3> *head = addressof(pos);
     const optional<Float3> *last = addressof(ns);
-    uint i = 0;
     uint tag = 0;
-    for (const optional<Float3> *ptr = head; ptr <= last; ++ptr, ++i) {
-        bool b = bool(*ptr);
+    for_each_optional([&](const optional<Float3> &cursor, uint i) {
+        bool b = bool(cursor);
         if (b) {
             tag |= 1 << i;
         }
-    }
-    auto str = std::bitset<32>(tag).to_string();
+    });
     return GeometryTag(tag);
 }
 
 AttrEvalOutput AttrEvalInput::to_output() const noexcept {
     GeometryTag tag = compute_tag();
-    float_array ret{float_num(tag)};
-    ret[0] = uv.x;
-    ret[1] = uv.y;
-    return ret;
+    float_array array{float_num(tag)};
+    array[0] = uv.x;
+    array[1] = uv.y;
+    uint cursor = 2;
+    auto fill_func = [](float_array &array, const optional<Float3> &attr, uint &cursor) {
+        if (attr) {
+            array[cursor++] = attr->x;
+            array[cursor++] = attr->y;
+            array[cursor++] = attr->z;
+        }
+    };
+    for_each_optional([&](const optional<Float3> &attr, uint i) {
+        fill_func(array, attr, cursor);
+    });
+    return {tag, array};
 }
 
 }// namespace vision
