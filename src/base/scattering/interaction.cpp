@@ -2,6 +2,7 @@
 // Created by Zero on 05/12/2022.
 //
 
+#include <bitset>
 #include "interaction.h"
 #include "base/scattering/medium.h"
 #include "base/sampler.h"
@@ -155,11 +156,11 @@ void Interaction::set_medium(const Uint &inside, const Uint &outside) {
 
 uint nonzero_bit_num(GeometryTag tag_) {
     uint tag = to_underlying(tag_);
-    uint cursor = 1;
     uint counter = 0;
     static constexpr uint width = 8;
     for (int i = 0; i < width; ++i) {
-        counter += uint((cursor << i) | tag);
+        uint cursor = (1 << i);
+        counter += uint(bool(cursor & tag));
     }
     return counter;
 }
@@ -168,13 +169,22 @@ void AttrEvalInput::from_output(const AttrEvalOutput &input) noexcept {
 }
 
 uint AttrEvalInput::float_num() const noexcept {
+    return 2 + nonzero_bit_num(compute_tag()) * 3;
+}
+
+GeometryTag AttrEvalInput::compute_tag() const noexcept {
     const optional<Float3> *head = addressof(pos);
     const optional<Float3> *last = addressof(ns);
-    uint counter = 0;
-    for (const optional<Float3> *ptr = head; ptr <= last; ++ptr) {
-        counter += uint(bool(*ptr));
+    uint i = 0;
+    uint tag = 0;
+    for (const optional<Float3> *ptr = head; ptr <= last; ++ptr, ++i) {
+        bool b = bool(*ptr);
+        if (b) {
+            tag |= 1 << i;
+        }
     }
-    return 2 + counter * 3;
+    auto str = std::bitset<32>(tag).to_string();
+    return GeometryTag(tag);
 }
 
 AttrEvalOutput AttrEvalInput::to_output() const noexcept {

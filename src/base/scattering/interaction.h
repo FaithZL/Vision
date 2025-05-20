@@ -403,6 +403,7 @@ struct AttrEvalInput {
 
     [[nodiscard]] uint float_num() const noexcept;
     [[nodiscard]] AttrEvalOutput to_output() const noexcept;
+    [[nodiscard]] GeometryTag compute_tag() const noexcept;
     void from_output(const AttrEvalOutput &input) noexcept;
 };
 
