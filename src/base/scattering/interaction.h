@@ -380,6 +380,27 @@ struct AttrEvalOutput {
     [[nodiscard]] auto *operator->() noexcept { return &array; }
 };
 
+struct AttrEvalContext {
+public:
+    enum Tag : uint {
+        UV = 1 << 0,
+    };
+
+public:
+    Tag tag{UV};
+    float_array array{1u};
+
+public:
+    AttrEvalContext(const float_array &array) : array(array) {}
+    AttrEvalContext(const Interaction &it)
+        : array(float_array::from_vec(it.uv)) {}
+    AttrEvalContext(Float2 uv)
+        : array(float_array::from_vec(uv)) {}
+    [[nodiscard]] Float2 uv() const noexcept { return array.as_vec2(); }
+    [[nodiscard]] const auto *operator->() const noexcept { return &array; }
+    [[nodiscard]] auto *operator->() noexcept { return &array; }
+};
+
 struct AttrEvalInput {
     Float2 uv;
     optional<Float3> pos;
