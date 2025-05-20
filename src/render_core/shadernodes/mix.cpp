@@ -65,7 +65,7 @@ public:
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return ocarina::lerp(t_.average(), A_.average(), B_.average());
     }
-    [[nodiscard]] AttrEvaluation evaluate(const AttrEvalContext &ctx,
+    [[nodiscard]] AttrEvalOutput evaluate(const AttrEvalInput &ctx,
                                           const SampledWavelengths &swl) const noexcept override {
         return ocarina::lerp(t_.evaluate(ctx, swl).array,
                              A_.evaluate(ctx, swl).array,

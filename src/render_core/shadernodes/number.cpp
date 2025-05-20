@@ -103,7 +103,7 @@ public:
     [[nodiscard]] ocarina::vector<float> average() const noexcept override {
         return value_.hv();
     }
-    [[nodiscard]] AttrEvaluation evaluate(const AttrEvalContext &ctx,
+    [[nodiscard]] AttrEvalOutput evaluate(const AttrEvalInput &ctx,
                                           const SampledWavelengths &swl) const noexcept override {
         return *value_;
     }

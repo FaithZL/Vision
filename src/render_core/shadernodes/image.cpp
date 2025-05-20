@@ -63,7 +63,7 @@ public:
         return true;
     }
 
-    [[nodiscard]] AttrEvaluation evaluate(const string &key, const AttrEvalContext &ctx,
+    [[nodiscard]] AttrEvalOutput evaluate(const string &key, const AttrEvalInput &ctx,
                                           const SampledWavelengths &swl) const noexcept override {
         float_array value = evaluate(ctx, swl).array;
         if (key == "Alpha") {
@@ -79,10 +79,10 @@ public:
 
     [[nodiscard]] uint channel_num() const noexcept { return texture_->host_tex().channel_num(); }
 
-    [[nodiscard]] AttrEvaluation evaluate(const AttrEvalContext &ctx,
+    [[nodiscard]] AttrEvalOutput evaluate(const AttrEvalInput &ctx,
                                           const SampledWavelengths &swl) const noexcept override {
         if (!cache_) {
-            AttrEvalContext ctx_processed = vector_.evaluate(ctx, swl);
+            AttrEvalInput ctx_processed = vector_.evaluate(ctx, swl);
             float_array value = pipeline()->tex_var(*tex_id_).sample(channel_num(), ctx_processed.uv);
             cache_.emplace(value);
         }

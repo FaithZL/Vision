@@ -34,7 +34,7 @@ public:
     [[nodiscard]] bool is_constant() const noexcept override { return true; }
     [[nodiscard]] uint dim() const noexcept override { return value_.size(); }
     [[nodiscard]] bool is_uniform() const noexcept override { return true; }
-    [[nodiscard]] AttrEvaluation evaluate(const AttrEvalContext &ctx,
+    [[nodiscard]] AttrEvalOutput evaluate(const AttrEvalInput &ctx,
                                           const SampledWavelengths &swl) const noexcept override {
         return DynamicArray<float>(value_);
     }

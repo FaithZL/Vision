@@ -107,7 +107,7 @@ bool ShaderNodeSlot::render_UI(ocarina::Widgets *widgets) noexcept {
     return false;
 }
 
-AttrEvaluation ShaderNodeSlot::evaluate(const AttrEvalContext &ctx,
+AttrEvalOutput ShaderNodeSlot::evaluate(const AttrEvalInput &ctx,
                                         const SampledWavelengths &swl) const noexcept {
     if (!node_) {
         return ctx.to_array();
@@ -182,19 +182,19 @@ float ShaderNodeSlot::luminance() const noexcept {
     return 0;
 }
 
-ColorDecode ShaderNodeSlot::eval_albedo_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
+ColorDecode ShaderNodeSlot::eval_albedo_spectrum(const AttrEvalInput &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(dim_ == 3);
     Float3 val = evaluate(ctx, swl)->as_vec3();
     return node_->spectrum()->decode_to_albedo(val, swl);
 }
 
-ColorDecode ShaderNodeSlot::eval_unbound_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
+ColorDecode ShaderNodeSlot::eval_unbound_spectrum(const AttrEvalInput &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(dim_ == 3);
     Float3 val = evaluate(ctx, swl)->as_vec3();
     return node_->spectrum()->decode_to_unbound_spectrum(val, swl);
 }
 
-ColorDecode ShaderNodeSlot::eval_illumination_spectrum(const AttrEvalContext &ctx, const SampledWavelengths &swl) const noexcept {
+ColorDecode ShaderNodeSlot::eval_illumination_spectrum(const AttrEvalInput &ctx, const SampledWavelengths &swl) const noexcept {
     OC_ASSERT(dim_ == 3);
     Float3 val = evaluate(ctx, swl)->as_vec3();
     return node_->spectrum()->decode_to_illumination(val, swl);

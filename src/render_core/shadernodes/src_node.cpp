@@ -11,7 +11,7 @@ class TextureCoordinate : public ShaderNode {
 public:
     using ShaderNode::ShaderNode;
     VS_MAKE_PLUGIN_NAME_FUNC_(tex_coord)
-    [[nodiscard]] AttrEvaluation evaluate(const string &key, const AttrEvalContext &ctx,
+    [[nodiscard]] AttrEvalOutput evaluate(const string &key, const AttrEvalInput &ctx,
                                           const SampledWavelengths &swl) const noexcept override {
         Float2 uv;
         if (key == "Generated") {
@@ -41,7 +41,7 @@ public:
     using ShaderNode::ShaderNode;
     VS_MAKE_PLUGIN_NAME_FUNC_(geometry)
 
-    [[nodiscard]] AttrEvaluation evaluate(const string &key, const AttrEvalContext &ctx,
+    [[nodiscard]] AttrEvalOutput evaluate(const string &key, const AttrEvalInput &ctx,
                                           const SampledWavelengths &swl) const noexcept override {
         Float2 uv;
         if (key == "Position") {

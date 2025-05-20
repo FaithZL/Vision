@@ -370,16 +370,16 @@ enum GeometryTag : uint {
     Ns = 1 << 4,
 };
 
-struct AttrEvaluation {
+struct AttrEvalOutput {
     GeometryTag tag{None};
     float_array array;
-    AttrEvaluation() = default;
-    AttrEvaluation(const float_array &array) : array(array) {}
+    AttrEvalOutput() = default;
+    AttrEvalOutput(const float_array &array) : array(array) {}
     [[nodiscard]] const auto *operator->() const noexcept { return &array; }
     [[nodiscard]] auto *operator->() noexcept { return &array; }
 };
 
-struct AttrEvalContext {
+struct AttrEvalInput {
     Float2 uv;
     optional<Float3> pos;
     optional<Float3> wo;
@@ -387,21 +387,21 @@ struct AttrEvalContext {
     optional<Float3> ng_local;
     optional<Float3> ns;
     optional<Float3> dp_dus;
-    AttrEvalContext() = default;
-    AttrEvalContext(Float3 pos)
+    AttrEvalInput() = default;
+    AttrEvalInput(Float3 pos)
         : pos(std::move(pos)) {}
-    AttrEvalContext(const Interaction &it)
+    AttrEvalInput(const Interaction &it)
         : pos(it.pos), uv(it.uv) {}
-    AttrEvalContext(Float2 uv)
+    AttrEvalInput(Float2 uv)
         : uv(std::move(uv)) {}
-    AttrEvalContext(const float_array &f_array)
+    AttrEvalInput(const float_array &f_array)
         : uv{f_array.as_vec2()} {
         if (f_array.size() == 5) {
             pos.emplace(f_array.sub(2, 3).as_vec3());
         }
     }
-    AttrEvalContext(const AttrEvaluation &ae)
-        : AttrEvalContext(ae.array) {}
+    AttrEvalInput(const AttrEvalOutput &ae)
+        : AttrEvalInput(ae.array) {}
 
     [[nodiscard]] uint float_num() const noexcept {
         return 2 + (pos ? 3 : 0);

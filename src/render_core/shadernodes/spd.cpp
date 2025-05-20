@@ -32,7 +32,7 @@ public:
     void prepare() noexcept override {
         spd_.prepare();
     }
-    [[nodiscard]] AttrEvaluation evaluate(const AttrEvalContext &ctx,
+    [[nodiscard]] AttrEvalOutput evaluate(const AttrEvalInput &ctx,
                                                const SampledWavelengths &swl) const noexcept override {
         return spd_.eval(swl);
     }
