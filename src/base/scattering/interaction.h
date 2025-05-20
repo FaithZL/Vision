@@ -361,7 +361,17 @@ struct LightSampleContext : public SpacePoint {
           ns(std::move(ns)) {}
 };
 
+enum GeometryTag : uint {
+    None = 0,
+    Position = 1 << 0,
+    Wo = 1 << 1,
+    Ng = 1 << 2,
+    NgLocal = 1 << 3,
+    Ns = 1 << 4,
+};
+
 struct AttrEvaluation {
+    GeometryTag tag{None};
     float_array array;
     AttrEvaluation() = default;
     AttrEvaluation(const float_array &array) : array(array) {}
@@ -374,6 +384,7 @@ struct AttrEvalContext {
     optional<Float3> pos;
     optional<Float3> wo;
     optional<Float3> ng;
+    optional<Float3> ng_local;
     optional<Float3> ns;
     optional<Float3> dp_dus;
     AttrEvalContext() = default;
