@@ -10,6 +10,7 @@ namespace vision {
 
 class ShaderGraph : public enable_shared_from_this<ShaderGraph> {
 protected:
+    weak_ptr<ShaderGraph> graph_;
     map<string, SP<ShaderNode>> node_map_;
 
 public:
@@ -25,7 +26,12 @@ public:
     template<typename T>
     [[nodiscard]] ShaderNodeSlot construct_slot(const AttrDesc &desc, const string &attr_name,
                                                 T val, AttrTag tag) noexcept;
-    [[nodiscard]] ShaderGraph &graph() noexcept { return *this; }
+    [[nodiscard]] ShaderGraph &graph() noexcept {
+        if (graph_.lock()) {
+            return *graph_.lock();
+        }
+        return *this;
+    }
     [[nodiscard]] SP<ShaderNode> get_node(const string &name) const noexcept {
         return node_map_.at(name);
     }
