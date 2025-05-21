@@ -82,6 +82,13 @@ def parse_mix(exporter, link, dim, node_tab):
     output_key = fs.name
     node_name = str(from_node)
     ret = slot_data(node_name, fs.name)
+    val = {
+        "type": "mix",
+        "param": {},
+    }
+    if not (node_name in node_tab):
+        node_tab[node_name] = val
+    return ret
 
 
 def parse_add(exporter, link, dim, node_tab):
@@ -90,6 +97,15 @@ def parse_add(exporter, link, dim, node_tab):
     output_key = fs.name
     node_name = str(from_node)
     ret = slot_data(node_name, fs.name)
+    val = {
+        "type": "add",
+        "param": {
+            "mat0": "",
+        },
+    }
+    if not (node_name in node_tab):
+        node_tab[node_name] = val
+    return ret
 
 
 func_dict = {
