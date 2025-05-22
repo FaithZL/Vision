@@ -32,7 +32,7 @@ public:
         }
         return *this;
     }
-    
+
     void set_root(SP<ShaderGraph> &graph) noexcept {
         root_ = graph;
     }
