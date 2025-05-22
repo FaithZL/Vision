@@ -79,16 +79,16 @@ def export_mirror(exporter, bsdf, node_tab):
 
 
 def export_mix(exporter, bsdf, node_tab):
-    node0 = bsdf.inputs[0].links[0].from_node
+    node0 = bsdf.inputs[0]
     node1 = bsdf.inputs[1].links[0].from_node
     node2 = bsdf.inputs[2].links[0].from_node
     ret = {
         "type": "mix",
-        "param" :{
-            "frac" : {},
-            "mat0" : {},
-            "mat1" : {},
-        }
+        "param": {
+            "frac": shadernode.parse_node(exporter, node0, 1, node_tab),
+            "mat0": func_tab[node1.type](exporter, node1, node_tab),
+            "mat1": func_tab[node2.type](exporter, node2, node_tab),
+        },
     }
     return ret
 
@@ -132,7 +132,7 @@ func_tab = {
 }
 
 
-def export(exporter, material, materials):
+def export(exporter, material, materials, node_tab=None):
     output_node_id = "Material Output"
     output = material.node_tree.nodes[output_node_id]
     bsdf = output.inputs["Surface"].links[0].from_node
@@ -140,7 +140,7 @@ def export(exporter, material, materials):
     if material.name in materials:
         return materials[material.name]
     export_func = func_tab[bsdf.type]
-    node_tab = {}
+    node_tab = {} if node_tab is None else node_tab
 
     data = export_func(exporter, bsdf, node_tab)
     data["node_tab"] = node_tab
@@ -149,3 +149,4 @@ def export(exporter, material, materials):
     else:
         materials[material.name] = data
     return data
+
