@@ -86,11 +86,11 @@ public:
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {}
     VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
     
-    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
-        VS_CAST_DESC
-        Material::initialize_(desc);
-        initialize_slots(desc);
-    }
+//    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
+//        VS_CAST_DESC
+//        Material::initialize_(desc);
+//        initialize_slots(desc);
+//    }
 
     void initialize_slots(const vision::Material::Desc &desc) noexcept override {
         VS_INIT_SLOT(color, make_float3(1.f), Albedo);

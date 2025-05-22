@@ -108,7 +108,9 @@ void Scene::add_light(TLight light) noexcept {
 
 void Scene::load_materials(const vector<MaterialDesc> &material_descs) {
     for (const MaterialDesc &desc : material_descs) {
-        add_material(ocarina::move(Node::create_shared<Material>(desc)));
+        auto material = Node::create_shared<Material>(desc);
+        material->initialize_slots(desc);
+        add_material(ocarina::move(material));
     }
 }
 

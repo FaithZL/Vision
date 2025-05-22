@@ -186,11 +186,11 @@ public:
         : Material(desc),
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {}
 
-    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
-        VS_CAST_DESC
-        Material::initialize_(desc);
-        initialize_slots(desc);
-    }
+//    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
+//        VS_CAST_DESC
+//        Material::initialize_(desc);
+//        initialize_slots(desc);
+//    }
 
     void initialize_slots(const vision::Material::Desc &desc) noexcept override {
         VS_INIT_SLOT(color, make_float3(1.f), Albedo);

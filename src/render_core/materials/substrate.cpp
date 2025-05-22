@@ -108,11 +108,11 @@ public:
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
     VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
     VS_MAKE_PLUGIN_NAME_FUNC
-    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
-        VS_CAST_DESC
-        Material::initialize_(node_desc);
-        initialize_slots(desc);
-    }
+//    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
+//        VS_CAST_DESC
+//        Material::initialize_(node_desc);
+//        initialize_slots(desc);
+//    }
 
     void initialize_slots(const vision::Material::Desc &desc) noexcept override {
         VS_INIT_SLOT(color, make_float3(1.f), Albedo);

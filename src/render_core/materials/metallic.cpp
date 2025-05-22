@@ -23,11 +23,11 @@ public:
     MetallicMaterial() = default;
     explicit MetallicMaterial(const MaterialDesc &desc)
         : Material(desc) {}
-    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
-        VS_CAST_DESC
-        Material::initialize_(desc);
-        initialize_slots(desc);
-    }
+//    void initialize_(const vision::NodeDesc &node_desc) noexcept override {
+//        VS_CAST_DESC
+//        Material::initialize_(desc);
+//        initialize_slots(desc);
+//    }
 
     void initialize_slots(const vision::Material::Desc &desc) noexcept override {
         VS_INIT_SLOT(color, make_float3(1.f), Albedo);
