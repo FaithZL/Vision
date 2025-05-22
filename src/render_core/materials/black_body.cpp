@@ -57,6 +57,7 @@ public:
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
         return make_unique<BlackBodyLobe>(swl);
     }
+    void initialize_slots(const vision::Material::Desc &desc) noexcept override {}
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
     explicit BlackBodyMaterial(const MaterialDesc &desc)
         : Material(desc) {}

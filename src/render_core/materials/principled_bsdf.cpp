@@ -277,7 +277,11 @@ public:
 
     void initialize_(const vision::NodeDesc &node_desc) noexcept override {
         VS_CAST_DESC
-        Material::initialize_(node_desc);
+        Material::initialize_(desc);
+        initialize_slots(desc);
+    }
+
+    void initialize_slots(const vision::Material::Desc &desc) noexcept override {
         VS_INIT_SLOT(color, make_float3(1.f), Albedo);
         VS_INIT_SLOT(metallic, 0.f, Number);
         VS_INIT_SLOT(ior, 1.5f, Number).set_range(1.01, 20.f);
@@ -303,6 +307,7 @@ public:
 
         init_slot_cursor(&color_, &transmission_weight_);
     }
+
     VS_HOTFIX_MAKE_RESTORE(Material, sheen_mode_, switches_)
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {

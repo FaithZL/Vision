@@ -137,9 +137,7 @@ public:
     void init(const ParameterSet &ps) noexcept override;
     template<typename T>
     [[nodiscard]] SlotDesc slot(const string &key, T default_value,
-                                AttrTag tag = AttrTag::Number) const noexcept {
-        return AttrDesc::slot(key, default_value, tag);
-    }
+                                AttrTag tag = AttrTag::Number) const noexcept;
 
     [[nodiscard]] SlotDesc slot(const string &key, const DataWrap &data,
                                 AttrTag tag = AttrTag::Number) const noexcept;
@@ -242,6 +240,12 @@ template<typename T>
     slot_desc.init(parameter_[key]);
     slot_desc.node.name = key;
     return slot_desc;
+}
+
+template<typename T>
+[[nodiscard]] SlotDesc GraphDesc::slot(const string &key, T default_value,
+                                       AttrTag tag) const noexcept {
+    return AttrDesc::slot(key, default_value, tag);
 }
 
 struct ImporterDesc : public NodeDesc {

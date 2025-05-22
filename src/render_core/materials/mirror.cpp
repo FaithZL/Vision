@@ -33,12 +33,17 @@ public:
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {}
     void initialize_(const vision::NodeDesc &node_desc) noexcept override {
         VS_CAST_DESC
-        Material::initialize_(node_desc);
+        Material::initialize_(desc);
+        initialize_slots(desc);
+    }
+
+    void initialize_slots(const vision::Material::Desc &desc) noexcept override {
         VS_INIT_SLOT(color, make_float3(1.f), Albedo);
         VS_INIT_SLOT(roughness, 0.001f, Number).set_range(0.0001f, 1.f);
         VS_INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);
         init_slot_cursor(&color_, &anisotropic_);
     }
+
     void prepare() noexcept override {
         MirrorLobe::prepare();
     }

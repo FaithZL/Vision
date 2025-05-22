@@ -24,8 +24,13 @@ public:
         : Material(desc),
           mat0_(Node::create_shared<Material>(*desc.mat0)),
           mat1_(Node::create_shared<Material>(*desc.mat1)) {}
+
     void initialize_(const vision::NodeDesc &node_desc) noexcept override {
         VS_CAST_DESC
+        initialize_slots(desc);
+    }
+
+    void initialize_slots(const vision::Material::Desc &desc) noexcept override {
         mat0_->initialize_(*desc.mat0);
         mat1_->initialize_(*desc.mat1);
         frac_.set(ShaderNodeSlot::create_slot(desc.slot("frac", 0.5f, Number)));

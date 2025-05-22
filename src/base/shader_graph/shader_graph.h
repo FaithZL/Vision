@@ -33,7 +33,7 @@ public:
         return *this;
     }
 
-    void set_root(SP<ShaderGraph> &graph) noexcept {
+    void set_root(SP<ShaderGraph> graph) noexcept {
         root_ = graph;
     }
     [[nodiscard]] SP<ShaderNode> get_node(const string &name) const noexcept {

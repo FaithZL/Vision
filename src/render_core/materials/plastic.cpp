@@ -88,7 +88,11 @@ public:
     
     void initialize_(const vision::NodeDesc &node_desc) noexcept override {
         VS_CAST_DESC
-        Material::initialize_(node_desc);
+        Material::initialize_(desc);
+        initialize_slots(desc);
+    }
+
+    void initialize_slots(const vision::Material::Desc &desc) noexcept override {
         VS_INIT_SLOT(color, make_float3(1.f), Albedo);
         VS_INIT_SLOT(spec, make_float3(0.05f), Albedo);
         VS_INIT_SLOT(ior, 1.3f, Number).set_range(1.003, 5);
