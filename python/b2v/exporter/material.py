@@ -13,8 +13,7 @@ from bpy.props import (
 from . import shadernode
 
 
-def export_matte(exporter, bsdf):
-    node_tab = {}
+def export_matte(exporter, bsdf, node_tab):
     ret = {
         "type": "matte",
         "param": {
@@ -22,12 +21,10 @@ def export_matte(exporter, bsdf):
             "roughness": shadernode.parse_node(exporter, bsdf.inputs["Roughness"], 1, node_tab),
         },
     }
-    ret["node_tab"] = node_tab
     return ret
 
 
-def export_principled(exporter, bsdf):
-    node_tab = {}
+def export_principled(exporter, bsdf, node_tab):
     ret = {
         "type": "principled_bsdf",
         "param": {
@@ -54,12 +51,10 @@ def export_principled(exporter, bsdf):
             "transmission_weight" : shadernode.parse_node(exporter, bsdf.inputs["Transmission Weight"], 1, node_tab),
         },
     }
-    ret["node_tab"] = node_tab
     return ret
 
 
-def export_glass(exporter, bsdf):
-    node_tab = {}
+def export_glass(exporter, bsdf, node_tab):
     ret = {
         "type": "glass",
         "param": {
@@ -68,12 +63,10 @@ def export_glass(exporter, bsdf):
             "ior": shadernode.parse_node(exporter, bsdf.inputs["IOR"], 1, node_tab),
         },
     }
-    ret["node_tab"] = node_tab
     return ret
 
 
-def export_mirror(exporter, bsdf):
-    node_tab = {}
+def export_mirror(exporter, bsdf, node_tab):
     ret = {
         "type": "mirror",
         "param": {
@@ -82,12 +75,10 @@ def export_mirror(exporter, bsdf):
             "anisotropic": shadernode.parse_node(exporter, bsdf.inputs["Anisotropy"], 1, node_tab),
         },
     }
-    ret["node_tab"] = node_tab
     return ret
 
 
-def export_mix(exporter, bsdf):
-    node_tab = {}
+def export_mix(exporter, bsdf, node_tab):
     node0 = bsdf.inputs[0].links[0].from_node
     node1 = bsdf.inputs[1].links[0].from_node
     node2 = bsdf.inputs[2].links[0].from_node
@@ -102,8 +93,7 @@ def export_mix(exporter, bsdf):
     return ret
 
 
-def export_emission(exporter, bsdf):
-    node_tab = {}
+def export_emission(exporter, bsdf, node_tab):
     socket = bsdf.inputs["Color"]
     ret = {
         "type": "area",
@@ -112,11 +102,10 @@ def export_emission(exporter, bsdf):
             "scale": bsdf.inputs["Strength"].default_value,
         },
     }
-    ret["node_tab"] = node_tab
     return ret
 
 
-def export_add(exporter, bsdf):
+def export_add(exporter, bsdf, node_tab):
     node0 = bsdf.inputs[0].links[0].from_node
     node1 = bsdf.inputs[1].links[0].from_node
 
@@ -125,8 +114,8 @@ def export_add(exporter, bsdf):
     ret = {
         "type": "add",
         "param": {
-            "material": func_tab[material_node.type](exporter, material_node),
-            "emission": func_tab[emission_node.type](exporter, emission_node),
+            "material": func_tab[material_node.type](exporter, material_node, node_tab),
+            "emission": func_tab[emission_node.type](exporter, emission_node, node_tab),
         },
     }
     return ret
@@ -147,13 +136,14 @@ def export(exporter, material, materials):
     output_node_id = "Material Output"
     output = material.node_tree.nodes[output_node_id]
     bsdf = output.inputs["Surface"].links[0].from_node
-    print("material export start")
 
     if material.name in materials:
         return materials[material.name]
     export_func = func_tab[bsdf.type]
-    data = export_func(exporter, bsdf)
+    node_tab = {}
 
+    data = export_func(exporter, bsdf, node_tab)
+    data["node_tab"] = node_tab
     if bsdf.type == "ADD_SHADER":
         materials[material.name] = data["param"]["material"]
     else:
