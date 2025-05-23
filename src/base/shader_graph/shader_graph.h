@@ -10,6 +10,7 @@ namespace vision {
 
 class ShaderGraph : public enable_shared_from_this<ShaderGraph> {
 protected:
+    bool is_root_{false};
     weak_ptr<ShaderGraph> graph_;
     map<string, SP<ShaderNode>> node_map_;
 
@@ -32,7 +33,7 @@ public:
         }
         return *this;
     }
-
+    OC_MAKE_MEMBER_GETTER_SETTER(is_root,)
     void set_graph(SP<ShaderGraph> graph) noexcept {
         graph_ = graph;
     }
