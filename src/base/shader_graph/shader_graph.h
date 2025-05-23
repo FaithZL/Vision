@@ -51,7 +51,6 @@ public:
         graph_ = graph;
     }
     [[nodiscard]] SP<ShaderNode> get_node(const string &name) const noexcept {
-        OC_ASSERT(is_root_);
         return node_map_.at(name);
     }
 };

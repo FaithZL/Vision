@@ -154,7 +154,18 @@ void Interaction::set_medium(const Uint &inside, const Uint &outside) {
 }
 
 void AttrEvalContext::init(const vision::Interaction &it) noexcept {
-
+    auto fill_array = []<size_t N>(float_array &arr, uint &cursor,
+                                   const Var<Vector<float, N>> &vec) {
+        for (int i = 0; i < N; ++i) {
+            arr[cursor++] = vec[i];
+        }
+    };
+    tag = Tag::All;
+    uint cursor = 0;
+    fill_array(array, cursor, it.uv);
+    fill_array(array, cursor, it.pos);
+    fill_array(array, cursor, it.ng);
+    fill_array(array, cursor, it.ng_local);
 }
 
 }// namespace vision
