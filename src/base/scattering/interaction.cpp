@@ -166,10 +166,13 @@ void AttrEvalContext::init(const vision::Interaction &it) noexcept {
     fill_array(array, cursor, it.pos);
     fill_array(array, cursor, it.ng);
     fill_array(array, cursor, it.ng_local);
+    fill_array(array, cursor, it.shading.dp_du());
 }
 
 Float2 AttrEvalContext::uv() const noexcept { return array.as_vec2(); }
 Float3 AttrEvalContext::pos() const noexcept { return array.sub(2, 3).as_vec3(); }
 Float3 AttrEvalContext::ng() const noexcept { return array.sub(5, 3).as_vec3(); }
 Float3 AttrEvalContext::ng_local() const noexcept { return array.sub(8, 3).as_vec3(); }
+Float3 AttrEvalContext::tangent() const noexcept { return array.sub(11, 3).as_vec3(); }
+
 }// namespace vision

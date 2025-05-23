@@ -368,7 +368,8 @@ public:
         Position = 1 << 1,
         Ng = 1 << 2,
         LocalNg = 1 << 3,
-        All = UV | Position | Ng | LocalNg,
+        Tangent = 1 << 4,
+        All = UV | Position | Ng | LocalNg | Tangent,
     };
 
 public:
@@ -390,6 +391,7 @@ public:
     [[nodiscard]] Float3 pos() const noexcept;
     [[nodiscard]] Float3 ng() const noexcept;
     [[nodiscard]] Float3 ng_local() const noexcept;
+    [[nodiscard]] Float3 tangent() const noexcept;
 };
 
 }// namespace vision

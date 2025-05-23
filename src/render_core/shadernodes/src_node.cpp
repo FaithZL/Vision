@@ -17,13 +17,13 @@ public:
         if (key == "Generated") {
             uv = ctx.uv();
         } else if (key == "Normal") {
-            // todo
-            uv = ctx.uv();
+            uv = ctx.ng().xy();
         } else if (key == "UV") {
             uv = ctx.uv();
         } else if (key == "Camera") {
             TSensor sensor = scene().sensor();
-            uv = sensor->device_position().xy();
+            Float3 c_pos = transform_point(sensor->device_c2w(), ctx.pos());
+            uv = c_pos.xy();
         } else if (key == "Object") {
             uv = ctx.uv();
         } else if (key == "Window") {
@@ -45,7 +45,7 @@ public:
                                           const SampledWavelengths &swl) const noexcept override {
         Float2 uv;
         if (key == "Position") {
-            uv = ctx.uv();
+            uv = ctx.pos().xy();
         } else if (key == "Normal") {
             TSensor sensor = scene().sensor();
             uv = sensor->device_position().xy();
