@@ -1,7 +1,7 @@
 add_library(vision-shadernode INTERFACE binary_op.cpp)
 vision_add_plugin(constant CATEGORY shadernode SOURCES constant.cpp)
 vision_add_plugin(image CATEGORY shadernode SOURCES image.cpp)
-vision_add_plugin(lerp CATEGORY shadernode SOURCES mix.cpp)
+vision_add_plugin(mix CATEGORY shadernode SOURCES mix.cpp)
 vision_add_plugin(number CATEGORY shadernode SOURCES number.cpp)
 vision_add_plugin(uv_mapping CATEGORY shadernode SOURCES mapping.cpp)
 vision_add_plugin(binary_op CATEGORY shadernode SOURCES binary_op.cpp)

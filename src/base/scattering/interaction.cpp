@@ -153,4 +153,8 @@ void Interaction::set_medium(const Uint &inside, const Uint &outside) {
     (*mi_).outside = outside;
 }
 
+void AttrEvalContext::init(const vision::Interaction &it) noexcept {
+
+}
+
 }// namespace vision

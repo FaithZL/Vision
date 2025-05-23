@@ -365,6 +365,9 @@ struct AttrEvalContext {
 public:
     enum Tag : uint {
         UV = 1 << 0,
+        Position = 1 << 1,
+        Ng = 1 << 2,
+        LocalNg = 1 << 3,
     };
 
 public:
@@ -375,12 +378,17 @@ public:
     AttrEvalContext() = default;
     AttrEvalContext(const float_array &array) : array(array) {}
     AttrEvalContext(const Interaction &it)
-        : array(float_array::from_vec(it.uv)) {}
+        : array(float_array::from_vec(it.uv)) {
+        init(it);
+    }
     AttrEvalContext(Float2 uv)
-        : array(float_array::from_vec(uv)) {}
+        : array(float_array::from_vec(uv)) {
+        init(it);
+    }
+    void init(const Interaction &it) noexcept;
     [[nodiscard]] Float2 uv() const noexcept { return array.as_vec2(); }
-    [[nodiscard]] const auto *operator->() const noexcept { return &array; }
-    [[nodiscard]] auto *operator->() noexcept { return &array; }
+    [[nodiscard]] const float_array *operator->() const noexcept { return &array; }
+    [[nodiscard]] float_array *operator->() noexcept { return &array; }
 };
 
 }// namespace vision
