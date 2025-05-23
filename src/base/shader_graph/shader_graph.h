@@ -33,6 +33,18 @@ public:
         }
         return *graph_.lock();
     }
+    [[nodiscard]] SP<const ShaderGraph> shared_graph() const noexcept {
+        if (is_root_) {
+            return shared_from_this();
+        }
+        return graph_.lock();
+    }
+    [[nodiscard]] SP<ShaderGraph> shared_graph() noexcept {
+        if (is_root_) {
+            return shared_from_this();
+        }
+        return graph_.lock();
+    }
     OC_MAKE_MEMBER_GETTER_SETTER(is_root,)
     void set_graph(SP<ShaderGraph> graph) noexcept {
         OC_ASSERT(!is_root_);

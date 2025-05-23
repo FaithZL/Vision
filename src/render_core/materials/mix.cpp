@@ -27,8 +27,8 @@ public:
     }
 
     void initialize_slots(const vision::Material::Desc &desc) noexcept override {
-        mat0_->set_graph(shared_from_this());
-        mat1_->set_graph(shared_from_this());
+        mat0_->set_graph(shared_graph());
+        mat1_->set_graph(shared_graph());
         mat0_->initialize_slots(*desc.mat0);
         mat1_->initialize_slots(*desc.mat1);
         frac_.set(ShaderNodeSlot::create_slot(desc.slot("frac", 0.5f, Number)));
