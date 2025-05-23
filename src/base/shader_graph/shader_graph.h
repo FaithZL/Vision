@@ -28,13 +28,14 @@ public:
     [[nodiscard]] ShaderNodeSlot construct_slot(const AttrDesc &desc, const string &attr_name,
                                                 T val, AttrTag tag) noexcept;
     [[nodiscard]] ShaderGraph &graph() noexcept {
-        if (graph_.lock()) {
-            return *graph_.lock();
+        if (is_root_) {
+            return *this;
         }
-        return *this;
+        return *graph_.lock();
     }
     OC_MAKE_MEMBER_GETTER_SETTER(is_root,)
     void set_graph(SP<ShaderGraph> graph) noexcept {
+        OC_ASSERT(!is_root_);
         graph_ = graph;
     }
     [[nodiscard]] SP<ShaderNode> get_node(const string &name) const noexcept {

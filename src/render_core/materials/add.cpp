@@ -25,6 +25,8 @@ public:
           mat1_(Node::create_shared<Material>(*desc.mat1)) {}
 
     void initialize_slots(const vision::Material::Desc &desc) noexcept override {
+        mat0_->set_graph(shared_from_this());
+        mat1_->set_graph(shared_from_this());
         mat0_->initialize_slots(*desc.mat0);
         mat1_->initialize_slots(*desc.mat1);
     }
