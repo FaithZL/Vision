@@ -764,7 +764,7 @@
                     }
                 },
                 "mat1": {
-                    "type": "matte",
+                    "type": "mirror",
                     "param": {
                         "color": {
                             "channels": "xyz",
@@ -780,6 +780,15 @@
                             }
                         },
                         "roughness": {
+                            "channels": "x",
+                            "node": {
+                                "type": "number",
+                                "param": {
+                                    "value": 0.395061731338501
+                                }
+                            }
+                        },
+                        "anisotropic": {
                             "channels": "x",
                             "node": {
                                 "type": "number",
