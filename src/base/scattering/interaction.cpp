@@ -169,5 +169,7 @@ void AttrEvalContext::init(const vision::Interaction &it) noexcept {
 }
 
 Float2 AttrEvalContext::uv() const noexcept { return array.as_vec2(); }
-
+Float3 AttrEvalContext::pos() const noexcept { return array.sub(2, 3).as_vec3(); }
+Float3 AttrEvalContext::ng() const noexcept { return array.sub(5, 3).as_vec3(); }
+Float3 AttrEvalContext::ng_local() const noexcept { return array.sub(8, 3).as_vec3(); }
 }// namespace vision
