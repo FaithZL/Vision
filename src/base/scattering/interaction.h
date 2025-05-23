@@ -384,9 +384,9 @@ public:
     AttrEvalContext(const Float2 &uv)
         : array(float_array::from_vec(uv)) {}
     void init(const Interaction &it) noexcept;
-    [[nodiscard]] Float2 uv() const noexcept { return array.as_vec2(); }
     [[nodiscard]] const float_array *operator->() const noexcept { return &array; }
     [[nodiscard]] float_array *operator->() noexcept { return &array; }
+    [[nodiscard]] Float2 uv() const noexcept;
     [[nodiscard]] Float3 pos() const noexcept;
     [[nodiscard]] Float3 ng() const noexcept;
     [[nodiscard]] Float3 ng_local() const noexcept;

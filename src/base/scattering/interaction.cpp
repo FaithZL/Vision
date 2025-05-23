@@ -168,4 +168,6 @@ void AttrEvalContext::init(const vision::Interaction &it) noexcept {
     fill_array(array, cursor, it.ng_local);
 }
 
+Float2 AttrEvalContext::uv() const noexcept { return array.as_vec2(); }
+
 }// namespace vision
