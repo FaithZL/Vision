@@ -601,7 +601,7 @@
                                 "color": {
                                     "channels": "xyz",
                                     "output_key": "Color",
-                                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x000001ECB8FD8820>"
+                                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x0000019B79C6E960>"
                                 },
                                 "roughness": {
                                     "channels": "x",
@@ -624,7 +624,7 @@
                                 "metallic": {
                                     "channels": "w",
                                     "output_key": "Alpha",
-                                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x000001ECB8FD8820>"
+                                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x0000019B79C6E960>"
                                 },
                                 "spec_tint": {
                                     "channels": "xyz",
@@ -801,19 +801,19 @@
                 }
             },
             "node_tab": {
-                "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000001ECB8FD84A0>": {
+                "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x0000019B79C6E5E0>": {
                     "type": "src_node",
                     "construct_name": "tex_coord",
                     "param": {}
                 },
-                "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x000001ECB8FD8820>": {
+                "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x0000019B79C6E960>": {
                     "type": "image",
                     "param": {
                         "fn": "textures/checker.jpg",
                         "vector": {
                             "channels": "x",
                             "output_key": "UV",
-                            "node": "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000001ECB8FD84A0>"
+                            "node": "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x0000019B79C6E5E0>"
                         },
                         "color_space": "srgb"
                     }
