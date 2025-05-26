@@ -368,8 +368,9 @@ public:
         Position = 1 << 1,
         Ng = 1 << 2,
         LocalNg = 1 << 3,
-        Tangent = 1 << 4,
-        All = UV | Position | Ng | LocalNg | Tangent,
+        Ns = 1 < 4,
+        Tangent = 1 << 5,
+        All = UV | Position | Ng | LocalNg | Ns | Tangent,
     };
 
 public:
@@ -379,7 +380,7 @@ public:
 public:
     AttrEvalContext() = default;
     AttrEvalContext(const float_array &array) : array(array) {}
-    AttrEvalContext(const Interaction &it):array(11u) {
+    AttrEvalContext(const Interaction &it) : array(11u) {
         init(it);
     }
     AttrEvalContext(const Float2 &uv)
@@ -391,6 +392,7 @@ public:
     [[nodiscard]] Float3 pos() const noexcept;
     [[nodiscard]] Float3 ng() const noexcept;
     [[nodiscard]] Float3 ng_local() const noexcept;
+    [[nodiscard]] Float3 ns() const noexcept;
     [[nodiscard]] Float3 tangent() const noexcept;
 };
 

@@ -47,12 +47,11 @@ public:
         if (key == "Position") {
             uv = ctx.pos().xy();
         } else if (key == "Normal") {
-            TSensor sensor = scene().sensor();
-            uv = sensor->device_position().xy();
+            uv = ctx.ng().xy();
         } else if (key == "Tangent") {
-            uv = ctx.uv();
+            uv = ctx.tangent().xy();
         } else if (key == "True Normal") {
-            uv = make_float2(dispatch_idx().xy()) / dispatch_dim().xy();
+            uv = ctx.ng().xy();
         } else if (key == "Incoming") {
             uv = make_float2(dispatch_idx().xy()) / dispatch_dim().xy();
         } else {
