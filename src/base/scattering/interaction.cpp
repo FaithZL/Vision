@@ -160,24 +160,23 @@ void AttrEvalContext::init(const vision::Interaction &it) noexcept {
             arr[cursor++] = vec[i];
         }
     };
-    tag = Tag::All;
     uint cursor = 0;
     fill_array(array, cursor, it.uv);
-    fill_array(array, cursor, it.pos);
-    fill_array(array, cursor, it.ng);
-    fill_array(array, cursor, it.ng_local);
-    fill_array(array, cursor, it.shading.normal());
-    fill_array(array, cursor, it.shading.dp_du());
-    fill_array(array, cursor, it.wo);
+    pos_.emplace(it.pos);
+    ng_.emplace(it.ng);
+    ng_local_.emplace(it.ng_local);
+    ns_.emplace(it.shading.normal());
+    tangent_.emplace(it.shading.dp_du());
+    wo_.emplace(it.wo);
 }
 
 Float3 AttrEvalContext::uvw() const noexcept { return make_float3(uv(), 0.f); }
 Float2 AttrEvalContext::uv() const noexcept { return array.as_vec2(); }
-Float3 AttrEvalContext::pos() const noexcept { return array.sub(2, 3).as_vec3(); }
-Float3 AttrEvalContext::ng() const noexcept { return array.sub(5, 3).as_vec3(); }
-Float3 AttrEvalContext::ng_local() const noexcept { return array.sub(8, 3).as_vec3(); }
-Float3 AttrEvalContext::ns() const noexcept { return array.sub(11, 3).as_vec3(); }
-Float3 AttrEvalContext::tangent() const noexcept { return array.sub(14, 3).as_vec3(); }
-Float3 AttrEvalContext::wo() const noexcept { return array.sub(17, 3).as_vec3(); }
+Float3 AttrEvalContext::pos() const noexcept { return *pos_; }
+Float3 AttrEvalContext::ng() const noexcept { return *ng_; }
+Float3 AttrEvalContext::ng_local() const noexcept { return *ng_local_; }
+Float3 AttrEvalContext::ns() const noexcept { return *ns_; }
+Float3 AttrEvalContext::tangent() const noexcept { return *tangent_; }
+Float3 AttrEvalContext::wo() const noexcept { return *wo_; }
 
 }// namespace vision
