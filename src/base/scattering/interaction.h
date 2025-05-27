@@ -374,14 +374,24 @@ public:
         All = UV | Position | Ng | LocalNg | Ns | Tangent | Wo,
     };
 
+    using OPFloat3 = optional<Float3>;
+
 public:
     Tag tag{UV};
     float_array array{1u};
 
+private:
+    OPFloat3 pos_;
+    OPFloat3 ng_;
+    OPFloat3 ng_local_;
+    OPFloat3 ns_;
+    OPFloat3 tangent_;
+    OPFloat3 wo_;
+
 public:
     AttrEvalContext() = default;
     AttrEvalContext(const float_array &array) : array(array) {}
-    AttrEvalContext(const Interaction &it) : array(11u) {
+    AttrEvalContext(const Interaction &it) : array(20u) {
         init(it);
     }
     AttrEvalContext(const Float2 &uv)
