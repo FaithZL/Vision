@@ -76,6 +76,22 @@ def parse_tex_coord(exporter, link, dim, node_tab):
     return ret
 
 
+def parse_new_geometry(exporter, link, dim, node_tab):
+    from_node = link.from_node
+    fs = link.from_socket
+    output_key = fs.name
+    node_name = str(from_node)
+    ret = ret = slot_data(node_name, fs.name)
+    val = {
+        "type": "src_node",
+        "construct_name": "geometry",
+        "param": {},
+    }
+    if not (node_name in node_tab):
+        node_tab[node_name] = val
+    return ret
+
+
 def parse_mix(exporter, link, dim, node_tab):
     from_node = link.from_node
     fs = link.from_socket
@@ -114,13 +130,15 @@ func_dict = {
     "MIX_SHADER": parse_mix,
     "ADD_SHADER": parse_add,
     "TEX_COORD": parse_tex_coord,
+    "NEW_GEOMETRY" : parse_new_geometry,
 }
 
 
 def parse_node(exporter, socket, dim, node_tab):
     if socket.is_linked:
         link = socket.links[0]
-        func = func_dict[link.from_node.type]
+        key = link.from_node.type
+        func = func_dict[key]
         return func(exporter, link, dim, node_tab)
     if dim == 1:
         value = socket.default_value
