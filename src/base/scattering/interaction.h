@@ -370,7 +370,8 @@ public:
         LocalNg = 1 << 3,
         Ns = 1 < 4,
         Tangent = 1 << 5,
-        All = UV | Position | Ng | LocalNg | Ns | Tangent,
+        Wo = 1 << 6,
+        All = UV | Position | Ng | LocalNg | Ns | Tangent | Wo,
     };
 
 public:
@@ -389,11 +390,13 @@ public:
     [[nodiscard]] const float_array *operator->() const noexcept { return &array; }
     [[nodiscard]] float_array *operator->() noexcept { return &array; }
     [[nodiscard]] Float2 uv() const noexcept;
+    [[nodiscard]] Float3 uvw() const noexcept;
     [[nodiscard]] Float3 pos() const noexcept;
     [[nodiscard]] Float3 ng() const noexcept;
     [[nodiscard]] Float3 ng_local() const noexcept;
     [[nodiscard]] Float3 ns() const noexcept;
     [[nodiscard]] Float3 tangent() const noexcept;
+    [[nodiscard]] Float3 wo() const noexcept;
 };
 
 }// namespace vision

@@ -13,26 +13,26 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC_(tex_coord)
     [[nodiscard]] AttrEvalContext evaluate(const string &key, const AttrEvalContext &ctx,
                                           const SampledWavelengths &swl) const noexcept override {
-        Float2 uv;
+        Float3 uvw;
         if (key == "Generated") {
-            uv = ctx.uv();
+            uvw = ctx.uvw();
         } else if (key == "Normal") {
-            uv = ctx.ng().xy();
+            uvw = ctx.ng();
         } else if (key == "UV") {
-            uv = ctx.uv();
+            uvw = ctx.uvw();
         } else if (key == "Camera") {
             TSensor sensor = scene().sensor();
             Float3 c_pos = transform_point(sensor->device_c2w(), ctx.pos());
-            uv = c_pos.xy();
+            uvw = c_pos;
         } else if (key == "Object") {
-            uv = ctx.uv();
+            uvw = ctx.pos();
         } else if (key == "Window") {
-            uv = make_float2(dispatch_idx().xy()) / dispatch_dim().xy();
+            uvw = make_float3(make_float2(dispatch_idx().xy()) / dispatch_dim().xy(), 0.f);
         } else {
             OC_WARNING_FORMAT("{} is unknown, fallback to uv", key.c_str());
-            uv = ctx.uv();
+            uvw = ctx.uvw();
         }
-        return float_array::from_vec(uv);
+        return float_array::from_vec(uvw);
     }
 };
 //todo
@@ -43,22 +43,22 @@ public:
 
     [[nodiscard]] AttrEvalContext evaluate(const string &key, const AttrEvalContext &ctx,
                                           const SampledWavelengths &swl) const noexcept override {
-        Float2 uv;
+        Float3 uvw;
         if (key == "Position") {
-            uv = ctx.pos().xy();
+            uvw = ctx.pos();
         } else if (key == "Normal") {
-            uv = ctx.ng().xy();
+            uvw = ctx.ng();
         } else if (key == "Tangent") {
-            uv = ctx.tangent().xy();
+            uvw = ctx.tangent();
         } else if (key == "True Normal") {
-            uv = ctx.ng().xy();
+            uvw = ctx.ng();
         } else if (key == "Incoming") {
-            uv = make_float2(dispatch_idx().xy()) / dispatch_dim().xy();
+            uvw = ctx.wo();
         } else {
             OC_WARNING_FORMAT("{} is unknown, fallback to uv", key.c_str());
-            uv = ctx.uv();
+            uvw = ctx.uvw();
         }
-        return float_array::from_vec(uv);
+        return float_array::from_vec(uvw);
     }
 };
 
