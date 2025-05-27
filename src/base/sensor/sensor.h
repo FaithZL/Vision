@@ -34,8 +34,8 @@ protected:
     EncodedData<float3> prev_pos_;
 
 protected:
-    void _update_raster() noexcept;
-    void _update_resolution(uint2 res) noexcept;
+    void update_raster() noexcept;
+    void update_resolution_(uint2 res) noexcept;
     [[nodiscard]] virtual RayVar generate_ray_in_local_space(const SensorSample &ss) const noexcept;
 
 public:
@@ -95,7 +95,7 @@ public:
             fov_y_ = new_fov_y;
         }
         tan_fov_y_over_2_ = tan(radians(fov_y_) * 0.5f);
-        _update_raster();
+        update_raster();
     }
     void update_fov_y(float val) noexcept { set_fov_y(fov_y() + val); }
     virtual void update_device_data() noexcept;

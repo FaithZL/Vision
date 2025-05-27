@@ -13,7 +13,7 @@ static float4x4 origin_matrix;
 Sensor::Sensor(const SensorDesc &desc)
     : Photosensory(desc) {
     init(desc);
-    _update_resolution(film_->resolution());
+    update_resolution_(film_->resolution());
 }
 
 void Sensor::init(const SensorDesc &desc) noexcept {
@@ -57,20 +57,20 @@ RayVar Sensor::generate_ray_in_local_space(const vision::SensorSample &ss) const
 
 void Sensor::set_resolution(ocarina::uint2 res) noexcept {
     Photosensory::set_resolution(res);
-    _update_resolution(res);
+    update_resolution_(res);
 }
 
-void Sensor::_update_resolution(uint2 res) noexcept {
+void Sensor::update_resolution_(uint2 res) noexcept {
     Box2f scrn = film()->screen_window();
     float2 span = scrn.span();
     float4x4 screen_to_raster = transform::scale(res.x, res.y, 1u) *
                                 transform::scale(1 / span.x, 1 / -span.y, 1.f) *
                                 transform::translation(-scrn.lower.x, -scrn.upper.y, 0.f);
     raster_to_screen_ = inverse(screen_to_raster);
-    _update_raster();
+    update_raster();
 }
 
-void Sensor::_update_raster() noexcept {
+void Sensor::update_raster() noexcept {
     camera_to_screen_ = transform::perspective<H>(fov_y(), z_near, z_far);
     raster_to_sensor_ = inverse(camera_to_screen_) * raster_to_screen_;
 }
@@ -89,7 +89,7 @@ void Sensor::set_mat(ocarina::float4x4 m) noexcept {
 
 void Sensor::update_resolution(ocarina::uint2 res) noexcept {
     film()->update_resolution(res);
-    _update_resolution(res);
+    update_resolution_(res);
 }
 
 void Sensor::after_render() noexcept {
