@@ -47,7 +47,7 @@ public:
         if (key == "Position") {
             uvw = ctx.pos();
         } else if (key == "Normal") {
-            uvw = ctx.ng();
+            uvw = ctx.ns();
         } else if (key == "Tangent") {
             uvw = ctx.tangent();
         } else if (key == "True Normal") {
