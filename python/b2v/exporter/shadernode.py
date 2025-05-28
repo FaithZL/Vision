@@ -106,6 +106,21 @@ def parse_camera_data(exporter, link, dim, node_tab):
     return ret
 
 
+def parse_fresnel(exporter, link, dim, node_tab):
+    from_node = link.from_node
+    fs = link.from_socket
+    output_key = fs.name
+    node_name = str(from_node)
+    ret = slot_data(node_name, output_key)
+    val = {
+        "type": "converter",
+        "construct_name": "fresnel",
+        "param": {},
+    }
+    try_add_tab(node_tab, node_name, val)
+    return ret
+
+
 def parse_mix(exporter, link, dim, node_tab):
     from_node = link.from_node
     fs = link.from_socket
@@ -146,6 +161,7 @@ func_dict = {
     "TEX_COORD": parse_tex_coord,
     "NEW_GEOMETRY" : parse_new_geometry,
     "CAMERA" : parse_camera_data,
+    "FRESNEL" : parse_fresnel,
 }
 
 
