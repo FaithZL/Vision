@@ -11,7 +11,7 @@ class TextureCoordinate : public ShaderNode {
 public:
     using ShaderNode::ShaderNode;
     VS_MAKE_PLUGIN_NAME_FUNC_(tex_coord)
-    
+
     [[nodiscard]] AttrEvalContext evaluate(const string &key, const AttrEvalContext &ctx,
                                           const SampledWavelengths &swl) const noexcept override {
         Float3 uvw;
