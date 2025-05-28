@@ -187,6 +187,10 @@ Float4x4 Sensor::device_c2w() const noexcept {
     return *c2w_;
 }
 
+Float4x4 Sensor::device_w2c() const noexcept {
+    return inverse(device_c2w());
+}
+
 Float Sensor::linear_depth(const Float3 &world_pos) const noexcept {
     Float4x4 w2c = inverse(device_c2w());
     Float3 c_pos = transform_point(w2c, world_pos);

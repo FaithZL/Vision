@@ -35,8 +35,8 @@ public:
         return float_array::from_vec(uvw);
     }
 };
-//todo
-class GeometryNode : public ShaderNode {
+
+class GeometryData : public ShaderNode {
 public:
     using ShaderNode::ShaderNode;
     VS_MAKE_PLUGIN_NAME_FUNC_(geometry)
@@ -62,8 +62,31 @@ public:
     }
 };
 
+class CameraData : public ShaderNode {
+public:
+    using ShaderNode::ShaderNode;
+    VS_MAKE_PLUGIN_NAME_FUNC_(camera)
+
+    [[nodiscard]] AttrEvalContext evaluate(const string &key, const AttrEvalContext &ctx,
+                                           const SampledWavelengths &swl) const noexcept override {
+        Float3 uvw;
+        TSensor sensor = scene().sensor();
+        if (key == "View Vector") {
+            Float3 vec = ctx.pos() - sensor->device_position();
+            vec = transform_vector(sensor->device_w2c(), vec);
+            uvw = ocarina::normalize(vec);
+        } else if (key == "View Z Depth") {
+            
+        } else if (key == "View Distance") {
+
+        }
+        return float_array::from_vec(uvw);
+    }
+};
+
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, TextureCoordinate, tex_coord)
-VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, GeometryNode, geometry)
+VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, GeometryData, geometry)
+VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, CameraData, camera)
 VS_REGISTER_CURRENT_FILE
