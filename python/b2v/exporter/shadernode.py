@@ -21,6 +21,9 @@ def slot_data(node_name, output_key, channels="x"):
     }
     return ret
 
+def try_add_tab(node_tab, key, val):
+    if not (key in node_tab):
+        node_tab[key] = val
 
 def parse_image_node(exporter, link, dim, node_tab):
     from_node = link.from_node
@@ -54,9 +57,7 @@ def parse_image_node(exporter, link, dim, node_tab):
     }
 
     ret = slot_data(node_name, fs.name, channels)
-
-    if not (node_name in node_tab):
-        node_tab[node_name] = val
+    try_add_tab(node_tab, node_name, val)
     return ret
 
 
@@ -65,14 +66,13 @@ def parse_tex_coord(exporter, link, dim, node_tab):
     fs = link.from_socket
     output_key = fs.name
     node_name = str(from_node)
-    ret = ret = slot_data(node_name, fs.name)
+    ret = slot_data(node_name, output_key)
     val = {
         "type": "src_node",
         "construct_name": "tex_coord",
         "param": {},
     }
-    if not (node_name in node_tab):
-        node_tab[node_name] = val
+    try_add_tab(node_tab, node_name, val)
     return ret
 
 
@@ -81,14 +81,28 @@ def parse_new_geometry(exporter, link, dim, node_tab):
     fs = link.from_socket
     output_key = fs.name
     node_name = str(from_node)
-    ret = ret = slot_data(node_name, fs.name)
+    ret = slot_data(node_name, output_key)
     val = {
         "type": "src_node",
         "construct_name": "geometry",
         "param": {},
     }
-    if not (node_name in node_tab):
-        node_tab[node_name] = val
+    try_add_tab(node_tab, node_name, val)
+    return ret
+
+
+def parse_camera_data(exporter, link, dim, node_tab):
+    from_node = link.from_node
+    fs = link.from_socket
+    output_key = fs.name
+    node_name = str(from_node)
+    ret = slot_data(node_name, output_key)
+    val = {
+        "type": "src_node",
+        "construct_name": "camera",
+        "param": {},
+    }
+    try_add_tab(node_tab, node_name, val)
     return ret
 
 
@@ -97,7 +111,7 @@ def parse_mix(exporter, link, dim, node_tab):
     fs = link.from_socket
     output_key = fs.name
     node_name = str(from_node)
-    ret = slot_data(node_name, fs.name)
+    ret = slot_data(node_name, output_key)
     val = {
         "type": "mix",
         "param": {},
@@ -122,7 +136,7 @@ def parse_add(exporter, link, dim, node_tab):
     if not (node_name in node_tab):
         node_tab[node_name] = val
     return ret
-
+    
 
 func_dict = {
     "TEX_IMAGE": parse_image_node,
@@ -131,6 +145,7 @@ func_dict = {
     "ADD_SHADER": parse_add,
     "TEX_COORD": parse_tex_coord,
     "NEW_GEOMETRY" : parse_new_geometry,
+    "CAMERA" : parse_camera_data,
 }
 
 
