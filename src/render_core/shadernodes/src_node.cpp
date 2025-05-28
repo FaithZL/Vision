@@ -11,6 +11,7 @@ class TextureCoordinate : public ShaderNode {
 public:
     using ShaderNode::ShaderNode;
     VS_MAKE_PLUGIN_NAME_FUNC_(tex_coord)
+    
     [[nodiscard]] AttrEvalContext evaluate(const string &key, const AttrEvalContext &ctx,
                                           const SampledWavelengths &swl) const noexcept override {
         Float3 uvw;
@@ -76,9 +77,14 @@ public:
             vec = transform_vector(sensor->device_w2c(), vec);
             uvw = ocarina::normalize(vec);
         } else if (key == "View Z Depth") {
-            
+            Float depth = sensor->linear_depth(ctx.pos());
+            uvw = make_float3(depth);
         } else if (key == "View Distance") {
-
+            Float3 vec = ctx.pos() - sensor->device_position();
+            uvw = make_float3(length(vec));
+        } else {
+            OC_WARNING_FORMAT("{} is unknown, fallback to uv", key.c_str());
+            uvw = ctx.uvw();
         }
         return float_array::from_vec(uvw);
     }
