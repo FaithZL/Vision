@@ -123,8 +123,8 @@ public:
 };
 
 template<EPort p = D>
-[[nodiscard]] Float phase_HG(Float cos_theta, Float g) {
-    Float denom = 1 + sqr(g) + 2 * g * cos_theta;
+[[nodiscard]] Float phase_HG(const oc_float<p> &cos_theta, const oc_float<p> & g) {
+    oc_float<p> denom = 1 + sqr(g) + 2 * g * cos_theta;
     return Inv4Pi * (1 - sqr(g)) / (denom * sqrt(denom));
 }
 
