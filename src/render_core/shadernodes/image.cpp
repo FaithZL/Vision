@@ -56,7 +56,7 @@ public:
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         widgets->text(name_.c_str());
-        widgets->same_line();
+        vector_.render_UI(widgets);
         widgets->use_tree("open", [&] {
             render_sub_UI(widgets);
         });
