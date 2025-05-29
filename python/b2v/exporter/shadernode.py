@@ -24,6 +24,14 @@ def slot_data(node_name, output_key, channels="x"):
 def try_add_tab(node_tab, key, val):
     if not (key in node_tab):
         node_tab[key] = val
+        
+
+def parse_input(exporter, input, dim, node_tab):
+    if not input.is_linked:
+        return None
+    else:
+        return parse_node(exporter, input, 2, node_tab)
+
 
 def parse_image_node(exporter, link, dim, node_tab):
     from_node = link.from_node
@@ -41,11 +49,8 @@ def parse_image_node(exporter, link, dim, node_tab):
         channels = "w" if dim == 1 else "www"
 
     node_name = str(from_node)
-
-    if not from_node.inputs["Vector"].is_linked:
-        vector = None
-    else:
-        vector = parse_node(exporter, from_node.inputs["Vector"], 2, node_tab)
+        
+    vector = parse_input(exporter, from_node.inputs["Vector"], 2, node_tab)
 
     val = {
         "type": "image",
