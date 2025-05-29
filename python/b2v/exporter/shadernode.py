@@ -50,7 +50,7 @@ def parse_image_node(exporter, link, dim, node_tab):
 
     node_name = str(from_node)
         
-    vector = parse_input(exporter, from_node.inputs["Vector"], 2, node_tab)
+    vector = parse_input(exporter, from_node.inputs["Vector"], 3, node_tab)
 
     val = {
         "type": "image",
@@ -116,11 +116,22 @@ def parse_vector_mapping(exporter, link, dim, node_tab):
     output_key = fs.name
     node_name = str(from_node)
     ret = slot_data(node_name, output_key)
+    vector = parse_node(exporter, from_node.inputs["Vector"], 3, node_tab)
+    scale = parse_node(exporter, from_node.inputs["Scale"], 3, node_tab)
+    rotation = parse_node(exporter, from_node.inputs["Rotation"], 3, node_tab)
+    location = None
+    if "Location" in from_node.inputs:
+        location = parse_node(exporter, from_node.inputs["Location"], 3, node_tab)
+    
     val = {
         "type": "converter",
         "construct_name": "vector_mapping",
         "param": {
-            
+            "type" : from_node.vector_type,
+            "vector" : vector,
+            "scale" : scale,
+            "rotation" : rotation,
+            "location" : location,
         },
     }
     try_add_tab(node_tab, node_name, val)
