@@ -552,7 +552,7 @@
                     "node": {
                         "type": "number",
                         "param": {
-                            "value": 0.5
+                            "value": 0.3333333432674408
                         }
                     }
                 },
@@ -564,7 +564,7 @@
                             "node": {
                                 "type": "number",
                                 "param": {
-                                    "value": 0.8066666722297668
+                                    "value": 0.7266666889190674
                                 }
                             }
                         },
@@ -601,7 +601,7 @@
                                 "color": {
                                     "channels": "xyz",
                                     "output_key": "Color",
-                                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x0000019B79C6E960>"
+                                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x00000250B8F14660>"
                                 },
                                 "roughness": {
                                     "channels": "x",
@@ -624,7 +624,7 @@
                                 "metallic": {
                                     "channels": "w",
                                     "output_key": "Alpha",
-                                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x0000019B79C6E960>"
+                                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x00000250B8F14660>"
                                 },
                                 "spec_tint": {
                                     "channels": "xyz",
@@ -801,19 +801,19 @@
                 }
             },
             "node_tab": {
-                "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x0000019B79C6E5E0>": {
+                "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x00000250B8F142E0>": {
                     "type": "src_node",
                     "construct_name": "tex_coord",
                     "param": {}
                 },
-                "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x0000019B79C6E960>": {
+                "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x00000250B8F14660>": {
                     "type": "image",
                     "param": {
                         "fn": "textures/checker.jpg",
                         "vector": {
                             "channels": "x",
                             "output_key": "UV",
-                            "node": "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x0000019B79C6E5E0>"
+                            "node": "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x00000250B8F142E0>"
                         },
                         "color_space": "srgb"
                     }

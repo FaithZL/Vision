@@ -16,6 +16,8 @@ class ShaderGraph;
 #define VS_MAKE_SLOT(attr_name) ShaderNodeSlot attr_name##_{#attr_name};
 #define VS_INIT_SLOT(name, default_value, type) \
     name##_.set(graph().construct_slot(desc, #name, default_value, type))
+#define VS_INIT_SLOT_NO_DEFAULT(name, type) \
+    name##_.set(graph().construct_slot(desc, #name, type))
 
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
 protected:
