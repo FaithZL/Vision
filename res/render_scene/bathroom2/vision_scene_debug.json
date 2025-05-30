@@ -135,7 +135,7 @@
     ],
     "materials": [
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Wall",
             "param": {
                 "color": [
@@ -180,7 +180,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Towel",
             "param": {
                 "color": [
@@ -255,7 +255,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Label",
             "param": {
                 "color": {
@@ -303,7 +303,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "DarkPlastic",
             "param": {
                 "color": [
@@ -326,7 +326,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "WallRight",
             "param": {
                 "color": [
@@ -337,7 +337,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "DarkBorder",
             "param": {
                 "color": [
@@ -348,7 +348,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Trims",
             "param": {
                 "color": [
@@ -381,7 +381,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_61_material",
             "param": {
                 "color": [
@@ -392,7 +392,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_62_material",
             "param": {
                 "color": [
@@ -403,7 +403,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_63_material",
             "param": {
                 "color": [
@@ -414,7 +414,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_64_material",
             "param": {
                 "color": [
@@ -425,7 +425,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_65_material",
             "param": {
                 "color": [
@@ -436,7 +436,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_66_material",
             "param": {
                 "color": [
@@ -447,7 +447,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_67_material",
             "param": {
                 "color": [
@@ -458,7 +458,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_68_material",
             "param": {
                 "color": [
@@ -469,7 +469,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_69_material",
             "param": {
                 "color": [
@@ -480,7 +480,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_70_material",
             "param": {
                 "color": [
@@ -491,7 +491,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_71_material",
             "param": {
                 "color": [

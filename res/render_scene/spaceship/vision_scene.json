@@ -3691,7 +3691,7 @@
     ],
     "materials": [
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Backdrop",
             "param": {
                 "color": [
@@ -3702,7 +3702,7 @@
             }
         },
         {
-            "type" : "matte",
+            "type" : "diffuse",
             "name" : "Light",
             "param" : {
                 "color" : [
@@ -3905,7 +3905,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Black",
             "param": {
                 "color": [
@@ -3916,7 +3916,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_88_material",
             "param": {
                 "color": [
@@ -3927,7 +3927,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_89_material",
             "param": {
                 "color": [

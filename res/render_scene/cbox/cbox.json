@@ -426,7 +426,7 @@
 	],
 	"materials" : [
 		{
-			"type" : "matte",
+			"type" : "diffuse",
 			"name" : "LeftWall",
 			"param" : {
 				"color" : [
@@ -458,7 +458,7 @@
 					}
 				},
 				"mat1" : {
-					"type" : "matte",
+					"type" : "diffuse",
 					"name" : "Glass",
 					"param" : {
 						"material_name" : "BK7",
@@ -516,7 +516,7 @@
 			}
 		},
 		{
-			"type" : "matte",
+			"type" : "diffuse",
 			"name" : "RightWall",
 			"param" : {
 				"color" : [
@@ -527,7 +527,7 @@
 			}
 		},
 		{
-			"type" : "matte",
+			"type" : "diffuse",
 			"name" : "Floor",
 			"param" : {
 				"color" : [
@@ -538,7 +538,7 @@
 			}
 		},
 		{
-			"type" : "matte",
+			"type" : "diffuse",
 			"name" : "Ceiling",
 			"param" : {
 				"color" :{
@@ -554,7 +554,7 @@
 			}
 		},
 		{
-			"type" : "matte",
+			"type" : "diffuse",
 			"name" : "BackWall",
 			"param" : {
 				//				"color" : {
@@ -605,7 +605,7 @@
 			}
 		},
 		//		{
-		//			"type" : "matte",
+		//			"type" : "diffuse",
 		//			"name" : "BackWall2",
 		//			"param" : {
 		//				"color" : {
@@ -618,7 +618,7 @@
 		//			}
 		//		},
 		{
-			"type" : "matte",
+			"type" : "diffuse",
 			"name" : "ShortBox",
 			"param" : {
 				"sigma" : 0.5,
@@ -924,7 +924,7 @@
 			}
 		},
 		{
-			"type" : "matte",
+			"type" : "diffuse",
 			"name" : "TallBox",
 			"param" : {
 				//                "color" : {
@@ -942,7 +942,7 @@
 			}
 		},
 		{
-			"type" : "matte",
+			"type" : "diffuse",
 			"name" : "Light",
 			"param" : {
 				"color" : [

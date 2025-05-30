@@ -158,7 +158,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "ShortBox",
             "param": {
                  "roughness" : 0.002,

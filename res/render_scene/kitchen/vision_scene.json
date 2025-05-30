@@ -12011,7 +12011,7 @@
     ],
     "materials": [
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "ChromeHandle",
             "param": {
                 "color": [
@@ -12022,7 +12022,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "RadioHandle",
             "param": {
                 "color": [
@@ -12033,7 +12033,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "RadioInside",
             "param": {
                 "color": [
@@ -12044,7 +12044,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "RadioKnob",
             "param": {
                 "color": [
@@ -12055,7 +12055,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "RadioPlastic",
             "param": {
                 "color": [
@@ -12066,7 +12066,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "RadioSurround",
             "param": {
                 "color": [
@@ -12231,7 +12231,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Walls",
             "param": {
                 "color": [
@@ -12299,7 +12299,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "ChoppingBoard",
             "param": {
                 "color": {
@@ -12309,7 +12309,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "CupboardUnits",
             "param": {
                 "color": [
@@ -12320,7 +12320,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "BookCover",
             "param": {
                 "color": [
@@ -12371,7 +12371,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Carrots",
             "param": {
                 "color": {
@@ -12465,7 +12465,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Mushrooms",
             "param": {
                 "color": [
@@ -12476,7 +12476,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "SlicedMushroms",
             "param": {
                 "color": {
@@ -12590,7 +12590,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Towel",
             "param": {
                 "color": {
@@ -12600,7 +12600,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Tiles",
             "param": {
                 "color": [
@@ -12611,7 +12611,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "WallSocket",
             "param": {
                 "color": [
@@ -12743,7 +12743,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "RadioDialBack",
             "param": {
                 "color": {
@@ -12839,7 +12839,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "WindowFrame",
             "param": {
                 "color": [
@@ -12879,7 +12879,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "BlindStringKnob",
             "param": {
                 "color": [
@@ -12890,7 +12890,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "BlindString",
             "param": {
                 "color": [
@@ -12913,7 +12913,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "TableMats",
             "param": {
                 "color": [
@@ -12945,7 +12945,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Home",
             "param": {
                 "color": [
@@ -12956,7 +12956,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Cushion1",
             "param": {
                 "color": {
@@ -13113,7 +13113,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "BreadBinFront",
             "param": {
                 "color": {
@@ -13123,7 +13123,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "BreadBinSides",
             "param": {
                 "color": {
@@ -13133,7 +13133,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "BreadBinTop",
             "param": {
                 "color": {
@@ -13163,7 +13163,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "CushionTies",
             "param": {
                 "color": {
@@ -13235,7 +13235,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Ceiling",
             "param": {
                 "color": [
@@ -13246,7 +13246,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "MushroomEnds",
             "param": {
                 "color": {
@@ -13256,7 +13256,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "PepperStems",
             "param": {
                 "color": [
@@ -13267,7 +13267,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Bulb",
             "param": {
                 "color": [
@@ -13278,7 +13278,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Grout",
             "param": {
                 "color": [
@@ -13289,7 +13289,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "LampCable",
             "param": {
                 "color": [
@@ -13321,7 +13321,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "LampInside",
             "param": {
                 "color": [
@@ -13332,7 +13332,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Window",
             "param": {
                 "color": [
@@ -13343,7 +13343,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Skirting",
             "param": {
                 "color": [
@@ -13354,7 +13354,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "BlindEnds",
             "param": {
                 "color": [
@@ -13365,7 +13365,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "BlindWoodStrip",
             "param": {
                 "color": [
@@ -13388,7 +13388,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_295_material",
             "param": {
                 "color": [
@@ -13399,7 +13399,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_296_material",
             "param": {
                 "color": [
@@ -13410,7 +13410,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_297_material",
             "param": {
                 "color": [
@@ -13421,7 +13421,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_298_material",
             "param": {
                 "color": [

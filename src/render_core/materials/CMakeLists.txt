@@ -1,5 +1,5 @@
 add_library(vision-material INTERFACE)
-vision_add_plugin(matte CATEGORY material SOURCES matte.cpp)
+vision_add_plugin(diffuse CATEGORY material SOURCES diffuse.cpp)
 vision_add_plugin(black_body CATEGORY material SOURCES black_body.cpp)
 vision_add_plugin(glass CATEGORY material SOURCES glass.cpp)
 vision_add_plugin(mirror CATEGORY material SOURCES mirror.cpp)

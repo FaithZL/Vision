@@ -13,9 +13,9 @@ from bpy.props import (
 from . import shadernode
 
 
-def export_matte(exporter, bsdf, node_tab):
+def export_diffuse(exporter, bsdf, node_tab):
     ret = {
-        "type": "matte",
+        "type": "diffuse",
         "param": {
             "color": shadernode.parse_node(exporter, bsdf.inputs["Color"], 3, node_tab),
             "roughness": shadernode.parse_node(exporter, bsdf.inputs["Roughness"], 1, node_tab),
@@ -122,7 +122,7 @@ def export_add(exporter, bsdf, node_tab):
 
 
 func_tab = {
-    "BSDF_DIFFUSE": export_matte,
+    "BSDF_DIFFUSE": export_diffuse,
     "BSDF_PRINCIPLED": export_principled,
     "BSDF_GLASS": export_glass,
     "BSDF_GLOSSY": export_mirror,

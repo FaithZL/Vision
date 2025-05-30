@@ -803,7 +803,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_16_material",
             "param": {
                 "color": [

@@ -372,7 +372,7 @@
     },
     "materials": [
         {
-            "type": "matte",
+            "type": "diffuse",
             "param": {
                 "color": {
                     "channels": "xyz",
@@ -401,7 +401,7 @@
             "name": "FloorBSDF"
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "param": {
                 "color": {
                     "channels": "xyz",
@@ -430,7 +430,7 @@
             "name": "CeilingBSDF"
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "param": {
                 "color": {
                     "channels": "xyz",
@@ -459,7 +459,7 @@
             "name": "BackWallBSDF"
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "param": {
                 "color": {
                     "channels": "xyz",
@@ -488,7 +488,7 @@
             "name": "RightWallBSDF"
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "param": {
                 "color": {
                     "channels": "xyz",
@@ -517,7 +517,7 @@
             "name": "LeftWallBSDF"
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "param": {
                 "color": {
                     "channels": "xyz",
@@ -569,7 +569,7 @@
                             }
                         },
                         "mat0": {
-                            "type": "matte",
+                            "type": "diffuse",
                             "param": {
                                 "color": {
                                     "channels": "xyz",

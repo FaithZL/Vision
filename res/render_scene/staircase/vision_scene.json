@@ -31099,7 +31099,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Lampshade",
             "param": {
                 "color": {
@@ -31153,7 +31153,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "ChairSeat",
             "param": {
                 "color": [
@@ -31224,7 +31224,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Painting1",
             "param": {
                 "color": {
@@ -31234,7 +31234,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Painting2",
             "param": {
                 "color": {
@@ -31244,7 +31244,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Painting3",
             "param": {
                 "color": {
@@ -31254,7 +31254,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Black",
             "param": {
                 "color": [
@@ -31287,7 +31287,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Emission",
             "param": {
                 "color": [
@@ -31298,7 +31298,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Candles",
             "param": {
                 "color": [
@@ -31331,7 +31331,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "WhitePaint2",
             "param": {
                 "color": [
@@ -31342,7 +31342,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "White",
             "param": {
                 "color": [
@@ -31353,7 +31353,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "WhitePlastic",
             "param": {
                 "color": [
@@ -31386,7 +31386,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "Wallpaper",
             "param": {
                 "color": {
@@ -31396,7 +31396,7 @@
             }
         },
         {
-            "type": "matte",
+            "type": "diffuse",
             "name": "shape_774_material",
             "param": {
                 "color": [

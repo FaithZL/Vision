@@ -9,7 +9,7 @@
 
 namespace vision {
 
-class MatteMaterial : public Material {
+class DiffuseMaterial : public Material {
 private:
     VS_MAKE_SLOT(color);
     VS_MAKE_SLOT(sigma);
@@ -32,8 +32,8 @@ public:
         Material::render_UI(widgets);
         return true;
     }
-    MatteMaterial() = default;
-    explicit MatteMaterial(const MaterialDesc &desc)
+    DiffuseMaterial() = default;
+    explicit DiffuseMaterial(const MaterialDesc &desc)
         : Material(desc) {}
 
     void initialize_slots(const vision::Material::Desc &desc) noexcept override {
@@ -47,4 +47,4 @@ public:
 };
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR_HOTFIX(vision, MatteMaterial)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, DiffuseMaterial)
