@@ -170,7 +170,15 @@ void AttrEvalContext::init(const vision::Interaction &it) noexcept {
     wo_.emplace(it.wo);
 }
 
-Float3 AttrEvalContext::uvw() const noexcept { return make_float3(uv(), 0.f); }
+Float3 AttrEvalContext::uvw() const noexcept {
+    uint dim = array.size();
+    switch(dim) {
+        case 2u:
+            return make_float3(uv(), 0.f);
+        default:
+            return array.as_vec3();
+    }
+}
 Float2 AttrEvalContext::uv() const noexcept { return array.as_vec2(); }
 Float3 AttrEvalContext::pos() const noexcept { return *pos_; }
 Float3 AttrEvalContext::ng() const noexcept { return *ng_; }

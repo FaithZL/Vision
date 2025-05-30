@@ -2,7 +2,7 @@
 // Created by ling.zhu on 2025/5/22.
 //
 
-#include "base/shader_graph/shader_node.h"
+#include "base/shader_graph/shader_graph.h"
 #include "GUI/widgets.h"
 
 namespace vision {
@@ -35,6 +35,16 @@ public:
     VectorMapping() = default;
     explicit VectorMapping(const ShaderNodeDesc &desc)
         : ShaderNode(desc) {}
+
+    VS_MAKE_GUI_ALL_FUNC(ShaderNode, vector_, location_, rotation_, scale_)
+    OC_ENCODABLE_FUNC(ShaderNode, vector_, location_, rotation_, scale_)
+
+    void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
+        VS_INIT_SLOT_NO_DEFAULT(vector, Number);
+        VS_INIT_SLOT_NO_DEFAULT(location, Number);
+        VS_INIT_SLOT_NO_DEFAULT(rotation, Number);
+        VS_INIT_SLOT_NO_DEFAULT(scale, Number);
+    }
 
     [[nodiscard]] AttrEvalContext evaluate(const std::string &key, const vision::AttrEvalContext &ctx,
                                            const vision::SampledWavelengths &swl) const noexcept override {
