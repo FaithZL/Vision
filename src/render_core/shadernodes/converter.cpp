@@ -40,7 +40,7 @@ public:
     OC_ENCODABLE_FUNC(ShaderNode, vector_, location_, rotation_, scale_)
 
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
-        VS_INIT_SLOT_NO_DEFAULT(vector, Number);
+        VS_INIT_SLOT(vector, make_float3(0, 0, 0), Number);
         VS_INIT_SLOT(location, make_float3(0, 0, 0), Number);
         VS_INIT_SLOT(rotation, make_float3(0, 0, 0), Number);
         VS_INIT_SLOT(scale, make_float3(1), Number);
