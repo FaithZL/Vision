@@ -22,10 +22,17 @@ void ShaderGraph::clear() noexcept {
 }
 
 void ShaderGraph::init_node_map(const map<string, ShaderNodeDesc> &tab) noexcept {
+    std::vector<std::function<void()>> funcs;
     for (const auto &[key, desc] : tab) {
         auto shader_node = Node::create_shared<ShaderNode>(desc);
         add_node(key, shader_node);
-        shader_node->initialize_slots(desc);
+        auto func = [=] {
+            shader_node->initialize_slots(desc);
+        };
+        funcs.emplace_back(func);
+    }
+    for (const auto &func : funcs) {
+        func();
     }
 }
 

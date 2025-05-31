@@ -41,9 +41,9 @@ public:
 
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
         VS_INIT_SLOT_NO_DEFAULT(vector, Number);
-        VS_INIT_SLOT_NO_DEFAULT(location, Number);
-        VS_INIT_SLOT_NO_DEFAULT(rotation, Number);
-        VS_INIT_SLOT_NO_DEFAULT(scale, Number);
+        VS_INIT_SLOT(location, make_float3(0, 0, 0), Number);
+        VS_INIT_SLOT(rotation, make_float3(0, 0, 0), Number);
+        VS_INIT_SLOT(scale, make_float3(1), Number);
     }
 
     [[nodiscard]] AttrEvalContext evaluate(const std::string &key, const vision::AttrEvalContext &ctx,
