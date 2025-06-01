@@ -53,13 +53,16 @@ public:
         VS_INIT_SLOT(vector, make_float3(0, 0, 0), Number);
         VS_INIT_SLOT(location, make_float3(0, 0, 0), Number);
         VS_INIT_SLOT(rotation, make_float3(0, 0, 0), Number);
-        VS_INIT_SLOT(scale, make_float3(1), Number);
+        VS_INIT_SLOT(scale, make_float3(1), Number).set_range(0.001, 100);
     }
 
     [[nodiscard]] AttrEvalContext evaluate(const std::string &key, const vision::AttrEvalContext &ctx,
                                            const vision::SampledWavelengths &swl) const noexcept override {
-
-        return ctx;
+        Float3 uvw = vector_.evaluate(ctx, swl).uvw();
+        Float3 scale = scale_.evaluate(ctx, swl)->as_vec3();
+        AttrEvalContext ctx_processed{float_array::from_vec(uvw * scale)};
+        $condition_info("{} {} {}", scale);
+        return ctx_processed;
     }
 };
 
