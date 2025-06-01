@@ -36,8 +36,18 @@ public:
     explicit VectorMapping(const ShaderNodeDesc &desc)
         : ShaderNode(desc) {}
 
-    VS_MAKE_GUI_ALL_FUNC(ShaderNode, vector_, location_, rotation_, scale_)
+    VS_MAKE_GUI_STATUS_FUNC(ShaderNode, vector_, location_, rotation_, scale_)
     OC_ENCODABLE_FUNC(ShaderNode, vector_, location_, rotation_, scale_)
+
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        bool ret = widgets->use_tree("detail", [&] {
+            vector_.render_UI(widgets);
+            location_.render_UI(widgets);
+            rotation_.render_UI(widgets);
+            scale_.render_UI(widgets);
+        });
+        return ret;
+    }
 
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
         VS_INIT_SLOT(vector, make_float3(0, 0, 0), Number);
