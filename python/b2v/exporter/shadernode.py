@@ -144,10 +144,17 @@ def parse_fresnel(exporter, link, dim, node_tab):
     output_key = fs.name
     node_name = str(from_node)
     ret = slot_data(node_name, output_key)
+    
+    normal = parse_node(exporter, from_node.inputs["Normal"], 3, node_tab)
+    ior = parse_node(exporter, from_node.inputs["IOR"], 1, node_tab)
+    
     val = {
         "type": "converter",
         "construct_name": "fresnel",
-        "param": {},
+        "param": {
+            "normal" : normal,
+            "ior" : ior,    
+        },
     }
     try_add_tab(node_tab, node_name, val)
     return ret

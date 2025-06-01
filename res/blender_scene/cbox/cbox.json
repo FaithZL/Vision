@@ -601,7 +601,7 @@
                                 "color": {
                                     "channels": "xyz",
                                     "output_key": "Color",
-                                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x000001E36F3520A0>"
+                                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x000001CD76E120A0>"
                                 },
                                 "roughness": {
                                     "channels": "x",
@@ -622,9 +622,9 @@
                                     }
                                 },
                                 "metallic": {
-                                    "channels": "w",
-                                    "output_key": "Alpha",
-                                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x000001E36F3520A0>"
+                                    "channels": "x",
+                                    "output_key": "Fac",
+                                    "node": "<bpy_struct, ShaderNodeFresnel(\"Fresnel\") at 0x000001CD76E11620>"
                                 },
                                 "spec_tint": {
                                     "channels": "xyz",
@@ -801,12 +801,12 @@
                 }
             },
             "node_tab": {
-                "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000001E36F351D20>": {
+                "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000001CD76E11D20>": {
                     "type": "src_node",
                     "construct_name": "tex_coord",
                     "param": {}
                 },
-                "<bpy_struct, ShaderNodeMapping(\"Mapping\") at 0x000001E36F3517E0>": {
+                "<bpy_struct, ShaderNodeMapping(\"Mapping\") at 0x000001CD76E117E0>": {
                     "type": "converter",
                     "construct_name": "vector_mapping",
                     "param": {
@@ -814,7 +814,7 @@
                         "vector": {
                             "channels": "x",
                             "output_key": "UV",
-                            "node": "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000001E36F351D20>"
+                            "node": "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000001CD76E11D20>"
                         },
                         "scale": {
                             "channels": "xyz",
@@ -857,16 +857,36 @@
                         }
                     }
                 },
-                "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x000001E36F3520A0>": {
+                "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x000001CD76E120A0>": {
                     "type": "image",
                     "param": {
                         "fn": "textures/checker.jpg",
                         "vector": {
                             "channels": "x",
                             "output_key": "Vector",
-                            "node": "<bpy_struct, ShaderNodeMapping(\"Mapping\") at 0x000001E36F3517E0>"
+                            "node": "<bpy_struct, ShaderNodeMapping(\"Mapping\") at 0x000001CD76E117E0>"
                         },
                         "color_space": "srgb"
+                    }
+                },
+                "<bpy_struct, ShaderNodeFresnel(\"Fresnel\") at 0x000001CD76E11620>": {
+                    "type": "converter",
+                    "construct_name": "fresnel",
+                    "param": {
+                        "normal": {
+                            "channels": "x",
+                            "output_key": "Normal",
+                            "node": "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000001CD76E11D20>"
+                        },
+                        "ior": {
+                            "channels": "x",
+                            "node": {
+                                "type": "number",
+                                "param": {
+                                    "value": 1.2999999523162842
+                                }
+                            }
+                        }
                     }
                 }
             },

@@ -28,14 +28,17 @@ public:
     }
 
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
-        VS_INIT_SLOT(ior, 1.5f, Number).set_range(0, 20);
         VS_INIT_SLOT(normal, make_float3(0, 0, 0), Number).set_range(0, 1);
+        VS_INIT_SLOT(ior, 1.5f, Number).set_range(0, 20);
     }
 
     [[nodiscard]] AttrEvalContext evaluate(const std::string &key, const vision::AttrEvalContext &ctx,
                                            const vision::SampledWavelengths &swl) const noexcept override {
-
-        return ctx;
+        Float3 normal = normal_.evaluate(ctx, swl)->as_vec3();
+        Float3 wo = ctx.wo();
+        Float ior = ior_.evaluate(ctx, swl)->as_scalar();
+        Float3 fr = make_float3(fresnel_dielectric(abs_dot(normal, wo), ior));
+        return AttrEvalContext{float_array ::from_vec(fr)};
     }
 };
 
