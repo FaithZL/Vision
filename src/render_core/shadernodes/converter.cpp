@@ -62,7 +62,7 @@ public:
         Float3 s = scale_.evaluate(ctx, swl)->as_vec3();
         Float3 angle = rotation_.evaluate(ctx, swl)->as_vec3();
         Float3 pos = location_.evaluate(ctx, swl)->as_vec3();
-        Float4x4 rotation = rotation_x(angle.x) * rotation_y(angle.y) * rotation_z(angle.z);
+        Float4x4 rotation = rotation_y(angle.y) * rotation_z(angle.z) * rotation_x(angle.x);
         Float4x4 trs = translation(pos) * rotation * scale(s);
         uvw = transform_point(trs, uvw);
         AttrEvalContext ctx_processed{float_array::from_vec(uvw)};
