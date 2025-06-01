@@ -27,6 +27,7 @@ public:
           texture_(&Global::instance().pipeline()->image_pool().obtain_texture(desc)) {
         tex_id_ = texture_->index();
     }
+    VS_MAKE_GUI_STATUS_FUNC(ShaderNode, vector_)
     OC_ENCODABLE_FUNC(ShaderNode, vector_, tex_id_)
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_HOTFIX_MAKE_RESTORE(ShaderNode, vector_, texture_, tex_id_, desc_)

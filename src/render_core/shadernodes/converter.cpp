@@ -61,7 +61,6 @@ public:
         Float3 uvw = vector_.evaluate(ctx, swl).uvw();
         Float3 scale = scale_.evaluate(ctx, swl)->as_vec3();
         AttrEvalContext ctx_processed{float_array::from_vec(uvw * scale)};
-        $condition_info("{} {} {}", scale);
         return ctx_processed;
     }
 };
