@@ -51,16 +51,21 @@ public:
 
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
         VS_INIT_SLOT(vector, make_float3(0, 0, 0), Number);
-        VS_INIT_SLOT(location, make_float3(0, 0, 0), Number);
-        VS_INIT_SLOT(rotation, make_float3(0, 0, 0), Number);
+        VS_INIT_SLOT(location, make_float3(0, 0, 0), Number).set_range(0, 100);
+        VS_INIT_SLOT(rotation, make_float3(0, 0, 0), Number).set_range(0, 360);
         VS_INIT_SLOT(scale, make_float3(1), Number).set_range(0.001, 100);
     }
 
     [[nodiscard]] AttrEvalContext evaluate(const std::string &key, const vision::AttrEvalContext &ctx,
                                            const vision::SampledWavelengths &swl) const noexcept override {
         Float3 uvw = vector_.evaluate(ctx, swl).uvw();
-        Float3 scale = scale_.evaluate(ctx, swl)->as_vec3();
-        AttrEvalContext ctx_processed{float_array::from_vec(uvw * scale)};
+        Float3 s = scale_.evaluate(ctx, swl)->as_vec3();
+        Float3 angle = rotation_.evaluate(ctx, swl)->as_vec3();
+        Float3 pos = location_.evaluate(ctx, swl)->as_vec3();
+        Float4x4 rotation = rotation_x(angle.x) * rotation_y(angle.y) * rotation_z(angle.z);
+        Float4x4 trs = translation(pos) * rotation * scale(s);
+        uvw = transform_point(trs, uvw);
+        AttrEvalContext ctx_processed{float_array::from_vec(uvw)};
         return ctx_processed;
     }
 };
