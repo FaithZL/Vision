@@ -8,9 +8,29 @@
 namespace vision {
 
 class FresnelNode : public ShaderNode {
+private:
+    VS_MAKE_SLOT(ior);
+    VS_MAKE_SLOT(normal);
+
 public:
-    using ShaderNode::ShaderNode;
+    FresnelNode() = default;
+    explicit FresnelNode(const ShaderNodeDesc &desc)
+        : ShaderNode(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC_(fresnel)
+    VS_MAKE_GUI_STATUS_FUNC(ShaderNode, ior_, normal_)
+    OC_ENCODABLE_FUNC(ShaderNode, ior_, normal_)
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        bool ret = widgets->use_tree("detail", [&] {
+            ior_.render_UI(widgets);
+            normal_.render_UI(widgets);
+        });
+        return ret;
+    }
+
+    void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
+        VS_INIT_SLOT(ior, 1.5f, Number).set_range(0, 20);
+        VS_INIT_SLOT(normal, make_float3(0, 0, 0), Number).set_range(0, 1);
+    }
 
     [[nodiscard]] AttrEvalContext evaluate(const std::string &key, const vision::AttrEvalContext &ctx,
                                            const vision::SampledWavelengths &swl) const noexcept override {
