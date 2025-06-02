@@ -102,8 +102,6 @@ bool ShaderNodeSlot::render_UI(ocarina::Widgets *widgets) noexcept {
         if (!attr_name_.empty()) {
             node_->set_name(attr_name_);
         }
-        widgets->text(attr_name_);
-        widgets->same_line();
         return node_->render_UI_by_tag(widgets, attr_tag_);
     }
     return false;

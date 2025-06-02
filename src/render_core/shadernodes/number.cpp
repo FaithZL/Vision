@@ -65,7 +65,7 @@ public:
         switch (attr_tag) {
             case AttrTag::Number: {
                 if (values.size() > 1) {
-                    widgets->check_box("sync", &sync_);
+                    widgets->check_box(ocarina::format("{} sync", name_.c_str()), &sync_);
                 }
                 if (sync_) {
                     changed_ |= widgets->drag_floatN(name_, values.data(), 1, 0.01, min_, max_);

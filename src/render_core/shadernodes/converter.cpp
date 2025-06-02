@@ -20,7 +20,7 @@ public:
     VS_MAKE_GUI_STATUS_FUNC(ShaderNode, ior_, normal_)
     OC_ENCODABLE_FUNC(ShaderNode, ior_, normal_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        bool ret = widgets->use_tree("detail", [&] {
+        bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] {
             ior_.render_UI(widgets);
             normal_.render_UI(widgets);
         });
@@ -63,7 +63,7 @@ public:
     OC_ENCODABLE_FUNC(ShaderNode, vector_, location_, rotation_, scale_)
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        bool ret = widgets->use_tree("detail", [&] {
+        bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] {
             vector_.render_UI(widgets);
             location_.render_UI(widgets);
             rotation_.render_UI(widgets);

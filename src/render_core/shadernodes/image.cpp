@@ -49,6 +49,7 @@ public:
     }
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
+        vector_.render_UI(widgets);
         widgets->button_click("reload", [&] {
             reload(widgets);
         });
@@ -56,16 +57,14 @@ public:
     }
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        widgets->text(name_.c_str());
-        vector_.render_UI(widgets);
-        widgets->use_tree("open", [&] {
+        bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] {
             render_sub_UI(widgets);
         });
-        return true;
+        return ret;
     }
 
     [[nodiscard]] AttrEvalContext evaluate(const string &key, const AttrEvalContext &ctx,
-                                          const SampledWavelengths &swl) const noexcept override {
+                                           const SampledWavelengths &swl) const noexcept override {
         float_array value = evaluate(ctx, swl).array;
         if (key == "Alpha") {
             if (channel_num() < 4) {
@@ -81,7 +80,7 @@ public:
     [[nodiscard]] uint channel_num() const noexcept { return texture_->host_tex().channel_num(); }
 
     [[nodiscard]] AttrEvalContext evaluate(const AttrEvalContext &ctx,
-                                          const SampledWavelengths &swl) const noexcept override {
+                                           const SampledWavelengths &swl) const noexcept override {
         if (!cache_) {
             AttrEvalContext ctx_processed = vector_.evaluate(ctx, swl);
             float_array value = pipeline()->tex_var(*tex_id_).sample(channel_num(), ctx_processed.uv());

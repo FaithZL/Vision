@@ -18,7 +18,8 @@ Scene &Node::scene() noexcept {
 }
 
 bool Node::render_UI(ocarina::Widgets *widgets) noexcept {
-    widgets->text("%s-%s does not implement render_UI", category().data(), impl_type().data());
+    widgets->text("%s, %s-%s does not implement render_UI", name_.c_str(),
+                  category().data(), impl_type().data());
     return true;
 }
 
