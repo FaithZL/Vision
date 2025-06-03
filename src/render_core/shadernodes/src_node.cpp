@@ -7,6 +7,57 @@
 
 namespace vision {
 
+/**
+ * input
+ *
+ * camera data
+ * fresnel
+ * geometry
+ * Texture coord
+ * color attr
+ *
+ * Color
+ *
+ * Brightness contrast
+ * Gamma
+ * HSV
+ * invert color
+ * RBG Curve
+ *
+ * Converter
+ *
+ * clamp
+ * Color ramp
+ * Combine color
+ * Combine XYZ
+ * Float curve
+ * map range
+ * math
+ * mix
+ * separate XYZ
+ * separate Color
+ *
+ * shader
+ *
+ * emission
+ *
+ * texture
+ * image
+ * noisy
+ *
+ * vector
+ * bump
+ * displacement
+ * mapping
+ * normal
+ * normal map
+ * vector displacement
+ * vector rotate
+ * vector transform
+ *
+ *
+ */
+
 class TextureCoordinate : public ShaderNode {
 public:
     using ShaderNode::ShaderNode;
