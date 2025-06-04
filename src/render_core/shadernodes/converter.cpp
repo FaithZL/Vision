@@ -42,6 +42,46 @@ public:
     }
 };
 
+class NormalMap : public ShaderNode {
+public:
+    using ShaderNode::ShaderNode;
+    VS_MAKE_PLUGIN_NAME_FUNC_(normal_map)
+
+private:
+    VS_MAKE_SLOT(color);
+    VS_MAKE_SLOT(strength);
+
+public:
+    NormalMap() = default;
+    explicit NormalMap(const ShaderNodeDesc &desc)
+        : ShaderNode(desc) {}
+
+    VS_MAKE_GUI_STATUS_FUNC(ShaderNode, color_, strength_)
+    OC_ENCODABLE_FUNC(ShaderNode, color_, strength_)
+
+    void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
+        VS_INIT_SLOT(color, make_float3(0.5, 0.5, 1), Albedo);
+        VS_INIT_SLOT(strength, 1.f, Number).set_range(-1, 1);
+    }
+
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] {
+            color_.render_UI(widgets);
+            strength_.render_UI(widgets);
+        });
+        return ret;
+    }
+
+    [[nodiscard]] AttrEvalContext evaluate(const AttrEvalContext &ctx,
+                                           const SampledWavelengths &swl) const noexcept override {
+        Float3 normal = color_.evaluate(ctx, swl)->as_vec3() * 2.f - make_float3(1.f);
+        Float s = strength_.evaluate(ctx, swl)->as_scalar();
+        normal.x *= s;
+        normal.y *= s;
+        return AttrEvalContext(float_array::from_vec(normal));
+    }
+};
+
 class VectorMapping : public ShaderNode {
 public:
     using ShaderNode::ShaderNode;
@@ -96,5 +136,6 @@ public:
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, FresnelNode, fresnel)
+VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, NormalMap, normal_map)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, VectorMapping, vector_mapping)
 VS_REGISTER_CURRENT_FILE
