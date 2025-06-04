@@ -55,7 +55,7 @@ protected:
 public:
     explicit MaterialEvaluator(const Interaction &it, const SampledWavelengths &swl)
         : shading_frame_(it.shading), ng_(it.ng), swl_(&swl) {}
-
+    OC_MAKE_MEMBER_GETTER_SETTER(shading_frame, &)
     void regularize() noexcept;
     void mollify() noexcept;
     [[nodiscard]] SampledSpectrum albedo(const Float3 &world_wo) const noexcept;
@@ -84,10 +84,12 @@ struct PrecomputedLobeTable {
     [[nodiscard]] string to_string() const noexcept;
 };
 
-#define VS_MAKE_MATERIAL_EVALUATOR(Lobe)                                                      \
-    void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,              \
-                          const SampledWavelengths &swl) const noexcept override {            \
-        evaluator.link(ocarina::dynamic_unique_pointer_cast<Lobe>(create_lobe_set(it, swl))); \
+#define VS_MAKE_MATERIAL_EVALUATOR(Lobe)                                                  \
+    void _build_evaluator(Material::Evaluator &evaluator, const Interaction &it,          \
+                          const SampledWavelengths &swl) const noexcept override {        \
+        auto lobe = ocarina::dynamic_unique_pointer_cast<Lobe>(create_lobe_set(it, swl)); \
+        evaluator.set_shading_frame(it.shading);                                          \
+        evaluator.link(std::move(lobe));                                                  \
     }
 
 class Material : public Node, public Encodable, public ShaderGraph {
