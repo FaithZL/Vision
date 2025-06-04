@@ -87,6 +87,7 @@ public:
     VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
 
     void initialize_slots(const vision::Material::Desc &desc) noexcept override {
+        Material::initialize_slots(desc);
         VS_INIT_SLOT(color, make_float3(1.f), Albedo);
         VS_INIT_SLOT(spec, make_float3(0.05f), Albedo);
         VS_INIT_SLOT(ior, 1.3f, Number).set_range(1.003, 5);

@@ -277,6 +277,7 @@ public:
         : Material(desc) {}
 
     void initialize_slots(const vision::Material::Desc &desc) noexcept override {
+        Material::initialize_slots(desc);
         VS_INIT_SLOT(color, make_float3(1.f), Albedo);
         VS_INIT_SLOT(metallic, 0.f, Number);
         VS_INIT_SLOT(ior, 1.5f, Number).set_range(1.01, 20.f);

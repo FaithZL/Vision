@@ -110,6 +110,7 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
 
     void initialize_slots(const vision::Material::Desc &desc) noexcept override {
+        Material::initialize_slots(desc);
         VS_INIT_SLOT(color, make_float3(1.f), Albedo);
         VS_INIT_SLOT(spec, make_float3(0.05f), Albedo);
         VS_INIT_SLOT(roughness, 0.5f, Number).set_range(0.0001f, 1.f);

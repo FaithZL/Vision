@@ -57,6 +57,7 @@ public:
           remapping_roughness_(desc["remapping_roughness"].as_bool(true)) {}
 
     void initialize_slots(const vision::Material::Desc &desc) noexcept override {
+        Material::initialize_slots(desc);
         VS_INIT_SLOT(roughness, 0.01f, Number).set_range(0.0001f, 1.f);
         VS_INIT_SLOT(anisotropic, 0.f, Number).set_range(-1, 1);
         init_ior(desc);
