@@ -80,7 +80,6 @@ public:
         Float s = strength_.evaluate(ctx, swl)->as_scalar();
         normal.x *= s;
         normal.y *= s;
-        $condition_info("{} {} {} --- {}", normal, s);
         return AttrEvalContext(float_array::from_vec(normal));
     }
 };
