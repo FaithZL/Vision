@@ -191,7 +191,7 @@ public:
         slot_cursor_.num = (back - head) + 1;
     }
     void initialize_(const vision::NodeDesc &node_desc) noexcept override;
-    virtual void initialize_slots(const Desc &desc) noexcept = 0;
+    virtual void initialize_slots(const Desc &desc) noexcept;
     ///region general for each
     template<bool check = true, typename T, typename F>
     auto reduce_slots(T &&initial, F &&func) const noexcept {

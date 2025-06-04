@@ -277,6 +277,12 @@ namespace detail {
 }
 }// namespace detail
 
+void Material::initialize_slots(const vision::Material::Desc &desc) noexcept {
+    if (desc.has_attr("normal")) {
+        VS_INIT_SLOT_NO_DEFAULT(normal, Number);
+    }
+}
+
 Uint Material::combine_flag(const Float3 &wo, const Float3 &wi, Uint flag) noexcept {
     Bool reflect = same_hemisphere(wo, wi);
     Uint non_reflect = ~BxDFFlag::Reflection;
