@@ -19,6 +19,7 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC_(fresnel)
     VS_MAKE_GUI_STATUS_FUNC(ShaderNode, ior_, normal_)
     OC_ENCODABLE_FUNC(ShaderNode, ior_, normal_)
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, ior_, normal_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] {
             ior_.render_UI(widgets);
@@ -58,6 +59,7 @@ public:
 
     VS_MAKE_GUI_STATUS_FUNC(ShaderNode, color_, strength_)
     OC_ENCODABLE_FUNC(ShaderNode, color_, strength_)
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, color_, strength_)
 
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
         VS_INIT_SLOT(color, make_float3(0.5, 0.5, 1), Albedo);
@@ -78,6 +80,7 @@ public:
         Float s = strength_.evaluate(ctx, swl)->as_scalar();
         normal.x *= s;
         normal.y *= s;
+        $condition_info("{} {} {} --- {}", normal, s);
         return AttrEvalContext(float_array::from_vec(normal));
     }
 };
@@ -101,6 +104,7 @@ public:
 
     VS_MAKE_GUI_STATUS_FUNC(ShaderNode, vector_, location_, rotation_, scale_)
     OC_ENCODABLE_FUNC(ShaderNode, vector_, location_, rotation_, scale_)
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, vector_, location_, rotation_, scale_, type_)
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] {
