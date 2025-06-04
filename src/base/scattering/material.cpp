@@ -154,10 +154,6 @@ BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
 uint Material::exp_of_two_ = 10;
 
 Material::Material(const vision::MaterialDesc &desc) : Node(desc) {
-    if (desc.has_attr("bump")) {
-        bump_.set(ShaderNodeSlot::create_slot(desc.slot("bump", 1.f, Number)));
-        bump_scale_.set(ShaderNodeSlot::create_slot(desc.slot("bump_scale", 1.f, Number)));
-    }
 }
 
 TSampler &Material::get_sampler() noexcept {
@@ -188,7 +184,7 @@ void Material::initialize_(const NodeDesc &node_desc) noexcept {
 
 void Material::restore(vision::RuntimeObject *old_obj) noexcept {
     Node::restore(old_obj);
-    VS_HOTFIX_MOVE_ATTRS(index_, slot_cursor_, bump_, bump_scale_)
+    VS_HOTFIX_MOVE_ATTRS(index_, slot_cursor_, normal_, bump_scale_)
     for (int i = 0; i < slot_cursor_.num; ++i) {
         ShaderNodeSlot &slot = get_slot(i);
         ShaderNodeSlot &old_slot = old_obj_->get_slot(i);
@@ -342,9 +338,9 @@ void Material::add_material_reference(SP<ShapeInstance> shape_instance) noexcept
 }
 
 void Material::_apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept {
-    switch (bump_.dim()) {
-        case 1: detail::compute_by_bump_map(bump_, bump_scale_, it, swl); break;
-        case 3: detail::compute_by_normal_map(bump_, bump_scale_, it, swl); break;
+    switch (normal_.dim()) {
+        case 1: detail::compute_by_bump_map(normal_, bump_scale_, it, swl); break;
+        case 3: detail::compute_by_normal_map(normal_, bump_scale_, it, swl); break;
         default: break;
     }
 }
@@ -364,7 +360,7 @@ MaterialEvaluator Material::create_evaluator(const Interaction &it,
 
 void Material::build_evaluator(Evaluator &evaluator, Interaction it,
                                const SampledWavelengths &swl) const noexcept {
-    if (bump_) {
+    if (normal_) {
         _apply_bump(std::addressof(it), swl);
     }
     _build_evaluator(evaluator, it, swl);

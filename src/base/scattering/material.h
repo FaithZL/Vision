@@ -104,7 +104,7 @@ public:
 
 protected:
     uint index_{InvalidUI32};
-    VS_MAKE_SLOT(bump);
+    VS_MAKE_SLOT(normal);
     VS_MAKE_SLOT(bump_scale);
     /// use for integral albedo
     static uint exp_of_two_;
@@ -198,11 +198,11 @@ public:
     auto reduce_slots(T &&initial, F &&func) const noexcept {
         T ret = OC_FORWARD(initial);
         if constexpr (check) {
-            if (bump_) {
-                ret = func(ret, bump_);
+            if (normal_) {
+                ret = func(ret, normal_);
             }
         } else {
-            ret = func(ret, bump_);
+            ret = func(ret, normal_);
         }
         if constexpr (check) {
             if (bump_scale_) {
@@ -228,11 +228,11 @@ public:
     auto reduce_slots(T &&initial, F &&func) noexcept {
         T ret = OC_FORWARD(initial);
         if constexpr (check) {
-            if (bump_) {
-                ret = func(ret, bump_);
+            if (normal_) {
+                ret = func(ret, normal_);
             }
         } else {
-            ret = func(ret, bump_);
+            ret = func(ret, normal_);
         }
         if constexpr (check) {
             if (bump_scale_) {
@@ -257,11 +257,11 @@ public:
     template<bool check = true, typename F>
     void for_each_slot(F &&func) const noexcept {
         if constexpr (check) {
-            if (bump_) {
-                func(bump_);
+            if (normal_) {
+                func(normal_);
             }
         } else {
-            func(bump_);
+            func(normal_);
         }
         if constexpr (check) {
             if (bump_scale_) {
@@ -286,11 +286,11 @@ public:
     template<bool check = true, typename F>
     void for_each_slot(F &&func) noexcept {
         if constexpr (check) {
-            if (bump_) {
-                func(bump_);
+            if (normal_) {
+                func(normal_);
             }
         } else {
-            func(bump_);
+            func(normal_);
         }
         if constexpr (check) {
             if (bump_scale_) {
