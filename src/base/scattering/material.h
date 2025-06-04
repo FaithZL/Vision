@@ -105,7 +105,6 @@ public:
 protected:
     uint index_{InvalidUI32};
     VS_MAKE_SLOT(normal);
-    VS_MAKE_SLOT(bump_scale);
     /// use for integral albedo
     static uint exp_of_two_;
     vector<weak_ptr<ShapeInstance>> shape_instances;
@@ -204,13 +203,6 @@ public:
         } else {
             ret = func(ret, normal_);
         }
-        if constexpr (check) {
-            if (bump_scale_) {
-                ret = func(ret, bump_scale_);
-            }
-        } else {
-            ret = func(ret, bump_scale_);
-        }
         for (int i = 0; i < slot_cursor_.num; ++i) {
             const ShaderNodeSlot &slot = get_slot(i);
             if constexpr (check) {
@@ -234,13 +226,6 @@ public:
         } else {
             ret = func(ret, normal_);
         }
-        if constexpr (check) {
-            if (bump_scale_) {
-                ret = func(ret, bump_scale_);
-            }
-        } else {
-            ret = func(ret, bump_scale_);
-        }
         for (int i = 0; i < slot_cursor_.num; ++i) {
             ShaderNodeSlot &slot = get_slot(i);
             if constexpr (check) {
@@ -263,14 +248,6 @@ public:
         } else {
             func(normal_);
         }
-        if constexpr (check) {
-            if (bump_scale_) {
-                func(bump_scale_);
-            }
-        } else {
-            func(bump_scale_);
-        }
-
         for (int i = 0; i < slot_cursor_.num; ++i) {
             const ShaderNodeSlot &slot = get_slot(i);
             if constexpr (check) {
@@ -291,13 +268,6 @@ public:
             }
         } else {
             func(normal_);
-        }
-        if constexpr (check) {
-            if (bump_scale_) {
-                func(bump_scale_);
-            }
-        } else {
-            func(bump_scale_);
         }
         for (int i = 0; i < slot_cursor_.num; ++i) {
             ShaderNodeSlot &slot = get_slot(i);

@@ -184,7 +184,7 @@ void Material::initialize_(const NodeDesc &node_desc) noexcept {
 
 void Material::restore(vision::RuntimeObject *old_obj) noexcept {
     Node::restore(old_obj);
-    VS_HOTFIX_MOVE_ATTRS(index_, slot_cursor_, normal_, bump_scale_)
+    VS_HOTFIX_MOVE_ATTRS(index_, slot_cursor_, normal_)
     for (int i = 0; i < slot_cursor_.num; ++i) {
         ShaderNodeSlot &slot = get_slot(i);
         ShaderNodeSlot &old_slot = old_obj_->get_slot(i);
@@ -338,11 +338,11 @@ void Material::add_material_reference(SP<ShapeInstance> shape_instance) noexcept
 }
 
 void Material::_apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept {
-    switch (normal_.dim()) {
-        case 1: detail::compute_by_bump_map(normal_, bump_scale_, it, swl); break;
-        case 3: detail::compute_by_normal_map(normal_, bump_scale_, it, swl); break;
-        default: break;
-    }
+//    switch (normal_.dim()) {
+//        case 1: detail::compute_by_bump_map(normal_, bump_scale_, it, swl); break;
+//        case 3: detail::compute_by_normal_map(normal_, bump_scale_, it, swl); break;
+//        default: break;
+//    }
 }
 
 SampledSpectrum Material::integral_albedo(const Float3 &wo, const Lobe *lobe_set) const noexcept {
