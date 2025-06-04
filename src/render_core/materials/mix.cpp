@@ -12,8 +12,8 @@ namespace vision {
 class MixMaterial : public Material {
 private:
     VS_MAKE_SLOT(frac)
-    SP<Material> mat0_{};
-    SP<Material> mat1_{};
+    HotfixSlot<SP<Material>> mat0_{};
+    HotfixSlot<SP<Material>>mat1_{};
 
 protected:
     VS_MAKE_MATERIAL_EVALUATOR(LobeSet)
