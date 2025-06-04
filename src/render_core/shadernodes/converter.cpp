@@ -80,6 +80,7 @@ public:
         Float s = strength_.evaluate(ctx, swl)->as_scalar();
         normal.x *= s;
         normal.y *= s;
+        normal = ocarina::normalize(normal);
         return AttrEvalContext(float_array::from_vec(normal));
     }
 };
