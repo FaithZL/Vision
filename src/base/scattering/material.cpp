@@ -275,55 +275,6 @@ namespace detail {
                                 normalize(w_refl - ng * dot(w_refl, ng)));
     return normalize(w_refl_clip + w);
 }
-
-void compute_by_normal_map(const ShaderNodeSlot &normal_map, const ShaderNodeSlot &scale,
-                           Interaction *it,
-                           const SampledWavelengths &swl) noexcept {
-    Float3 normal = normal_map.evaluate(*it, swl)->as_vec3() * 2.f - make_float3(1.f);
-    Float s = scale.evaluate(*it, swl)->as_scalar();
-    normal.x *= s;
-    normal.y *= s;
-    Float3 world_normal = it->shading.to_world(normal);
-    world_normal = normalize(world_normal);
-    world_normal = clamp_ns(world_normal, it->ng, it->wo);
-    world_normal = normalize(face_forward(world_normal, it->shading.normal()));
-    it->shading.update(world_normal);
-}
-
-void compute_by_bump_map(const ShaderNodeSlot &bump_map, const ShaderNodeSlot &scale,
-                         Interaction *it,
-                         const SampledWavelengths &swl) noexcept {
-    static constexpr float d = 0.0005f;
-
-    Interaction it_eval = *it;
-
-    Float du = 0.5f * (abs(it->du_dx) + abs(it->du_dy));
-    du = select(du == 0.f, d, du);
-    it_eval.pos = it->pos + du * it->shading.dp_du();
-    it_eval.uv = it->uv + make_float2(du, 0.f);
-    it_eval.ng = normalize(cross(it->shading.dp_du(), it->shading.dp_dv()));
-    Float u_displace = bump_map.evaluate(it_eval, swl)->as_scalar();
-
-    Float dv = 0.5f * (abs(it->dv_dx) + abs(it->dv_dy));
-    dv = select(dv == 0.f, d, dv);
-    it_eval.pos = it->pos + dv * it->shading.dp_dv();
-    it_eval.uv = it->uv + make_float2(0.f, dv);
-    it_eval.ng = normalize(cross(it->shading.dp_du(), it->shading.dp_dv()));
-    Float v_displace = bump_map.evaluate(it_eval, swl)->as_scalar();
-
-    Float displace = bump_map.evaluate(*it, swl)->as_scalar();
-
-    Float3 dp_du = it->shading.dp_du() +
-                   (u_displace - displace) / du * it->shading.normal() +
-                   displace * it->shading.dn_du;
-
-    Float3 dp_dv = it->shading.dp_dv() +
-                   (v_displace - displace) / dv * it->shading.normal() +
-                   displace * it->shading.dn_dv;
-
-    it->shading.z = normalize(cross(dp_du, dp_dv));
-    it->shading.set(dp_du, dp_dv, normalize(cross(dp_du, dp_dv)));
-}
 }// namespace detail
 
 Uint Material::combine_flag(const Float3 &wo, const Float3 &wi, Uint flag) noexcept {
@@ -334,15 +285,16 @@ Uint Material::combine_flag(const Float3 &wo, const Float3 &wi, Uint flag) noexc
 }
 
 void Material::add_material_reference(SP<ShapeInstance> shape_instance) noexcept {
-    shape_instances.push_back(ocarina::move(shape_instance));
+    shape_instances.push_back(std::move(shape_instance));
 }
 
-void Material::_apply_bump(Interaction *it, const SampledWavelengths &swl) const noexcept {
-//    switch (normal_.dim()) {
-//        case 1: detail::compute_by_bump_map(normal_, bump_scale_, it, swl); break;
-//        case 3: detail::compute_by_normal_map(normal_, bump_scale_, it, swl); break;
-//        default: break;
-//    }
+void Material::correct_normal(Interaction *it, const SampledWavelengths &swl) const noexcept {
+    Float3 normal = normal_.evaluate(*it, swl)->as_vec3();
+    Float3 world_normal = it->shading.to_world(normal);
+    world_normal = normalize(world_normal);
+    world_normal = detail::clamp_ns(world_normal, it->ng, it->wo);
+    world_normal = normalize(face_forward(world_normal, it->shading.normal()));
+    it->shading.update(world_normal);
 }
 
 SampledSpectrum Material::integral_albedo(const Float3 &wo, const Lobe *lobe_set) const noexcept {
@@ -361,7 +313,7 @@ MaterialEvaluator Material::create_evaluator(const Interaction &it,
 void Material::build_evaluator(Evaluator &evaluator, Interaction it,
                                const SampledWavelengths &swl) const noexcept {
     if (normal_) {
-        _apply_bump(std::addressof(it), swl);
+        correct_normal(std::addressof(it), swl);
     }
     _build_evaluator(evaluator, it, swl);
 }
