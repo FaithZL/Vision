@@ -160,12 +160,33 @@ def parse_fresnel(exporter, link, dim, node_tab):
     return ret
 
 
+def parse_normal_map(exporter, link, dim, node_tab):
+    from_node = link.from_node
+    fs = link.from_socket
+    output_key = fs.name
+    node_name = str(from_node)
+    ret = slot_data(node_name, output_key, "xyz")
+    color = parse_node(exporter, from_node.inputs["Color"], 3, node_tab)
+    strength = parse_node(exporter, from_node.inputs["Strength"], 1, node_tab)
+    
+    val = {
+        "type": "converter",
+        "construct_name": "normal_map",
+        "param": {
+            "color" : color,
+            "strength" : strength,    
+        },
+    }
+    try_add_tab(node_tab, node_name, val)
+    return ret
+
+
 def parse_mix(exporter, link, dim, node_tab):
     from_node = link.from_node
     fs = link.from_socket
     output_key = fs.name
     node_name = str(from_node)
-    ret = slot_data(node_name, output_key)
+    ret = slot_data(node_name, output_key,)
     val = {
         "type": "mix",
         "param": {},
@@ -202,6 +223,7 @@ func_dict = {
     "CAMERA" : parse_camera_data,
     "MAPPING" : parse_vector_mapping,
     "FRESNEL" : parse_fresnel,
+    "NORMAL_MAP" : parse_normal_map,
 }
 
 

@@ -552,7 +552,7 @@
                     "node": {
                         "type": "number",
                         "param": {
-                            "value": 0.3333333432674408
+                            "value": 0.0
                         }
                     }
                 },
@@ -564,7 +564,7 @@
                             "node": {
                                 "type": "number",
                                 "param": {
-                                    "value": 0.7266666889190674
+                                    "value": 1.0
                                 }
                             }
                         },
@@ -601,14 +601,14 @@
                                 "color": {
                                     "channels": "xyz",
                                     "output_key": "Color",
-                                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x000001CD76E120A0>"
+                                    "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x0000022E22090660>"
                                 },
                                 "roughness": {
                                     "channels": "x",
                                     "node": {
                                         "type": "number",
                                         "param": {
-                                            "value": 0.0
+                                            "value": 0.7927272319793701
                                         }
                                     }
                                 },
@@ -623,8 +623,12 @@
                                 },
                                 "metallic": {
                                     "channels": "x",
-                                    "output_key": "Fac",
-                                    "node": "<bpy_struct, ShaderNodeFresnel(\"Fresnel\") at 0x000001CD76E11620>"
+                                    "node": {
+                                        "type": "number",
+                                        "param": {
+                                            "value": 0.0
+                                        }
+                                    }
                                 },
                                 "spec_tint": {
                                     "channels": "xyz",
@@ -648,12 +652,17 @@
                                         }
                                     }
                                 },
+                                "normal": {
+                                    "channels": "xyz",
+                                    "output_key": "Normal",
+                                    "node": "<bpy_struct, ShaderNodeNormalMap(\"Normal Map\") at 0x0000022E1BB78588>"
+                                },
                                 "sheen_weight": {
                                     "channels": "x",
                                     "node": {
                                         "type": "number",
                                         "param": {
-                                            "value": 1.0
+                                            "value": 0.0
                                         }
                                     }
                                 },
@@ -662,7 +671,7 @@
                                     "node": {
                                         "type": "number",
                                         "param": {
-                                            "value": 0.7836363315582275
+                                            "value": 0.6018181443214417
                                         }
                                     }
                                 },
@@ -801,12 +810,40 @@
                 }
             },
             "node_tab": {
-                "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000001CD76E11D20>": {
+                "<bpy_struct, ShaderNodeTexImage(\"Image Texture.001\") at 0x0000022E21A9F108>": {
+                    "type": "image",
+                    "param": {
+                        "fn": "textures/brickwall_normal.jpg",
+                        "vector": null,
+                        "color_space": "srgb"
+                    }
+                },
+                "<bpy_struct, ShaderNodeNormalMap(\"Normal Map\") at 0x0000022E1BB78588>": {
+                    "type": "converter",
+                    "construct_name": "normal_map",
+                    "param": {
+                        "color": {
+                            "channels": "xyz",
+                            "output_key": "Color",
+                            "node": "<bpy_struct, ShaderNodeTexImage(\"Image Texture.001\") at 0x0000022E21A9F108>"
+                        },
+                        "strength": {
+                            "channels": "x",
+                            "node": {
+                                "type": "number",
+                                "param": {
+                                    "value": 0.9000003337860107
+                                }
+                            }
+                        }
+                    }
+                },
+                "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x0000022E220902E0>": {
                     "type": "src_node",
                     "construct_name": "tex_coord",
                     "param": {}
                 },
-                "<bpy_struct, ShaderNodeMapping(\"Mapping\") at 0x000001CD76E117E0>": {
+                "<bpy_struct, ShaderNodeMapping(\"Mapping\") at 0x0000022E2203BCA0>": {
                     "type": "converter",
                     "construct_name": "vector_mapping",
                     "param": {
@@ -814,7 +851,7 @@
                         "vector": {
                             "channels": "x",
                             "output_key": "UV",
-                            "node": "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000001CD76E11D20>"
+                            "node": "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x0000022E220902E0>"
                         },
                         "scale": {
                             "channels": "xyz",
@@ -857,36 +894,16 @@
                         }
                     }
                 },
-                "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x000001CD76E120A0>": {
+                "<bpy_struct, ShaderNodeTexImage(\"Image Texture\") at 0x0000022E22090660>": {
                     "type": "image",
                     "param": {
-                        "fn": "textures/checker.jpg",
+                        "fn": "textures/brickwall.jpg",
                         "vector": {
                             "channels": "x",
                             "output_key": "Vector",
-                            "node": "<bpy_struct, ShaderNodeMapping(\"Mapping\") at 0x000001CD76E117E0>"
+                            "node": "<bpy_struct, ShaderNodeMapping(\"Mapping\") at 0x0000022E2203BCA0>"
                         },
                         "color_space": "srgb"
-                    }
-                },
-                "<bpy_struct, ShaderNodeFresnel(\"Fresnel\") at 0x000001CD76E11620>": {
-                    "type": "converter",
-                    "construct_name": "fresnel",
-                    "param": {
-                        "normal": {
-                            "channels": "x",
-                            "output_key": "Normal",
-                            "node": "<bpy_struct, ShaderNodeTexCoord(\"Texture Coordinate\") at 0x000001CD76E11D20>"
-                        },
-                        "ior": {
-                            "channels": "x",
-                            "node": {
-                                "type": "number",
-                                "param": {
-                                    "value": 1.2999999523162842
-                                }
-                            }
-                        }
                     }
                 }
             },

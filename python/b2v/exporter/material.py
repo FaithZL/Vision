@@ -25,6 +25,11 @@ def export_diffuse(exporter, bsdf, node_tab):
 
 
 def export_principled(exporter, bsdf, node_tab):
+    
+    normal = None
+    if bsdf.inputs["Normal"].is_linked:
+        normal = shadernode.parse_node(exporter, bsdf.inputs["Normal"], 3, node_tab)
+    
     ret = {
         "type": "principled_bsdf",
         "param": {
@@ -34,6 +39,8 @@ def export_principled(exporter, bsdf, node_tab):
             "metallic": shadernode.parse_node(exporter, bsdf.inputs["Metallic"], 1, node_tab),
             "spec_tint" : shadernode.parse_node(exporter, bsdf.inputs["Specular Tint"], 3, node_tab),
             "anisotropic" : shadernode.parse_node(exporter, bsdf.inputs["Anisotropic"], 1, node_tab),
+            
+            "normal" : normal,
             
             "sheen_weight" : shadernode.parse_node(exporter, bsdf.inputs["Sheen Weight"], 1, node_tab),
             "sheen_roughness" : shadernode.parse_node(exporter, bsdf.inputs["Sheen Roughness"], 1, node_tab),
