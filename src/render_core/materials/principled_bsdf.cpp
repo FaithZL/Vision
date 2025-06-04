@@ -348,7 +348,6 @@ public:
         return ret;
     }
     [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
-        correct_normal(addressof(it), swl);
         LobeSet::Lobes lobes;
         auto [color, color_lum] = color_.eval_albedo_spectrum(it, swl);
         DynamicArray<float> iors = ior_.evaluate(it, swl).array;
@@ -363,7 +362,7 @@ public:
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
 
         SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
-        Float cos_theta = dot(it.wo, it.shading.normal());
+        Float cos_theta = dot(it.wo, it.ng);
         Float front_factor = cast<float>(cos_theta > 0.f);
         if (switches_[ESheen]) {
             outline("principled sheen", [&] {
