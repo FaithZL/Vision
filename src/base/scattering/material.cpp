@@ -295,6 +295,9 @@ void Material::add_material_reference(SP<ShapeInstance> shape_instance) noexcept
 }
 
 void Material::correct_normal(Interaction *it, const SampledWavelengths &swl) const noexcept {
+    if (!normal_) {
+        return;
+    }
     Float3 normal = normal_.evaluate(*it, swl)->as_vec3();
     Float3 world_normal = it->shading.to_world(normal);
     world_normal = normalize(world_normal);
@@ -316,11 +319,8 @@ MaterialEvaluator Material::create_evaluator(const Interaction &it,
     return evaluator;
 }
 
-void Material::build_evaluator(Evaluator &evaluator, Interaction it,
+void Material::build_evaluator(Evaluator &evaluator, const Interaction &it,
                                const SampledWavelengths &swl) const noexcept {
-    if (normal_) {
-        correct_normal(std::addressof(it), swl);
-    }
     _build_evaluator(evaluator, it, swl);
 }
 
