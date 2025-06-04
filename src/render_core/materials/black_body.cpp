@@ -54,7 +54,7 @@ protected:
     VS_MAKE_MATERIAL_EVALUATOR(BlackBodyLobe)
 
 public:
-    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<Lobe> create_lobe_set(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         return make_unique<BlackBodyLobe>(swl);
     }
     void initialize_slots(const vision::Material::Desc &desc) noexcept override {}

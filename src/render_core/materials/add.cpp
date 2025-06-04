@@ -50,7 +50,7 @@ public:
     [[nodiscard]] uint64_t compute_topology_hash() const noexcept override {
         return hash64(mat0_->topology_hash(), mat1_->topology_hash());
     }
-    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<Lobe> create_lobe_set(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         return LobeSet::create_add(mat0_->create_lobe_set(it, swl),
                                    mat1_->create_lobe_set(it, swl));
     }

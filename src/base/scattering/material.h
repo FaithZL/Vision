@@ -95,7 +95,7 @@ public:
     using Evaluator = MaterialEvaluator;
     virtual void _build_evaluator(Evaluator &evaluator, const Interaction &it,
                                   const SampledWavelengths &swl) const noexcept = 0;
-    [[nodiscard]] virtual UP<Lobe> create_lobe_set(Interaction it,
+    [[nodiscard]] virtual UP<Lobe> create_lobe_set(const Interaction &it,
                                                    const SampledWavelengths &swl) const noexcept = 0;
 
 public:

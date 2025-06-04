@@ -39,7 +39,7 @@ public:
 
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_HOTFIX_MAKE_RESTORE(Material, remapping_roughness_, alpha_threshold_)
-    [[nodiscard]] UP<Lobe> create_lobe_set(Interaction it, const SampledWavelengths &swl) const noexcept override {
+    [[nodiscard]] UP<Lobe> create_lobe_set(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         SampledSpectrum color = color_.eval_albedo_spectrum(it, swl).sample;
         SampledSpectrum edge_tint = edge_tint_.eval_albedo_spectrum(it, swl).sample;
         Float roughness = ocarina::clamp(roughness_.evaluate(it, swl)->as_scalar(), 0.01f, 1.f);
