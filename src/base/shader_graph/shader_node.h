@@ -158,4 +158,85 @@ public:
 #undef VS_MAKE_ENCODABLE_FUNC
 };
 
+class ShaderNodeSlotSet {
+protected:
+    ShaderNodeSlotSet() = default;
+    struct SlotCursor {
+        // The offset of the first slot in the object
+        uint offset{0u};
+        uint num{0u};
+    };
+
+    SlotCursor slot_cursor_;
+    const ShaderNodeSlot &get_slot(uint index) const noexcept {
+        const ShaderNodeSlot *head = reinterpret_cast<const ShaderNodeSlot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
+        return head[index];
+    }
+
+    ShaderNodeSlot &get_slot(uint index) noexcept {
+        const ShaderNodeSlot *head = reinterpret_cast<const ShaderNodeSlot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
+        return (const_cast<ShaderNodeSlot *>(head))[index];
+    }
+
+    template<bool check = true, typename T, typename F>
+    auto reduce_slots(T &&initial, F &&func) const noexcept {
+        T ret = OC_FORWARD(initial);
+        for (int i = 0; i < slot_cursor_.num; ++i) {
+            const ShaderNodeSlot &slot = get_slot(i);
+            if constexpr (check) {
+                if (slot) {
+                    ret = func(ret, slot);
+                }
+            } else {
+                ret = func(ret, slot);
+            }
+        }
+        return ret;
+    }
+
+    template<bool check = true, typename T, typename F>
+    auto reduce_slots(T &&initial, F &&func) noexcept {
+        T ret = OC_FORWARD(initial);
+        for (int i = 0; i < slot_cursor_.num; ++i) {
+            ShaderNodeSlot &slot = get_slot(i);
+            if constexpr (check) {
+                if (slot) {
+                    ret = func(ret, slot);
+                }
+            } else {
+                ret = func(ret, slot);
+            }
+        }
+        return ret;
+    }
+
+    template<bool check = true, typename F>
+    void for_each_slot(F &&func) const noexcept {
+        for (int i = 0; i < slot_cursor_.num; ++i) {
+            const ShaderNodeSlot &slot = get_slot(i);
+            if constexpr (check) {
+                if (slot) {
+                    func(slot);
+                }
+            } else {
+                func(slot);
+            }
+        }
+    }
+
+    template<bool check = true, typename F>
+    void for_each_slot(F &&func) noexcept {
+        for (int i = 0; i < slot_cursor_.num; ++i) {
+            ShaderNodeSlot &slot = get_slot(i);
+            if constexpr (check) {
+                if (slot) {
+                    func(slot);
+                }
+            } else {
+                func(slot);
+            }
+        }
+    }
+};
+
 }// namespace vision
