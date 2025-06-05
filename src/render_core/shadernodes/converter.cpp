@@ -145,9 +145,9 @@ public:
     }
 };
 
-class Clamp : public ShaderNode {
+class Clamp : public ShaderNodeMultiSlot {
 public:
-    using ShaderNode::ShaderNode;
+    using ShaderNodeMultiSlot::ShaderNodeMultiSlot;
     VS_MAKE_PLUGIN_NAME_FUNC_(clamp)
 
 private:
@@ -158,25 +158,13 @@ private:
 public:
     Clamp() = default;
     explicit Clamp(const ShaderNodeDesc &desc)
-        : ShaderNode(desc) {}
-
-    VS_MAKE_GUI_STATUS_FUNC(ShaderNode, min_, max_, value_)
-    OC_ENCODABLE_FUNC(ShaderNode, min_, max_, value_)
-    VS_HOTFIX_MAKE_RESTORE(ShaderNode, min_, max_, value_)
-
-    bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] {
-            min_.render_UI(widgets);
-            max_.render_UI(widgets);
-            value_.render_UI(widgets);
-        });
-        return ret;
-    }
+        : ShaderNodeMultiSlot(desc) {}
 
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
         VS_INIT_SLOT(min, 1.f, Number).set_range(-100, 100);
         VS_INIT_SLOT(max, 1.f, Number).set_range(-100, 100);
         VS_INIT_SLOT(value, 1.f, Number).set_range(-100, 100);
+        init_slot_cursor(&min_, &value_);
     }
 
     [[nodiscard]] AttrEvalContext evaluate(const AttrEvalContext &ctx,
