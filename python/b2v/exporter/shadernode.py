@@ -217,6 +217,22 @@ def parse_color(exporter, link, dim, node_tab):
     return ret
 
 
+def parse_gamma(exporter, link, dim, node_tab):
+    from_node = link.from_node
+    output_key = link.from_socket.name
+    node_name = str(from_node)
+    ret = slot_data(node_name, output_key, "")
+    val = {
+        "type" : "converter",
+        "construct_name" : "gamma",
+        "param" : {
+            "color" : parse_node(exporter, from_node.inputs["Color"], 3, node_tab),
+            "gamma" : parse_node(exporter, from_node.inputs["Gamma"], 1, node_tab),
+        },
+    }
+    try_add_tab(node_tab, node_name, val)
+    return ret;
+
 def parse_mix(exporter, link, dim, node_tab):
     from_node = link.from_node
     fs = link.from_socket
@@ -261,6 +277,8 @@ func_dict = {
     "FRESNEL" : parse_fresnel,
     "NORMAL_MAP" : parse_normal_map,
     "CLAMP" : parse_clamp,
+    "RGB" : parse_color,
+    "GAMMA" : parse_gamma,
 }
 
 
