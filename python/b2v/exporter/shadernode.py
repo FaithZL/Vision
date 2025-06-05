@@ -200,6 +200,23 @@ def parse_clamp(exporter, link, dim, node_tab):
     return ret
 
 
+def parse_color(exporter, link, dim, node_tab):
+    from_node = link.from_node
+    fs = link.from_socket
+    output_key = fs.name
+    node_name = str(from_node)
+    ret = slot_data(node_name, output_key, "")
+    val = {
+        "type": "converter",
+        "construct_name": "color",
+        "param": {
+            
+        },
+    }
+    try_add_tab(node_tab, node_name, val)
+    return ret
+
+
 def parse_mix(exporter, link, dim, node_tab):
     from_node = link.from_node
     fs = link.from_socket
