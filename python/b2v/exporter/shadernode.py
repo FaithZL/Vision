@@ -181,12 +181,31 @@ def parse_normal_map(exporter, link, dim, node_tab):
     return ret
 
 
+def parse_clamp(exporter, link, dim, node_tab):
+    from_node = link.from_node
+    fs = link.from_socket
+    output_key = fs.name
+    node_name = str(from_node)
+    ret = slot_data(node_name, output_key, "")
+    val = {
+        "type": "converter",
+        "construct_name": "clamp",
+        "param": {
+            "min" : parse_node(exporter, from_node.inputs["Min"], 1, node_tab),
+            "max" : parse_node(exporter, from_node.inputs["Max"], 1, node_tab),
+            "value" : parse_node(exporter, from_node.inputs["Value"], 1, node_tab),
+        },
+    }
+    try_add_tab(node_tab, node_name, val)
+    return ret
+
+
 def parse_mix(exporter, link, dim, node_tab):
     from_node = link.from_node
     fs = link.from_socket
     output_key = fs.name
     node_name = str(from_node)
-    ret = slot_data(node_name, output_key,)
+    ret = slot_data(node_name, output_key)
     val = {
         "type": "mix",
         "param": {},
@@ -224,6 +243,7 @@ func_dict = {
     "MAPPING" : parse_vector_mapping,
     "FRESNEL" : parse_fresnel,
     "NORMAL_MAP" : parse_normal_map,
+    "CLAMP" : parse_clamp,
 }
 
 

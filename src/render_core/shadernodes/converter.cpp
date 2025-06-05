@@ -137,9 +137,53 @@ public:
     }
 };
 
+class Clamp : public ShaderNode {
+public:
+    using ShaderNode::ShaderNode;
+    VS_MAKE_PLUGIN_NAME_FUNC_(clamp)
+
+private:
+    VS_MAKE_SLOT(min);
+    VS_MAKE_SLOT(max);
+    VS_MAKE_SLOT(value);
+
+public:
+    Clamp() = default;
+    explicit Clamp(const ShaderNodeDesc &desc)
+        : ShaderNode(desc) {}
+
+    VS_MAKE_GUI_STATUS_FUNC(ShaderNode, min_, max_, value_)
+    OC_ENCODABLE_FUNC(ShaderNode, min_, max_, value_)
+    VS_HOTFIX_MAKE_RESTORE(ShaderNode, min_, max_, value_)
+
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {
+        bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] {
+            min_.render_UI(widgets);
+            max_.render_UI(widgets);
+            value_.render_UI(widgets);
+        });
+        return ret;
+    }
+
+    void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
+        VS_INIT_SLOT(min, 1.f, Number).set_range(-100, 100);
+        VS_INIT_SLOT(max, 1.f, Number).set_range(-100, 100);
+        VS_INIT_SLOT(value, 1.f, Number).set_range(-100, 100);
+    }
+
+    [[nodiscard]] AttrEvalContext evaluate(const AttrEvalContext &ctx,
+                                           const SampledWavelengths &swl) const noexcept override {
+        Float min = min_.evaluate(ctx, swl)->as_scalar();
+        Float max = max_.evaluate(ctx, swl)->as_scalar();
+        float_array value = value_.evaluate(ctx, swl).array;
+        return {value};
+    }
+};
+
 }// namespace vision
 
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, FresnelNode, fresnel)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, NormalMap, normal_map)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, VectorMapping, vector_mapping)
+VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, Clamp, clamp)
 VS_REGISTER_CURRENT_FILE
