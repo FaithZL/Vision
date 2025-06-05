@@ -105,10 +105,10 @@ public:
     [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }
 };
 
-class ShaderNodeMultiSlot : public ShaderNode, public ShaderNodeSlotSet {
+class SlotsShaderNode : public ShaderNode, public ShaderNodeSlotSet {
 public:
-    ShaderNodeMultiSlot() = default;
-    explicit ShaderNodeMultiSlot(const ShaderNodeDesc &desc)
+    SlotsShaderNode() = default;
+    explicit SlotsShaderNode(const ShaderNodeDesc &desc)
         : ShaderNode(desc) {}
 
     void restore(vision::RuntimeObject *old_obj) noexcept override;

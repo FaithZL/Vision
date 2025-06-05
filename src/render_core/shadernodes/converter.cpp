@@ -145,9 +145,9 @@ public:
     }
 };
 
-class Clamp : public ShaderNodeMultiSlot {
+class Clamp : public SlotsShaderNode {
 public:
-    using ShaderNodeMultiSlot::ShaderNodeMultiSlot;
+    using SlotsShaderNode::SlotsShaderNode;
     VS_MAKE_PLUGIN_NAME_FUNC_(clamp)
 
 private:
@@ -158,7 +158,7 @@ private:
 public:
     Clamp() = default;
     explicit Clamp(const ShaderNodeDesc &desc)
-        : ShaderNodeMultiSlot(desc) {}
+        : SlotsShaderNode(desc) {}
 
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
         VS_INIT_SLOT(min, 1.f, Number).set_range(-100, 100);
