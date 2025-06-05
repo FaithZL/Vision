@@ -31,6 +31,15 @@ ShaderNodeSlot &ShaderNodeSlotSet::get_slot(int index) noexcept {
     return (const_cast<ShaderNodeSlot *>(head))[index];
 }
 
+void ShaderNodeMultiSlot::restore(vision::RuntimeObject *old_obj) noexcept {
+    VS_HOTFIX_MOVE_ATTRS(slot_cursor_)
+    for (int i = 0; i < slot_cursor_.num; ++i) {
+        ShaderNodeSlot &slot = get_slot(i);
+        ShaderNodeSlot &old_slot = old_obj_->get_slot(i);
+        slot = ocarina::move(old_slot);
+    }
+}
+
 ///#region SlotBase
 SlotBase::SlotBase(int, std::string channels, AttrTag attr_tag)
     : dim_(channels.size()),

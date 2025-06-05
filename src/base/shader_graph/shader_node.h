@@ -105,6 +105,34 @@ public:
     [[nodiscard]] virtual uint2 resolution() const noexcept { return make_uint2(0); }
 };
 
+class ShaderNodeMultiSlot : public ShaderNode, public ShaderNodeSlotSet {
+public:
+    ShaderNodeMultiSlot() = default;
+    explicit ShaderNodeMultiSlot(const ShaderNodeDesc &desc)
+        : ShaderNode(desc) {}
+
+    void restore(vision::RuntimeObject *old_obj) noexcept override;
+
+    ///#region encodable
+    [[nodiscard]] uint compacted_size() const noexcept override;
+    [[nodiscard]] bool has_device_value() const noexcept override;
+    void after_decode() const noexcept override;
+    void invalidate() const noexcept override;
+    void encode(RegistrableManaged<buffer_ty> &data) const noexcept override;
+    void decode(const DataAccessor *da) const noexcept override;
+    void decode(const DynamicArray<ocarina::buffer_ty> &array) const noexcept override;
+    [[nodiscard]] uint alignment() const noexcept override;
+    [[nodiscard]] uint cal_offset(ocarina::uint prev_size) const noexcept override;
+    ///#endregion
+
+    ///#region GUI
+    void reset_status() noexcept override;
+    bool has_changed() noexcept override;
+    bool render_UI(ocarina::Widgets *widgets) noexcept override;
+    void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
+    ///#endregion
+};
+
 class SlotBase : public ocarina::Hashable {
 protected:
     uint dim_{4};
