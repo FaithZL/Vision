@@ -206,11 +206,15 @@ def parse_color(exporter, link, dim, node_tab):
     output_key = fs.name
     node_name = str(from_node)
     ret = slot_data(node_name, output_key, "")
+    color = from_node.color
     val = {
-        "type": "converter",
-        "construct_name": "color",
+        "type": "number",
         "param": {
-            
+            "value": [
+                color.r,
+                color.g,
+                color.b,
+            ],
         },
     }
     try_add_tab(node_tab, node_name, val)

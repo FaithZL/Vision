@@ -17,7 +17,7 @@ import numpy as np
 from . import shadernode
 
 
-def export_area(exporter, object):
+def export_area(exporter, object, node_tab):
     light = object.data
     width = 1
     height = 1
@@ -45,7 +45,7 @@ def export_area(exporter, object):
     return ret
 
 
-def export_point(exporter, object):
+def export_point(exporter, object, node_tab):
     light = object.data
     pos = object.location
     p = exporter.correct_matrix(pos)
@@ -72,7 +72,7 @@ def export_point(exporter, object):
     return ret
 
 
-def export_spot(exporter, object):
+def export_spot(exporter, object, node_tab):
     light = object.data
     pos = object.location
     p = exporter.correct_matrix(pos)
@@ -117,13 +117,15 @@ func_tab = {
 }
 
 
-def export(exporter, object):
-    ret = func_tab[object.data.type](exporter, object)
+def export(exporter, object, node_tab=None):
+    node_tab = {} if node_tab is None else node_tab
+    ret = func_tab[object.data.type](exporter, object, node_tab)
     return ret
 
 def export_environment(exporter):
     scene = bpy.context.scene
     if scene.world and scene.world.use_nodes:
+        node_tab = {}
         world_nodes = scene.world.node_tree.nodes
         output = world_nodes["World Output"]
         env_surface = output.inputs["Surface"].links[0].from_node
@@ -134,7 +136,7 @@ def export_environment(exporter):
         ret = {
             "type" : "spherical",
             "param" : {
-                "color" : shadernode.parse_node(exporter, color, 3),
+                "color" : shadernode.parse_node(exporter, color, 3, node_tab),
                 "scale" : scale,
                 "o2w" : {
                     "type":"Euler",
