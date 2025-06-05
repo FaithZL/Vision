@@ -7,22 +7,7 @@
 
 namespace vision {
 
-#define VS_CALL_RENDER_UI(slot) slot.render_UI(widgets);
-
-#define VS_MAKE_SLOT_RENDER_UI(...)                                             \
-    bool render_UI(ocarina::Widgets *widgets) noexcept override {               \
-        bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] { \
-            MAP(VS_CALL_RENDER_UI, ##__VA_ARGS__);                              \
-        });                                                                     \
-        return ret;                                                             \
-    }
-
-#define VS_MAKE_SLOT_FUNC(Super, ...)             \
-    VS_MAKE_GUI_STATUS_FUNC(Super, ##__VA_ARGS__) \
-    OC_ENCODABLE_FUNC(Super, ##__VA_ARGS__)       \
-    VS_MAKE_SLOT_RENDER_UI(##__VA_ARGS__)
-
-class FresnelNode : public ShaderNode {
+class FresnelNode : public SlotsShaderNode {
 private:
     VS_MAKE_SLOT(ior);
     VS_MAKE_SLOT(normal);
@@ -30,15 +15,12 @@ private:
 public:
     FresnelNode() = default;
     explicit FresnelNode(const ShaderNodeDesc &desc)
-        : ShaderNode(desc) {}
-
+        : SlotsShaderNode(desc) {}
     VS_MAKE_PLUGIN_NAME_FUNC_(fresnel)
-    VS_MAKE_SLOT_FUNC(ShaderNode, ior_, normal_)
-    VS_HOTFIX_MAKE_RESTORE(ShaderNode, ior_, normal_)
-
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
         VS_INIT_SLOT(normal, make_float3(0, 0, 0), Number).set_range(0, 1);
         VS_INIT_SLOT(ior, 1.5f, Number).set_range(0, 20);
+        init_slot_cursor(&ior_, &normal_);
     }
 
     [[nodiscard]] AttrEvalContext evaluate(const std::string &key, const vision::AttrEvalContext &ctx,
@@ -51,9 +33,9 @@ public:
     }
 };
 
-class NormalMap : public ShaderNode {
+class NormalMap : public SlotsShaderNode {
 public:
-    using ShaderNode::ShaderNode;
+    using SlotsShaderNode::SlotsShaderNode;
     VS_MAKE_PLUGIN_NAME_FUNC_(normal_map)
 
 private:
@@ -63,23 +45,12 @@ private:
 public:
     NormalMap() = default;
     explicit NormalMap(const ShaderNodeDesc &desc)
-        : ShaderNode(desc) {}
-
-    VS_MAKE_GUI_STATUS_FUNC(ShaderNode, color_, strength_)
-    OC_ENCODABLE_FUNC(ShaderNode, color_, strength_)
-    VS_HOTFIX_MAKE_RESTORE(ShaderNode, color_, strength_)
+        : SlotsShaderNode(desc) {}
 
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
         VS_INIT_SLOT(color, make_float3(0.5, 0.5, 1), Albedo);
         VS_INIT_SLOT(strength, 1.f, Number).set_range(-1, 1);
-    }
-
-    bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] {
-            color_.render_UI(widgets);
-            strength_.render_UI(widgets);
-        });
-        return ret;
+        init_slot_cursor(&color_, &strength_);
     }
 
     [[nodiscard]] AttrEvalContext evaluate(const AttrEvalContext &ctx,
@@ -93,9 +64,9 @@ public:
     }
 };
 
-class VectorMapping : public ShaderNode {
+class VectorMapping : public SlotsShaderNode {
 public:
-    using ShaderNode::ShaderNode;
+    using SlotsShaderNode::SlotsShaderNode;
     VS_MAKE_PLUGIN_NAME_FUNC_(vector_mapping)
 
 private:
@@ -108,27 +79,14 @@ private:
 public:
     VectorMapping() = default;
     explicit VectorMapping(const ShaderNodeDesc &desc)
-        : ShaderNode(desc) {}
-
-    VS_MAKE_GUI_STATUS_FUNC(ShaderNode, vector_, location_, rotation_, scale_)
-    OC_ENCODABLE_FUNC(ShaderNode, vector_, location_, rotation_, scale_)
-    VS_HOTFIX_MAKE_RESTORE(ShaderNode, vector_, location_, rotation_, scale_, type_)
-
-    bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] {
-            vector_.render_UI(widgets);
-            location_.render_UI(widgets);
-            rotation_.render_UI(widgets);
-            scale_.render_UI(widgets);
-        });
-        return ret;
-    }
+        : SlotsShaderNode(desc) {}
 
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
         VS_INIT_SLOT(vector, make_float3(0, 0, 0), Number);
         VS_INIT_SLOT(location, make_float3(0, 0, 0), Number).set_range(0, 100);
         VS_INIT_SLOT(rotation, make_float3(0, 0, 0), Number).set_range(0, 360);
         VS_INIT_SLOT(scale, make_float3(1), Number).set_range(0.001, 100);
+        init_slot_cursor(&vector_, &scale_);
     }
 
     [[nodiscard]] AttrEvalContext evaluate(const std::string &key, const vision::AttrEvalContext &ctx,
