@@ -176,7 +176,7 @@ public:
         Float min = min_.evaluate(ctx, swl)->as_scalar();
         Float max = max_.evaluate(ctx, swl)->as_scalar();
         float_array value = value_.evaluate(ctx, swl).array;
-        return {value};
+        return {value.clamp(min, max)};
     }
 };
 
