@@ -92,7 +92,7 @@ struct PrecomputedLobeTable {
         evaluator.link(std::move(lobe));                                                  \
     }
 
-class Material : public Node, public Encodable, public ShaderGraph {
+class Material : public Node, public Encodable, public ShaderGraph, public ShaderNodeSlotSet {
 public:
     using Evaluator = MaterialEvaluator;
     virtual void _build_evaluator(Evaluator &evaluator, const Interaction &it,
@@ -113,21 +113,7 @@ protected:
 
 protected:
     static constexpr uint stride = sizeof(ShaderNodeSlot);
-    struct SlotCursor {
-        // The offset of the first slot in the object
-        uint offset{0u};
-        uint num{0u};
-    };
-    SlotCursor slot_cursor_;
-    const ShaderNodeSlot &get_slot(uint index) const noexcept {
-        const ShaderNodeSlot *head = reinterpret_cast<const ShaderNodeSlot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
-        return head[index];
-    }
 
-    ShaderNodeSlot &get_slot(uint index) noexcept {
-        const ShaderNodeSlot *head = reinterpret_cast<const ShaderNodeSlot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
-        return (const_cast<ShaderNodeSlot *>(head))[index];
-    }
     static TSampler &get_sampler() noexcept;
 
     template<typename TLobe, size_t N = 1>
@@ -182,16 +168,7 @@ public:
     [[nodiscard]] virtual bool is_dispersive() const noexcept { return false; }
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
-    void init_slot_cursor(const ShaderNodeSlot *ptr, uint num) noexcept {
-        uint offset = reinterpret_cast<const char *>(ptr) - reinterpret_cast<char *>(this);
-        slot_cursor_.offset = offset;
-        slot_cursor_.num = num;
-    }
-    void init_slot_cursor(const ShaderNodeSlot *head, const ShaderNodeSlot *back) noexcept {
-        uint offset = reinterpret_cast<const char *>(head) - reinterpret_cast<char *>(this);
-        slot_cursor_.offset = offset;
-        slot_cursor_.num = (back - head) + 1;
-    }
+
     void initialize_(const vision::NodeDesc &node_desc) noexcept override;
     virtual void initialize_slots(const Desc &desc) noexcept;
     ///region general for each
@@ -205,16 +182,7 @@ public:
         } else {
             ret = func(ret, normal_);
         }
-        for (int i = 0; i < slot_cursor_.num; ++i) {
-            const ShaderNodeSlot &slot = get_slot(i);
-            if constexpr (check) {
-                if (slot) {
-                    ret = func(ret, slot);
-                }
-            } else {
-                ret = func(ret, slot);
-            }
-        }
+        ret = ShaderNodeSlotSet::reduce_slots<check>(ret, OC_FORWARD(func));
         return ret;
     }
 
@@ -228,16 +196,7 @@ public:
         } else {
             ret = func(ret, normal_);
         }
-        for (int i = 0; i < slot_cursor_.num; ++i) {
-            ShaderNodeSlot &slot = get_slot(i);
-            if constexpr (check) {
-                if (slot) {
-                    ret = func(ret, slot);
-                }
-            } else {
-                ret = func(ret, slot);
-            }
-        }
+        ret = ShaderNodeSlotSet::reduce_slots<check>(ret, OC_FORWARD(func));
         return ret;
     }
 
@@ -250,16 +209,7 @@ public:
         } else {
             func(normal_);
         }
-        for (int i = 0; i < slot_cursor_.num; ++i) {
-            const ShaderNodeSlot &slot = get_slot(i);
-            if constexpr (check) {
-                if (slot) {
-                    func(slot);
-                }
-            } else {
-                func(slot);
-            }
-        }
+        ShaderNodeSlotSet::for_each_slot<check>(OC_FORWARD(func));
     }
 
     template<bool check = true, typename F>
@@ -271,16 +221,7 @@ public:
         } else {
             func(normal_);
         }
-        for (int i = 0; i < slot_cursor_.num; ++i) {
-            ShaderNodeSlot &slot = get_slot(i);
-            if constexpr (check) {
-                if (slot) {
-                    func(slot);
-                }
-            } else {
-                func(slot);
-            }
-        }
+        ShaderNodeSlotSet::for_each_slot<check>(OC_FORWARD(func));
     }
     ///endregion
 

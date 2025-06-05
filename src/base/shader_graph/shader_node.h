@@ -65,12 +65,12 @@ public:
     ///#endregion
 
     [[nodiscard]] virtual AttrEvalContext evaluate(const AttrEvalContext &ctx,
-                                                  const SampledWavelengths &swl) const noexcept {
+                                                   const SampledWavelengths &swl) const noexcept {
         OC_ERROR("call error");
         return {};
     }
     [[nodiscard]] virtual AttrEvalContext evaluate(const string &key, const AttrEvalContext &ctx,
-                                                  const SampledWavelengths &swl) const noexcept {
+                                                   const SampledWavelengths &swl) const noexcept {
         return evaluate(ctx, swl);
     }
     virtual void for_each_pixel(const function<Image::foreach_signature> &func) const noexcept {
@@ -123,7 +123,7 @@ public:
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     [[nodiscard]] virtual AttrEvalContext evaluate(const AttrEvalContext &ctx,
-                                                  const SampledWavelengths &swl) const noexcept;
+                                                   const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] vector<float> average() const noexcept;
     [[nodiscard]] float luminance() const noexcept;
     [[nodiscard]] bool valid() const noexcept { return node_ != nullptr; }
@@ -160,20 +160,33 @@ public:
 
 class ShaderNodeSlotSet {
 protected:
-    ShaderNodeSlotSet() = default;
     struct SlotCursor {
         // The offset of the first slot in the object
-        uint offset{0u};
+        int offset{0u};
         uint num{0u};
     };
-
     SlotCursor slot_cursor_;
-    const ShaderNodeSlot &get_slot(uint index) const noexcept {
+
+protected:
+    ShaderNodeSlotSet() = default;
+
+    void init_slot_cursor(const ShaderNodeSlot *ptr, uint num) noexcept {
+        int offset = reinterpret_cast<const char *>(ptr) - reinterpret_cast<char *>(this);
+        slot_cursor_.offset = offset;
+        slot_cursor_.num = num;
+    }
+    void init_slot_cursor(const ShaderNodeSlot *first, const ShaderNodeSlot *last) noexcept {
+        int offset = reinterpret_cast<const char *>(first) - reinterpret_cast<char *>(this);
+        slot_cursor_.offset = offset;
+        slot_cursor_.num = (last - first) + 1;
+    }
+
+    const ShaderNodeSlot &get_slot(int index) const noexcept {
         const ShaderNodeSlot *head = reinterpret_cast<const ShaderNodeSlot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
         return head[index];
     }
 
-    ShaderNodeSlot &get_slot(uint index) noexcept {
+    ShaderNodeSlot &get_slot(int index) noexcept {
         const ShaderNodeSlot *head = reinterpret_cast<const ShaderNodeSlot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
         return (const_cast<ShaderNodeSlot *>(head))[index];
     }
