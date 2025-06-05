@@ -7,6 +7,21 @@
 
 namespace vision {
 
+#define VS_CALL_RENDER_UI(slot) slot.render_UI(widgets);
+
+#define VS_MAKE_SLOT_RENDER_UI(...)                                             \
+    bool render_UI(ocarina::Widgets *widgets) noexcept override {               \
+        bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] { \
+            MAP(VS_CALL_RENDER_UI, ##__VA_ARGS__);                              \
+        });                                                                     \
+        return ret;                                                             \
+    }
+
+#define VS_MAKE_SLOT_FUNC(Super, ...)             \
+    VS_MAKE_GUI_STATUS_FUNC(Super, ##__VA_ARGS__) \
+    OC_ENCODABLE_FUNC(Super, ##__VA_ARGS__)       \
+    VS_MAKE_SLOT_RENDER_UI(##__VA_ARGS__)
+
 class FresnelNode : public ShaderNode {
 private:
     VS_MAKE_SLOT(ior);
@@ -16,17 +31,10 @@ public:
     FresnelNode() = default;
     explicit FresnelNode(const ShaderNodeDesc &desc)
         : ShaderNode(desc) {}
+
     VS_MAKE_PLUGIN_NAME_FUNC_(fresnel)
-    VS_MAKE_GUI_STATUS_FUNC(ShaderNode, ior_, normal_)
-    OC_ENCODABLE_FUNC(ShaderNode, ior_, normal_)
+    VS_MAKE_SLOT_FUNC(ShaderNode, ior_, normal_)
     VS_HOTFIX_MAKE_RESTORE(ShaderNode, ior_, normal_)
-    bool render_UI(ocarina::Widgets *widgets) noexcept override {
-        bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] {
-            ior_.render_UI(widgets);
-            normal_.render_UI(widgets);
-        });
-        return ret;
-    }
 
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
         VS_INIT_SLOT(normal, make_float3(0, 0, 0), Number).set_range(0, 1);
