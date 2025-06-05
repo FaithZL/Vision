@@ -31,6 +31,7 @@ ShaderNodeSlot &ShaderNodeSlotSet::get_slot(int index) noexcept {
     return (const_cast<ShaderNodeSlot *>(head))[index];
 }
 
+
 void ShaderNodeMultiSlot::restore(vision::RuntimeObject *old_obj) noexcept {
     VS_HOTFIX_MOVE_ATTRS(slot_cursor_)
     for (int i = 0; i < slot_cursor_.num; ++i) {
@@ -38,6 +39,89 @@ void ShaderNodeMultiSlot::restore(vision::RuntimeObject *old_obj) noexcept {
         ShaderNodeSlot &old_slot = old_obj_->get_slot(i);
         slot = ocarina::move(old_slot);
     }
+}
+
+uint ShaderNodeMultiSlot::compacted_size() const noexcept {
+    return reduce_slots(0u, [&](uint size, const ShaderNodeSlot &slot) {
+        return size + slot->compacted_size();
+    });
+}
+
+uint ShaderNodeMultiSlot::cal_offset(ocarina::uint prev_size) const noexcept {
+    return reduce_slots(prev_size, [&](uint size, const ShaderNodeSlot &slot) {
+        return slot->cal_offset(size);
+    });
+}
+
+uint ShaderNodeMultiSlot::alignment() const noexcept {
+    return reduce_slots(0u, [&](uint align, const ShaderNodeSlot &slot) {
+        return ocarina::max(align, slot->alignment());
+    });
+}
+
+bool ShaderNodeMultiSlot::has_device_value() const noexcept {
+    return reduce_slots(true, [&](bool b, const ShaderNodeSlot &slot) {
+        return b && slot->has_device_value();
+    });
+}
+
+void ShaderNodeMultiSlot::invalidate() const noexcept {
+    for_each_slot([&](const ShaderNodeSlot &slot) {
+        slot->invalidate();
+    });
+}
+
+void ShaderNodeMultiSlot::after_decode() const noexcept {
+    for_each_slot([&](const ShaderNodeSlot &slot) {
+        slot->after_decode();
+    });
+}
+
+void ShaderNodeMultiSlot::encode(RegistrableManaged<buffer_ty> &data) const noexcept {
+    for_each_slot([&](const ShaderNodeSlot &slot) {
+        slot->encode(data);
+    });
+}
+
+void ShaderNodeMultiSlot::decode(const DataAccessor *da) const noexcept {
+    for_each_slot([&](const ShaderNodeSlot &slot) {
+        slot->decode(da);
+    });
+}
+
+void ShaderNodeMultiSlot::decode(const DynamicArray<ocarina::buffer_ty> &array) const noexcept {
+    for_each_slot([&](const ShaderNodeSlot &slot) {
+        slot->decode(array);
+    });
+}
+
+///#endregion
+
+void ShaderNodeMultiSlot::reset_status() noexcept {
+    for_each_slot([&](ShaderNodeSlot &slot) {
+        slot.reset_status();
+    });
+    Node::reset_status();
+}
+
+bool ShaderNodeMultiSlot::has_changed() noexcept {
+    return Node::has_changed() || reduce_slots(false, [&](bool b, ShaderNodeSlot &slot) {
+               return b || slot->has_changed();
+           });
+}
+
+bool ShaderNodeMultiSlot::render_UI(ocarina::Widgets *widgets) noexcept {
+    render_sub_UI(widgets);
+    bool ret = widgets->use_tree(ocarina::format("{} detail", name_), [&] {
+        for_each_slot([&](ShaderNodeSlot &slot) {
+            slot.render_UI(widgets);
+        });
+    });
+    return ret;
+}
+
+void ShaderNodeMultiSlot::render_sub_UI(ocarina::Widgets *widgets) noexcept {
+    ShaderNode::render_sub_UI(widgets);
 }
 
 ///#region SlotBase
