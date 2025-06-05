@@ -10,6 +10,27 @@
 
 namespace vision {
 
+void ShaderNodeSlotSet::init_slot_cursor(const ShaderNodeSlot *ptr, uint num) noexcept {
+    int offset = reinterpret_cast<const char *>(ptr) - reinterpret_cast<char *>(this);
+    slot_cursor_.offset = offset;
+    slot_cursor_.num = num;
+}
+void ShaderNodeSlotSet::init_slot_cursor(const ShaderNodeSlot *first, const ShaderNodeSlot *last) noexcept {
+    int offset = reinterpret_cast<const char *>(first) - reinterpret_cast<char *>(this);
+    slot_cursor_.offset = offset;
+    slot_cursor_.num = (last - first) + 1;
+}
+
+const ShaderNodeSlot &ShaderNodeSlotSet::get_slot(int index) const noexcept {
+    const ShaderNodeSlot *head = reinterpret_cast<const ShaderNodeSlot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
+    return head[index];
+}
+
+ShaderNodeSlot &ShaderNodeSlotSet::get_slot(int index) noexcept {
+    const ShaderNodeSlot *head = reinterpret_cast<const ShaderNodeSlot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
+    return (const_cast<ShaderNodeSlot *>(head))[index];
+}
+
 ///#region SlotBase
 SlotBase::SlotBase(int, std::string channels, AttrTag attr_tag)
     : dim_(channels.size()),
@@ -108,7 +129,7 @@ bool ShaderNodeSlot::render_UI(ocarina::Widgets *widgets) noexcept {
 }
 
 AttrEvalContext ShaderNodeSlot::evaluate(const AttrEvalContext &ctx,
-                                        const SampledWavelengths &swl) const noexcept {
+                                         const SampledWavelengths &swl) const noexcept {
     if (!node_) {
         return ctx;
     }

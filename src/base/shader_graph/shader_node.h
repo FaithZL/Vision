@@ -13,11 +13,37 @@
 namespace vision {
 
 class ShaderGraph;
+class ShaderNodeSlot;
 #define VS_MAKE_SLOT(attr_name) ShaderNodeSlot attr_name##_{#attr_name};
 #define VS_INIT_SLOT(name, default_value, type) \
     name##_.set(graph().construct_slot(desc, #name, default_value, type))
 #define VS_INIT_SLOT_NO_DEFAULT(name, type) \
     name##_.set(graph().construct_slot(desc, #name, type))
+
+class ShaderNodeSlotSet {
+protected:
+    struct SlotCursor {
+        // The offset of the first slot in the object
+        int offset{0u};
+        uint num{0u};
+    };
+    SlotCursor slot_cursor_;
+
+protected:
+    ShaderNodeSlotSet() = default;
+    void init_slot_cursor(const ShaderNodeSlot *ptr, uint num) noexcept;
+    void init_slot_cursor(const ShaderNodeSlot *first, const ShaderNodeSlot *last) noexcept;
+    const ShaderNodeSlot &get_slot(int index) const noexcept;
+    ShaderNodeSlot &get_slot(int index) noexcept;
+    template<bool check = true, typename T, typename F>
+    auto reduce_slots(T &&initial, F &&func) const noexcept;
+    template<bool check = true, typename T, typename F>
+    auto reduce_slots(T &&initial, F &&func) noexcept;
+    template<bool check = true, typename F>
+    void for_each_slot(F &&func) const noexcept;
+    template<bool check = true, typename F>
+    void for_each_slot(F &&func) noexcept;
+};
 
 class ShaderNode : public Node, public Encodable, public enable_shared_from_this<ShaderNode> {
 protected:
@@ -158,98 +184,64 @@ public:
 #undef VS_MAKE_ENCODABLE_FUNC
 };
 
-class ShaderNodeSlotSet {
-protected:
-    struct SlotCursor {
-        // The offset of the first slot in the object
-        int offset{0u};
-        uint num{0u};
-    };
-    SlotCursor slot_cursor_;
-
-protected:
-    ShaderNodeSlotSet() = default;
-
-    void init_slot_cursor(const ShaderNodeSlot *ptr, uint num) noexcept {
-        int offset = reinterpret_cast<const char *>(ptr) - reinterpret_cast<char *>(this);
-        slot_cursor_.offset = offset;
-        slot_cursor_.num = num;
-    }
-    void init_slot_cursor(const ShaderNodeSlot *first, const ShaderNodeSlot *last) noexcept {
-        int offset = reinterpret_cast<const char *>(first) - reinterpret_cast<char *>(this);
-        slot_cursor_.offset = offset;
-        slot_cursor_.num = (last - first) + 1;
-    }
-
-    const ShaderNodeSlot &get_slot(int index) const noexcept {
-        const ShaderNodeSlot *head = reinterpret_cast<const ShaderNodeSlot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
-        return head[index];
-    }
-
-    ShaderNodeSlot &get_slot(int index) noexcept {
-        const ShaderNodeSlot *head = reinterpret_cast<const ShaderNodeSlot *>(reinterpret_cast<const char *>(this) + slot_cursor_.offset);
-        return (const_cast<ShaderNodeSlot *>(head))[index];
-    }
-
-    template<bool check = true, typename T, typename F>
-    auto reduce_slots(T &&initial, F &&func) const noexcept {
-        T ret = OC_FORWARD(initial);
-        for (int i = 0; i < slot_cursor_.num; ++i) {
-            const ShaderNodeSlot &slot = get_slot(i);
-            if constexpr (check) {
-                if (slot) {
-                    ret = func(ret, slot);
-                }
-            } else {
+template<bool check, typename T, typename F>
+auto ShaderNodeSlotSet::reduce_slots(T &&initial, F &&func) const noexcept {
+    T ret = OC_FORWARD(initial);
+    for (int i = 0; i < slot_cursor_.num; ++i) {
+        const ShaderNodeSlot &slot = get_slot(i);
+        if constexpr (check) {
+            if (slot) {
                 ret = func(ret, slot);
             }
+        } else {
+            ret = func(ret, slot);
         }
-        return ret;
     }
+    return ret;
+}
 
-    template<bool check = true, typename T, typename F>
-    auto reduce_slots(T &&initial, F &&func) noexcept {
-        T ret = OC_FORWARD(initial);
-        for (int i = 0; i < slot_cursor_.num; ++i) {
-            ShaderNodeSlot &slot = get_slot(i);
-            if constexpr (check) {
-                if (slot) {
-                    ret = func(ret, slot);
-                }
-            } else {
+template<bool check, typename T, typename F>
+auto ShaderNodeSlotSet::reduce_slots(T &&initial, F &&func) noexcept {
+    T ret = OC_FORWARD(initial);
+    for (int i = 0; i < slot_cursor_.num; ++i) {
+        ShaderNodeSlot &slot = get_slot(i);
+        if constexpr (check) {
+            if (slot) {
                 ret = func(ret, slot);
             }
+        } else {
+            ret = func(ret, slot);
         }
-        return ret;
     }
+    return ret;
+}
 
-    template<bool check = true, typename F>
-    void for_each_slot(F &&func) const noexcept {
-        for (int i = 0; i < slot_cursor_.num; ++i) {
-            const ShaderNodeSlot &slot = get_slot(i);
-            if constexpr (check) {
-                if (slot) {
-                    func(slot);
-                }
-            } else {
+template<bool check, typename F>
+void ShaderNodeSlotSet::for_each_slot(F &&func) const noexcept {
+    for (int i = 0; i < slot_cursor_.num; ++i) {
+        const ShaderNodeSlot &slot = get_slot(i);
+        if constexpr (check) {
+            if (slot) {
                 func(slot);
             }
+        } else {
+            func(slot);
         }
     }
+}
 
-    template<bool check = true, typename F>
-    void for_each_slot(F &&func) noexcept {
-        for (int i = 0; i < slot_cursor_.num; ++i) {
-            ShaderNodeSlot &slot = get_slot(i);
-            if constexpr (check) {
-                if (slot) {
-                    func(slot);
-                }
-            } else {
+template<bool check, typename F>
+void ShaderNodeSlotSet::for_each_slot(F &&func) noexcept {
+    for (int i = 0; i < slot_cursor_.num; ++i) {
+        ShaderNodeSlot &slot = get_slot(i);
+        if constexpr (check) {
+            if (slot) {
                 func(slot);
             }
+        } else {
+            func(slot);
         }
     }
-};
+}
 
 }// namespace vision
