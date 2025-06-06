@@ -235,7 +235,24 @@ def parse_gamma(exporter, link, dim, node_tab):
         },
     }
     try_add_tab(node_tab, node_name, val)
-    return ret;
+    return ret
+
+
+def parse_combine_color(exporter, link, dim, node_tab):
+    from_node = link.from_node
+    output_key = link.from_socket.name
+    node_name = str(from_node)
+    ret = slot_data(node_name, output_key, "")
+    val = {
+        "type" : "converter",
+        "construct_name" : "combine_color",
+        "param" : {
+            
+        },
+    }
+    try_add_tab(node_tab, node_name, val)
+    return ret
+    
 
 def parse_mix(exporter, link, dim, node_tab):
     from_node = link.from_node
@@ -283,6 +300,7 @@ func_dict = {
     "CLAMP" : parse_clamp,
     "RGB" : parse_color,
     "GAMMA" : parse_gamma,
+    "COMBINE_COLOR" : parse_combine_color,
 }
 
 
