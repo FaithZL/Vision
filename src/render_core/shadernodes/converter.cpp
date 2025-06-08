@@ -144,6 +144,21 @@ public:
     CombineColor() = default;
     explicit CombineColor(const ShaderNodeDesc &desc)
         : SlotsShaderNode(desc) {}
+
+    void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
+        VS_INIT_SLOT(channel0, 0.5f, Number);
+        VS_INIT_SLOT(channel1, 0.5f, Number);
+        VS_INIT_SLOT(channel2, 0.5f, Number);
+        init_slot_cursor(addressof(channel0_), addressof(channel1_));
+    }
+
+    AttrEvalContext evaluate(const AttrEvalContext &ctx,
+                             const SampledWavelengths &swl) const noexcept override {
+        Float c0 = channel0_.evaluate(ctx, swl)->as_scalar();
+        Float c1 = channel1_.evaluate(ctx, swl)->as_scalar();
+        Float c2 = channel2_.evaluate(ctx, swl)->as_scalar();
+        return {float_array::from_vec(make_float3(c0, c1, c2))};
+    }
 };
 
 class Clamp : public SlotsShaderNode {
@@ -182,5 +197,7 @@ public:
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, FresnelNode, fresnel)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, NormalMap, normal_map)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, VectorMapping, vector_mapping)
+VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, CombineColor, combine_color)
+VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, Gamma, gamma)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, Clamp, clamp)
 VS_REGISTER_CURRENT_FILE
