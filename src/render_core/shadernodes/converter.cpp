@@ -103,9 +103,96 @@ public:
     }
 };
 
+class Gamma : public SlotsShaderNode {
+public:
+    VS_MAKE_PLUGIN_NAME_FUNC_(gamma)
+
+private:
+    VS_MAKE_SLOT(color);
+    VS_MAKE_SLOT(gamma);
+
+public:
+    Gamma() = default;
+    explicit Gamma(const ShaderNodeDesc &desc)
+        : SlotsShaderNode(desc) {}
+
+    void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
+        VS_INIT_SLOT(color, make_float3(0.5f), Albedo);
+        VS_INIT_SLOT(gamma, 2.2f, Number);
+        init_slot_cursor(&color_, &gamma_);
+    }
+
+    AttrEvalContext evaluate(const AttrEvalContext &ctx,
+                             const SampledWavelengths &swl) const noexcept override {
+        Float gamma = gamma_.evaluate(ctx, swl)->as_scalar();
+        Float3 color = color_.evaluate(ctx, swl)->as_vec3();
+        color = ocarina::pow(color, make_float3(gamma));
+        return {float_array::from_vec(color)};
+    }
+};
+
+class CombineXYZ : public SlotsShaderNode {
+public:
+    VS_MAKE_PLUGIN_NAME_FUNC_(combine_xyz)
+
+private:
+    VS_MAKE_SLOT(x);
+    VS_MAKE_SLOT(y);
+    VS_MAKE_SLOT(z);
+
+public:
+    CombineXYZ() = default;
+    explicit CombineXYZ(const ShaderNodeDesc &desc)
+        : SlotsShaderNode(desc) {}
+
+    void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
+        VS_INIT_SLOT(x, 0.5f, Number);
+        VS_INIT_SLOT(y, 0.5f, Number);
+        VS_INIT_SLOT(z, 0.5f, Number);
+        init_slot_cursor(addressof(x_), addressof(z_));
+    }
+
+    AttrEvalContext evaluate(const AttrEvalContext &ctx,
+                             const SampledWavelengths &swl) const noexcept override {
+        Float x = x_.evaluate(ctx, swl)->as_scalar();
+        Float y = y_.evaluate(ctx, swl)->as_scalar();
+        Float z = z_.evaluate(ctx, swl)->as_scalar();
+        return {float_array::from_vec(make_float3(x, y, z))};
+    }
+};
+
+class CombineColor : public SlotsShaderNode {
+public:
+    VS_MAKE_PLUGIN_NAME_FUNC_(combine_color)
+
+private:
+    VS_MAKE_SLOT(channel0);
+    VS_MAKE_SLOT(channel1);
+    VS_MAKE_SLOT(channel2);
+
+public:
+    CombineColor() = default;
+    explicit CombineColor(const ShaderNodeDesc &desc)
+        : SlotsShaderNode(desc) {}
+
+    void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
+        VS_INIT_SLOT(channel0, 0.5f, Number);
+        VS_INIT_SLOT(channel1, 0.5f, Number);
+        VS_INIT_SLOT(channel2, 0.5f, Number);
+        init_slot_cursor(addressof(channel0_), addressof(channel1_));
+    }
+
+    AttrEvalContext evaluate(const AttrEvalContext &ctx,
+                             const SampledWavelengths &swl) const noexcept override {
+        Float c0 = channel0_.evaluate(ctx, swl)->as_scalar();
+        Float c1 = channel1_.evaluate(ctx, swl)->as_scalar();
+        Float c2 = channel2_.evaluate(ctx, swl)->as_scalar();
+        return {float_array::from_vec(make_float3(c0, c1, c2))};
+    }
+};
+
 class Clamp : public SlotsShaderNode {
 public:
-    using SlotsShaderNode::SlotsShaderNode;
     VS_MAKE_PLUGIN_NAME_FUNC_(clamp)
 
 private:
@@ -139,5 +226,8 @@ public:
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, FresnelNode, fresnel)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, NormalMap, normal_map)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, VectorMapping, vector_mapping)
+VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, CombineXYZ, combine_xyz)
+VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, CombineColor, combine_color)
+VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, Gamma, gamma)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, Clamp, clamp)
 VS_REGISTER_CURRENT_FILE
