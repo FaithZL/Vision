@@ -131,6 +131,36 @@ public:
     }
 };
 
+class CombineXYZ : public SlotsShaderNode {
+public:
+    VS_MAKE_PLUGIN_NAME_FUNC_(combine_xyz)
+
+private:
+    VS_MAKE_SLOT(x);
+    VS_MAKE_SLOT(y);
+    VS_MAKE_SLOT(z);
+
+public:
+    CombineXYZ() = default;
+    explicit CombineXYZ(const ShaderNodeDesc &desc)
+        : SlotsShaderNode(desc) {}
+
+    void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
+        VS_INIT_SLOT(x, 0.5f, Number);
+        VS_INIT_SLOT(y, 0.5f, Number);
+        VS_INIT_SLOT(z, 0.5f, Number);
+        init_slot_cursor(addressof(x_), addressof(z_));
+    }
+
+    AttrEvalContext evaluate(const AttrEvalContext &ctx,
+                             const SampledWavelengths &swl) const noexcept override {
+        Float x = x_.evaluate(ctx, swl)->as_scalar();
+        Float y = y_.evaluate(ctx, swl)->as_scalar();
+        Float z = z_.evaluate(ctx, swl)->as_scalar();
+        return {float_array::from_vec(make_float3(x, y, z))};
+    }
+};
+
 class CombineColor : public SlotsShaderNode {
 public:
     VS_MAKE_PLUGIN_NAME_FUNC_(combine_color)
