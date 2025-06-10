@@ -193,7 +193,6 @@ public:
 
 class Clamp : public SlotsShaderNode {
 public:
-    using SlotsShaderNode::SlotsShaderNode;
     VS_MAKE_PLUGIN_NAME_FUNC_(clamp)
 
 private:
