@@ -226,6 +226,7 @@ public:
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, FresnelNode, fresnel)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, NormalMap, normal_map)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, VectorMapping, vector_mapping)
+VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, CombineXYZ, combine_xyz)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, CombineColor, combine_color)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, Gamma, gamma)
 VS_MAKE_CLASS_CREATOR_HOTFIX_FUNC(vision, Clamp, clamp)
