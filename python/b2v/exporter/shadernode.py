@@ -247,7 +247,9 @@ def parse_combine_color(exporter, link, dim, node_tab):
         "type" : "converter",
         "construct_name" : "combine_color",
         "param" : {
-            
+            "channel0" : parse_node(exporter, from_node.inputs["Red"], 1, node_tab),
+            "channel1" : parse_node(exporter, from_node.inputs["Green"], 1, node_tab),
+            "channel2" : parse_node(exporter, from_node.inputs["Blue"], 1, node_tab),
         },
     }
     try_add_tab(node_tab, node_name, val)
