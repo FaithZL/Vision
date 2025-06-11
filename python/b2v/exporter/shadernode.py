@@ -256,6 +256,24 @@ def parse_combine_color(exporter, link, dim, node_tab):
     return ret
     
 
+def parse_combine_xyz(exporter, link, dim, node_tab):
+    from_node = link.from_node
+    output_key = link.from_socket.name
+    node_name = str(from_node)
+    ret = slot_data(node_name, output_key, "")
+    val = {
+        "type" : "converter",
+        "construct_name" : "combine_xyz",
+        "param" : {
+            "x" : parse_node(exporter, from_node.inputs["X"], 1, node_tab),
+            "y" : parse_node(exporter, from_node.inputs["Y"], 1, node_tab),
+            "z" : parse_node(exporter, from_node.inputs["Z"], 1, node_tab),
+        },
+    }
+    try_add_tab(node_tab, node_name, val)
+    return ret
+
+
 def parse_mix(exporter, link, dim, node_tab):
     from_node = link.from_node
     fs = link.from_socket
@@ -303,6 +321,7 @@ func_dict = {
     "RGB" : parse_color,
     "GAMMA" : parse_gamma,
     "COMBINE_COLOR" : parse_combine_color,
+    "COMBINE_XYZ" : parse_combine_xyz,
 }
 
 
