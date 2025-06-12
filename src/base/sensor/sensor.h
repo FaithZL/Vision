@@ -71,6 +71,8 @@ public:
     [[nodiscard]] Float3 device_right() const noexcept;
     [[nodiscard]] Float4x4 device_c2w() const noexcept;
     [[nodiscard]] Float4x4 device_w2c() const noexcept;
+    /// set device c2w GPU only
+    void set_device_c2w(const Float4x4 &mat) noexcept;
     [[nodiscard]] Float linear_depth(const Float3 &world_pos) const noexcept;
     void move(float3 delta) noexcept { position_ += delta; }
 

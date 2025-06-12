@@ -187,6 +187,10 @@ Float4x4 Sensor::device_c2w() const noexcept {
     return *c2w_;
 }
 
+void Sensor::set_device_c2w(const ocarina::Float4x4 &mat) noexcept {
+    c2w_.dv() = mat;
+}
+
 Float4x4 Sensor::device_w2c() const noexcept {
     return inverse(device_c2w());
 }
