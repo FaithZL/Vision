@@ -304,6 +304,13 @@ def parse_add(exporter, link, dim, node_tab):
     if not (node_name in node_tab):
         node_tab[node_name] = val
     return ret
+
+    
+def parse_math(exporter, link, dim, node_tab):
+    from_node = link.from_node
+    fs = link.from_socket
+    output_key = fs.name
+    node_name = str(from_node)
     
 
 func_dict = {
@@ -322,6 +329,7 @@ func_dict = {
     "GAMMA" : parse_gamma,
     "COMBINE_COLOR" : parse_combine_color,
     "COMBINE_XYZ" : parse_combine_xyz,
+    "MATH" : parse_math,
 }
 
 

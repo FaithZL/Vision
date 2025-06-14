@@ -15,8 +15,8 @@ public:
     explicit BlackBodyLobe(const SampledWavelengths &swl) : swl_(&swl) {}
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::Diffuse; }
     [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi,
-                                             MaterialEvalMode mode, const Uint &flag,
-                                             TransportMode tm) const noexcept override;
+                                                  MaterialEvalMode mode, const Uint &flag,
+                                                  TransportMode tm) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override;
     [[nodiscard]] BSDFSample sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
                                           TransportMode tm) const noexcept override;
@@ -31,8 +31,8 @@ const SampledWavelengths *BlackBodyLobe::swl() const {
 }
 
 ScatterEval BlackBodyLobe::evaluate_local_impl(const Float3 &wo, const Float3 &wi,
-                                          MaterialEvalMode mode, const Uint &flag,
-                                          TransportMode tm) const noexcept {
+                                               MaterialEvalMode mode, const Uint &flag,
+                                               TransportMode tm) const noexcept {
     ScatterEval ret{*swl_};
     ret.f = {swl_->dimension(), 0.f};
     ret.pdfs = 1.f;
@@ -57,6 +57,8 @@ public:
     [[nodiscard]] UP<Lobe> create_lobe_set(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         return make_unique<BlackBodyLobe>(swl);
     }
+    [[nodiscard]] uint alignment() const noexcept override { return sizeof(float); }
+    uint cal_offset(ocarina::uint prev_size) const noexcept override { return ocarina::max(prev_size, 1u); }
     void initialize_slots(const vision::Material::Desc &desc) noexcept override {}
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
     explicit BlackBodyMaterial(const MaterialDesc &desc)
