@@ -17,13 +17,6 @@ dic = {
         "description": "reinhard tone mapping.",
         "parameters": {},
     },
-    "exposure": {
-        "label": "exposure",
-        "description": "exposure tone mapping.",
-        "parameters": {
-            "exposure": {"type": "Float", "args": {"default": 1, "max": 5, "min": 0.1}},
-        },
-    },
 }
 
 
