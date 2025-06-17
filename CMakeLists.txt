@@ -20,7 +20,11 @@ set(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+option(OCARINA_PY "Build python export" FALSE)
+
 #set(OCARINA_BUILD_TESTS FALSE)
+#set(OCARINA_PY TRUE)
+
 if (MSVC)
 add_compile_options(
         /wd4996
@@ -45,10 +49,3 @@ add_custom_target(CP_OIDN_CUDA ALL
         COMMAND copy src\\ext\\oidn\\OpenImageDenoise_device_cuda.dll bin
         DEPENDS OpenImageDenoise_device_cuda
         )
-#
-#add_custom_target(CP_USD ALL
-#        COMMAND
-#        copy ..\\src\\ext\\usd\\bin\\*.dll bin &&
-#        copy ..\\src\\ext\\usd\\lib\\*.dll bin &&
-#        xcopy ..\\src\\ext\\usd\\lib\\usd\\ bin\\usd\\  /s/y
-#        )
