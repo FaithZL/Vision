@@ -91,15 +91,17 @@ public:
 
     [[nodiscard]] AttrEvalContext evaluate(const std::string &key, const vision::AttrEvalContext &ctx,
                                            const vision::SampledWavelengths &swl) const noexcept override {
-        Float3 uvw = vector_.evaluate(ctx, swl).uvw();
-        Float3 s = scale_.evaluate(ctx, swl)->as_vec3();
-        Float3 angle = rotation_.evaluate(ctx, swl)->as_vec3();
-        Float3 pos = location_.evaluate(ctx, swl)->as_vec3();
-        Float4x4 rotation = rotation_y(angle.y) * rotation_z(angle.z) * rotation_x(angle.x);
-        Float4x4 trs = translation(pos) * rotation * scale(s);
-        uvw = transform_point(trs, uvw);
-        AttrEvalContext ctx_processed{float_array::from_vec(uvw)};
-        return ctx_processed;
+        return outline("VectorMapping", [&] {
+            Float3 uvw = vector_.evaluate(ctx, swl).uvw();
+            Float3 s = scale_.evaluate(ctx, swl)->as_vec3();
+            Float3 angle = rotation_.evaluate(ctx, swl)->as_vec3();
+            Float3 pos = location_.evaluate(ctx, swl)->as_vec3();
+            Float4x4 rotation = rotation_y(angle.y) * rotation_z(angle.z) * rotation_x(angle.x);
+            Float4x4 trs = translation(pos) * rotation * scale(s);
+            uvw = transform_point(trs, uvw);
+            AttrEvalContext ctx_processed{float_array::from_vec(uvw)};
+            return ctx_processed;
+        });
     }
 };
 
