@@ -21,9 +21,11 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(OCARINA_PY "Build python export" FALSE)
+option(OIDN_ON "Build oidn" TRUE)
 
 #set(OCARINA_BUILD_TESTS FALSE)
 #set(OCARINA_PY TRUE)
+set(OIDN_ON FALSE)
 
 if (MSVC)
 add_compile_options(
@@ -45,7 +47,9 @@ message(STATUS "C++ Compiler: ${CMAKE_CXX_COMPILER}")
 
 add_subdirectory(src)
 
-add_custom_target(CP_OIDN_CUDA ALL
-        COMMAND copy src\\ext\\oidn\\OpenImageDenoise_device_cuda.dll bin
-        DEPENDS OpenImageDenoise_device_cuda
-        )
+if (${OIDN_ON})
+    add_custom_target(CP_OIDN_CUDA ALL
+            COMMAND copy src\\ext\\oidn\\OpenImageDenoise_device_cuda.dll bin
+            DEPENDS OpenImageDenoise_device_cuda
+    )
+endif ()

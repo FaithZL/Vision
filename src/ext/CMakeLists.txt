@@ -28,32 +28,34 @@ endif ()
 add_library(vision-ext-assimp_config INTERFACE)
 target_link_libraries(vision-ext-assimp_config INTERFACE assimp::assimp)
 
-set(OIDN_DEVICE_CUDA ON)
+if (${OIDN_ON})
+    set(OIDN_DEVICE_CUDA ON)
 
-add_subdirectory(oidn)
+    add_subdirectory(oidn)
 
-set_target_properties(OpenImageDenoise
-        PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-        ${CMAKE_BINARY_DIR}/bin/
-)
+    set_target_properties(OpenImageDenoise
+            PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+            ${CMAKE_BINARY_DIR}/bin/
+    )
 
-set_target_properties(OpenImageDenoise_core
-        PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-        ${CMAKE_BINARY_DIR}/bin/
-)
+    set_target_properties(OpenImageDenoise_core
+            PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+            ${CMAKE_BINARY_DIR}/bin/
+    )
 
-set_target_properties(OpenImageDenoise_device_cpu
-        PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-        ${CMAKE_BINARY_DIR}/bin/
-)
+    set_target_properties(OpenImageDenoise_device_cpu
+            PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+            ${CMAKE_BINARY_DIR}/bin/
+    )
 
-set_target_properties(OpenImageDenoise_device_cuda
-        PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-        ${CMAKE_BINARY_DIR}/bin/
-)
+    set_target_properties(OpenImageDenoise_device_cuda
+            PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+            ${CMAKE_BINARY_DIR}/bin/
+    )
 
-add_library(vision-ext-oidn INTERFACE)
-target_link_libraries(vision-ext-oidn INTERFACE OpenImageDenoise)
+    add_library(vision-ext-oidn INTERFACE)
+    target_link_libraries(vision-ext-oidn INTERFACE OpenImageDenoise)
+endif ()
 
 add_subdirectory(xatlas)
 add_library(vision-ext-xatlas INTERFACE)
