@@ -22,6 +22,9 @@ public:
     static constexpr float alpha_upper = 1.f;
 
 protected:
+    optional<PartialDerivative<Float3>> shading_frame_;
+
+protected:
     [[nodiscard]] virtual SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
                                                           TSampler &sampler) const noexcept {
         OC_ASSERT(false);
