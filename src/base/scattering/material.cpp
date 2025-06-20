@@ -122,11 +122,13 @@ ScatterEval MaterialEvaluator::evaluate(const Float3 &world_wo, const Float3 &wo
                                         TransportMode tm) const noexcept {
     Float3 wo = shading_frame_.to_local(world_wo);
     Float3 wi = shading_frame_.to_local(world_wi);
-    ScatterEval ret = evaluate_local(wo, wi, mode, flag, tm);
-//    ScatterEval ret{*swl_};
-//    dispatch([&](const Lobe *lobe_set) {
-//        ret = lobe_set->evaluate(world_wo, world_wi, mode, flag, tm);
-//    });
+//    ScatterEval ret2 = evaluate_local(wo, wi, mode, flag, tm);
+//    $condition_info("{} {} {}    ---", ret2.f.vec3());
+    ScatterEval ret{*swl_};
+    dispatch([&](const Lobe *lobe_set) {
+        ret = lobe_set->evaluate(world_wo, world_wi, mode, flag, tm);
+    });
+//    $condition_info("{} {} {}    ---++++", ret2.f.vec3());
     Bool discard = same_hemisphere(world_wo, world_wi, ng_) == BxDFFlag::is_transmission(ret.flags);
     ret.pdfs = select(discard, 0.f, ret.pdfs);
     ret.f *= abs_cos_theta(wi);

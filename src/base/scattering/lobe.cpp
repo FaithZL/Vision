@@ -33,8 +33,8 @@ SampledSpectrum Lobe::precompute_with_radio(const Float3 &ratio, TSampler &sampl
 }
 
 Float Lobe::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
-    Bool valid = same_hemisphere(wo, wi);
-//    Bool valid = same_hemisphere(wo, wi, shading_frame_->normal());
+//    Bool valid = same_hemisphere(wo, wi);
+    Bool valid = same_hemisphere(wo, wi, shading_frame_->normal());
     return cast<float>(valid);
 }
 
@@ -590,8 +590,8 @@ ScatterEval LobeSet::evaluate_local_impl(const Float3 &wo, const Float3 &wi,
         /// for custom function auto merge
         Float weight = lobe.weight();
         ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm, eta);
-        se.f *= weight * lobe->valid_factor(wo, wi);
-        se.pdfs *= lobe.sample_weight() * lobe->valid_factor(wo, wi);
+        se.f *= weight * cast<uint>(same_hemisphere(wo, wi));
+        se.pdfs *= lobe.sample_weight() * cast<uint>(same_hemisphere(wo, wi));
         ret.f += se.f;
         ret.pdfs += se.pdfs;
         ret.flags = ret.flags | se.flags;
