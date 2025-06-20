@@ -37,6 +37,14 @@ Float Lobe::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
     return cast<float>(valid);
 }
 
+const PartialDerivative<Float3> &Lobe::shading_frame() const noexcept {
+    return shading_frame_ ? shading_frame_.value() : parent_->shading_frame();
+}
+
+void Lobe::set_shading_frame(const PartialDerivative<ocarina::Float3> &frame) noexcept {
+    shading_frame_.emplace(frame);
+}
+
 ScatterEval Lobe::evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                  const Uint &flag, TransportMode tm) const noexcept {
     string label = string(class_name()) + "::evaluate_local";
@@ -375,6 +383,13 @@ WeightedLobe::WeightedLobe(Float sample_weight, Float weight, SP<Lobe> bxdf)
 void LobeSet::initialize() noexcept {
     normalize_sampled_weight();
     flatten();
+    update_children_parents();
+}
+
+void LobeSet::update_children_parents() noexcept {
+    for_each([&](WeightedLobe &weighted_lobe) {
+        weighted_lobe->set_parent(this);
+    });
 }
 
 UP<LobeSet> LobeSet::create_mix(const Float &frac, SP<Lobe> b0, SP<Lobe> b1) noexcept {
@@ -442,6 +457,7 @@ void LobeSet::flatten() noexcept {
         }
     });
     lobes_ = std::move(new_lobes);
+    update_children_parents();
     comment("LobeSet::flatten end");
 }
 

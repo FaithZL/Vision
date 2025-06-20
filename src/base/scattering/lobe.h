@@ -16,12 +16,15 @@ namespace vision {
         return *this;                                                 \
     }
 
+class LobeSet;
+
 struct Lobe : public ocarina::Hashable {
 public:
     static constexpr float alpha_lower = 0.001f;
     static constexpr float alpha_upper = 1.f;
 
 protected:
+    const LobeSet *parent_{nullptr};
     optional<PartialDerivative<Float3>> shading_frame_{};
 
 protected:
@@ -40,12 +43,9 @@ protected:
 public:
     Lobe() = default;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
-    [[nodiscard]] virtual const PartialDerivative<Float3> &shading_frame() const noexcept {
-        return shading_frame_.value();
-    }
-    virtual void set_shading_frame(const PartialDerivative<Float3> &frame) noexcept {
-        shading_frame_.emplace(frame);
-    }
+    [[nodiscard]] virtual const PartialDerivative<Float3> &shading_frame() const noexcept;
+    virtual void set_shading_frame(const PartialDerivative<Float3> &frame) noexcept;
+    OC_MAKE_MEMBER_GETTER_SETTER(parent, &)
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm) const noexcept;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
@@ -277,6 +277,7 @@ public:
     }
     /// normalize weight and flatten the tree
     void initialize() noexcept;
+    void update_children_parents() noexcept;
     static UP<LobeSet> create_mix(const Float &frac, SP<Lobe> b0, SP<Lobe> b1) noexcept;
     static UP<LobeSet> create_add(SP<Lobe> b0, SP<Lobe> b1) noexcept;
     void normalize_sampled_weight() noexcept;
