@@ -42,6 +42,7 @@ protected:
 
 public:
     Lobe() = default;
+    Lobe(optional<PartialDerivative<Float3>> shading_frame) : shading_frame_(std::move(shading_frame)) {}
     [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
     [[nodiscard]] virtual const PartialDerivative<Float3> &shading_frame() const noexcept;
     virtual void set_shading_frame(const PartialDerivative<Float3> &frame) noexcept;
@@ -137,10 +138,12 @@ protected:
                                                   TSampler &sampler) const noexcept override;
 
 public:
-    DiffuseLobe(const SampledSpectrum &kr, const SampledWavelengths &swl)
-        : bxdf_(std::make_unique<LambertReflection>(kr, swl)) {}
-    DiffuseLobe(SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
-        : bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
+    DiffuseLobe(optional<PartialDerivative<Float3>> shading_frame,
+                const SampledSpectrum &kr, const SampledWavelengths &swl)
+        : Lobe(std::move(shading_frame)), bxdf_(std::make_unique<LambertReflection>(kr, swl)) {}
+    DiffuseLobe(optional<PartialDerivative<Float3>> shading_frame,
+                SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
+        : Lobe(std::move(shading_frame)), bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
     [[nodiscard]] Uint flag() const noexcept override { return bxdf_->flags(); }
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return bxdf_->albedo(cos_theta); }
     [[nodiscard]] const SampledWavelengths *swl() const override {
