@@ -20,6 +20,7 @@ protected:
 public:
     [[nodiscard]] UP<Lobe> create_lobe_set(const Interaction &it,
                                            const SampledWavelengths &swl) const noexcept override {
+        auto shading_frame = compute_shading_frame(it, swl);
         SampledSpectrum kr = color_.eval_albedo_spectrum(it, swl).sample;
         if (sigma_) {
             Float sigma = sigma_.evaluate(it, swl)->as_scalar();

@@ -238,6 +238,7 @@ public:
     }
 
     [[nodiscard]] UP<Lobe> create_lobe_set(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+        auto shading_frame = compute_shading_frame(it, swl);
         SampledSpectrum color = color_.eval_albedo_spectrum(it, swl).sample;
         DynamicArray<float> iors = ior_.evaluate(it, swl).array;
         iors = it.correct_eta(iors);

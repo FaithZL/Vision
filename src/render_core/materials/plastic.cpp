@@ -102,6 +102,7 @@ public:
 
     VS_MAKE_PLUGIN_NAME_FUNC
     [[nodiscard]] UP<Lobe> create_lobe_set(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
+        auto shading_frame = compute_shading_frame(it, swl);
         SampledSpectrum Rd = color_.eval_albedo_spectrum(it, swl).sample;
         SampledSpectrum Rs = spec_.eval_albedo_spectrum(it, swl).sample;
 
