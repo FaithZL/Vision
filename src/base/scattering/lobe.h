@@ -22,7 +22,7 @@ public:
     static constexpr float alpha_upper = 1.f;
 
 protected:
-    optional<PartialDerivative<Float3>> shading_frame_;
+    optional<PartialDerivative<Float3>> shading_frame_{};
 
 protected:
     [[nodiscard]] virtual SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
@@ -40,7 +40,12 @@ protected:
 public:
     Lobe() = default;
     [[nodiscard]] virtual SampledSpectrum albedo(const Float &cos_theta) const noexcept = 0;
-
+    [[nodiscard]] virtual const PartialDerivative<Float3> &shading_frame() const noexcept {
+        return shading_frame_.value();
+    }
+    virtual void set_shading_frame(const PartialDerivative<Float3> &frame) noexcept {
+        shading_frame_.emplace(frame);
+    }
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm) const noexcept;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
@@ -92,6 +97,7 @@ protected:
 
 public:
     MicrofacetLobe(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl);
+
     template<typename T = Fresnel>
     [[nodiscard]] const T *fresnel() const noexcept { return static_cast<const T *>(fresnel_.get()); }
     template<typename T = Fresnel>
