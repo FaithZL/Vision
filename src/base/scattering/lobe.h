@@ -47,12 +47,16 @@ public:
     [[nodiscard]] virtual const PartialDerivative<Float3> &shading_frame() const noexcept;
     virtual void set_shading_frame(const PartialDerivative<Float3> &frame) noexcept;
     OC_MAKE_MEMBER_GETTER_SETTER(parent, &)
+    [[nodiscard]] ScatterEval evaluate(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
+                                       const Uint &flag, TransportMode tm) const noexcept;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm) const noexcept;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm, Float *eta) const noexcept;
     [[nodiscard]] virtual bool is_multi() const noexcept { return false; }
     [[nodiscard]] virtual Float valid_factor(const Float3 &wo, const Float3 &wi) const noexcept;
+    [[nodiscard]] BSDFSample sample(const Float3 &world_wo, const Uint &flag,
+                                    TSampler &sampler, TransportMode tm) const noexcept;
     [[nodiscard]] virtual BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                                   TSampler &sampler,
                                                   TransportMode tm) const noexcept;

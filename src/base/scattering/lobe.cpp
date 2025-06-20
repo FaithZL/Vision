@@ -45,6 +45,13 @@ void Lobe::set_shading_frame(const PartialDerivative<ocarina::Float3> &frame) no
     shading_frame_.emplace(frame);
 }
 
+ScatterEval Lobe::evaluate(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
+                           const Uint &flag, TransportMode tm) const noexcept {
+    Float3 wo = shading_frame().to_local(world_wo);
+    Float3 wi = shading_frame().to_local(world_wi);
+    return evaluate_local(wo, wi, mode, flag, tm);
+}
+
 ScatterEval Lobe::evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                  const Uint &flag, TransportMode tm) const noexcept {
     string label = string(class_name()) + "::evaluate_local";
@@ -59,6 +66,14 @@ ScatterEval Lobe::evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEva
     return outline(label, [&] {
         return evaluate_local_impl(wo, wi, mode, flag, tm, eta);
     });
+}
+
+BSDFSample Lobe::sample(const Float3 &world_wo, const Uint &flag,
+                        TSampler &sampler, TransportMode tm) const noexcept {
+    Float3 wo = shading_frame().to_local(world_wo);
+    BSDFSample ret = sample_local(wo, flag, sampler, tm);
+    ret.wi = shading_frame().to_world(ret.wi);
+    return ret;
 }
 
 SampledDirection Lobe::sample_wi(const Float3 &wo, const Uint &flag,
