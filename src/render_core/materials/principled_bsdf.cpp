@@ -33,8 +33,9 @@ public:
 
 public:
     SheenLTC(Mode mode, const Float &cos_theta, SampledSpectrum tint,
-             Float alpha, const SampledWavelengths &swl)
-        : tint_(std::move(tint)), alpha_(std::move(alpha)), swl_(&swl) {
+             Float alpha, const SampledWavelengths &swl,
+             PartialDerivative<Float3> shading_frame = {})
+        : Lobe(std::move(shading_frame)), tint_(std::move(tint)), alpha_(std::move(alpha)), swl_(&swl) {
         Float4 c = fetch_ltc(mode, cos_theta);
         a_ = c.x;
         b_ = c.y;
@@ -56,8 +57,8 @@ public:
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
 
     [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi,
-                                             MaterialEvalMode mode, const Uint &flag,
-                                             TransportMode tm) const noexcept override {
+                                                  MaterialEvalMode mode, const Uint &flag,
+                                                  TransportMode tm) const noexcept override {
         ScatterEval ret{*swl_};
         Float cos_theta_o = cos_theta(wo);
         Float cos_theta_i = cos_theta(wi);
@@ -96,7 +97,7 @@ public:
     }
 
     [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
-                                             TSampler &sampler) const noexcept override {
+                                                  TSampler &sampler) const noexcept override {
 
         Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
         wi = M(wi);
@@ -272,7 +273,7 @@ protected:
 public:
     VS_MAKE_PLUGIN_NAME_FUNC
     PrincipledBSDF() = default;
-    
+
     explicit PrincipledBSDF(const MaterialDesc &desc)
         : Material(desc) {}
 
@@ -372,7 +373,7 @@ public:
                 Float sheen_roughness = sheen_roughness_.evaluate(it, swl)->as_scalar();
                 UP<SheenLTC> sheen_ltc = make_unique<SheenLTC>(sheen_mode_, cos_theta,
                                                                sheen_tint * sheen_weight * weight,
-                                                               sheen_roughness, swl);
+                                                               sheen_roughness, swl, shading_frame);
                 SampledSpectrum sheen_albedo = sheen_ltc->albedo(cos_theta);
                 WeightedLobe sheen_lobe(sheen_albedo.average(), std::move(sheen_ltc));
                 lobes.push_back(std::move(sheen_lobe));
@@ -390,7 +391,7 @@ public:
                 SP<GGXMicrofacet> microfacet_cc = make_shared<GGXMicrofacet>(make_float2(cc_roughness));
                 UP<MicrofacetReflection> cc_refl = make_unique<MicrofacetReflection>(cc_weight * weight * cc_tint, swl,
                                                                                      microfacet_cc);
-                UP<CoatLobe> cc_lobe = make_unique<CoatLobe>(fresnel_cc, std::move(cc_refl));
+                UP<CoatLobe> cc_lobe = make_unique<CoatLobe>(fresnel_cc, std::move(cc_refl), shading_frame);
                 SampledSpectrum cc_albedo = cc_lobe->albedo(cos_theta);
                 WeightedLobe w_cc_lobe(cc_albedo.average(), std::move(cc_lobe));
                 weight = layering_weight(cc_albedo, weight);
@@ -405,7 +406,7 @@ public:
                 UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic,
                                                                                         swl, microfacet);
                 WeightedLobe metal_lobe(metallic * weight.average(),
-                                        make_unique<MetallicLobe>(fresnel_f82, std::move(metal_refl)));
+                                        make_unique<MetallicLobe>(fresnel_f82, std::move(metal_refl), shading_frame));
                 lobes.push_back(std::move(metal_lobe));
                 weight *= (1.0f - metallic);
             });
@@ -418,7 +419,8 @@ public:
                 auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl, eta}, swl);
                 SampledSpectrum t_weight = trans_weight * weight;
                 SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(schlick_F0_from_ior(eta) * specular_tint, etas, swl);
-                UP<Lobe> dielectric = make_unique<DielectricLobe>(fresnel_schlick, microfacet, color, false, SurfaceData::Glossy);
+                UP<Lobe> dielectric = make_unique<DielectricLobe>(fresnel_schlick, microfacet, color, false,
+                                                                  SurfaceData::Glossy, shading_frame);
                 WeightedLobe trans_lobe(t_weight.average(), t_weight.average(), std::move(dielectric));
                 lobes.push_back(std::move(trans_lobe));
                 weight *= (1.0f - trans_weight);
@@ -429,7 +431,8 @@ public:
                 Float f0 = schlick_F0_from_ior(ior);
                 SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(f0 * specular_tint, iors, swl);
                 UP<Lobe> spec_refl = make_unique<SpecularLobe>(fresnel_schlick,
-                                                               make_unique<MicrofacetReflection>(weight, swl, microfacet));
+                                                               make_unique<MicrofacetReflection>(weight, swl, microfacet),
+                                                               shading_frame);
                 SampledSpectrum spec_refl_albedo = spec_refl->albedo(cos_theta);
                 WeightedLobe specular_lobe(spec_refl_albedo.average(), std::move(spec_refl));
                 lobes.push_back(std::move(specular_lobe));
@@ -439,7 +442,8 @@ public:
         if (switches_[EDiffuse]) {
             outline("principled diffuse", [&] {
                 SampledSpectrum diff_weight = color * weight * front_factor;
-                WeightedLobe diffuse_lobe{diff_weight.average(), make_shared<DiffuseLobe>(diff_weight, swl)};
+                WeightedLobe diffuse_lobe{diff_weight.average(),
+                                          make_shared<DiffuseLobe>(diff_weight, swl, shading_frame)};
                 lobes.push_back(std::move(diffuse_lobe));
             });
         }
