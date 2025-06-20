@@ -40,6 +40,19 @@ protected:
         return evaluate_local_impl(wo, wi, mode, flag, tm);
     }
 
+    [[nodiscard]] virtual ScatterEval evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
+                                                    const Uint &flag, TransportMode tm) const noexcept {
+        Float3 wo = shading_frame().to_local(world_wo);
+        Float3 wi = shading_frame().to_local(world_wi);
+        return evaluate_local_impl(wo, wi, mode, flag, tm);
+    }
+    [[nodiscard]] virtual ScatterEval evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
+                                                    const Uint &flag, TransportMode tm, Float *eta) const noexcept {
+        Float3 wo = shading_frame().to_local(world_wo);
+        Float3 wi = shading_frame().to_local(world_wi);
+        return evaluate_local_impl(wo, wi, mode, flag, tm, eta);
+    }
+
 public:
     Lobe() = default;
     Lobe(optional<PartialDerivative<Float3>> shading_frame) : shading_frame_(std::move(shading_frame)) {}
@@ -49,6 +62,8 @@ public:
     OC_MAKE_MEMBER_GETTER_SETTER(parent, &)
     [[nodiscard]] ScatterEval evaluate(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
                                        const Uint &flag, TransportMode tm) const noexcept;
+    [[nodiscard]] ScatterEval evaluate(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
+                                       const Uint &flag, TransportMode tm, Float *eta) const noexcept;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm) const noexcept;
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,

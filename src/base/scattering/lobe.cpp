@@ -47,9 +47,18 @@ void Lobe::set_shading_frame(const PartialDerivative<ocarina::Float3> &frame) no
 
 ScatterEval Lobe::evaluate(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
                            const Uint &flag, TransportMode tm) const noexcept {
-    Float3 wo = shading_frame().to_local(world_wo);
-    Float3 wi = shading_frame().to_local(world_wi);
-    return evaluate_local(wo, wi, mode, flag, tm);
+    string label = string(class_name()) + "::evaluate";
+    return outline(label, [&] {
+        return evaluate_impl(world_wo, world_wi, mode, flag, tm);
+    });
+}
+
+ScatterEval Lobe::evaluate(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
+                           const Uint &flag, TransportMode tm, Float *eta) const noexcept {
+    string label = string(class_name()) + "::evaluate with eta";
+    return outline(label, [&] {
+        return evaluate_impl(world_wo, world_wi, mode, flag, tm, eta);
+    });
 }
 
 ScatterEval Lobe::evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,

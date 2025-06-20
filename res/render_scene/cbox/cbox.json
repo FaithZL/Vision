@@ -262,9 +262,9 @@
 //				"material" : "mix2",
 //				"material" : "Mirror",
 //				                "material": "Mirror2",
-//								                "material": "Glass",
+								                "material": "Glass",
 //												"material" : "Metal",
-				"material" : "principled_bsdf2",
+//				"material" : "principled_bsdf2",
 //				"material" : "metallic",
 				"transform" : {
 					"type" : "matrix4x4",
