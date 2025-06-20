@@ -247,7 +247,8 @@ public:
 protected:
     [[nodiscard]] uint64_t compute_topology_hash() const noexcept override;
     [[nodiscard]] uint64_t compute_hash() const noexcept override;
-    virtual void correct_normal(Interaction *it, const SampledWavelengths &swl) const noexcept;
+    virtual PartialDerivative<Float3> compute_shading_frame(const Interaction &it,
+                                                            const SampledWavelengths &swl) const noexcept;
     [[nodiscard]] SampledSpectrum integral_albedo(const Float3 &wo, const Lobe *lobe_set) const noexcept;
 
 public:

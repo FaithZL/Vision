@@ -294,16 +294,19 @@ void Material::add_material_reference(SP<ShapeInstance> shape_instance) noexcept
     shape_instances.push_back(std::move(shape_instance));
 }
 
-void Material::correct_normal(Interaction *it, const SampledWavelengths &swl) const noexcept {
+PartialDerivative<Float3> Material::compute_shading_frame(const Interaction &it,
+                                                          const SampledWavelengths &swl) const noexcept {
+    PartialDerivative<Float3> ret = it.shading;
     if (!normal_) {
-        return;
+        return ret;
     }
-    Float3 normal = normal_.evaluate(*it, swl)->as_vec3();
-    Float3 world_normal = it->shading.to_world(normal);
+    Float3 normal = normal_.evaluate(it, swl)->as_vec3();
+    Float3 world_normal = it.shading.to_world(normal);
     world_normal = normalize(world_normal);
-    world_normal = detail::clamp_ns(world_normal, it->ng, it->wo);
-    world_normal = normalize(face_forward(world_normal, it->shading.normal()));
-    it->shading.update(world_normal);
+    world_normal = detail::clamp_ns(world_normal, it.ng, it.wo);
+    world_normal = normalize(face_forward(world_normal, it.shading.normal()));
+    ret.update(world_normal);
+    return ret;
 }
 
 SampledSpectrum Material::integral_albedo(const Float3 &wo, const Lobe *lobe_set) const noexcept {
