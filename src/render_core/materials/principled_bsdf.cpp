@@ -365,7 +365,7 @@ public:
 
         SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
         Float cos_theta = dot(it.wo, it.ng);
-        Float front_factor = cast<float>(cos_theta > 0.f);
+        Float front_factor = 1;
         if (switches_[ESheen]) {
             outline("principled sheen", [&] {
                 SampledSpectrum sheen_tint = sheen_tint_.eval_albedo_spectrum(it, swl).sample;
@@ -448,6 +448,7 @@ public:
             });
         }
         UP<LobeSet> ret = make_unique<LobeSet>(std::move(lobes));
+        ret->set_shading_frame(shading_frame);
         return ret;
     }
 };

@@ -146,9 +146,14 @@ BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
                                      const Uint &flag,
                                      TransportMode tm) const noexcept {
     Float3 wo = shading_frame_.to_local(world_wo);
-    BSDFSample ret = sample_local(wo, flag, sampler, tm);
-    ret.eval.f *= abs_cos_theta(ret.wi);
-    ret.wi = shading_frame_.to_world(ret.wi);
+//    BSDFSample ret = sample_local(wo, flag, sampler, tm);
+//    ret.eval.f *= abs_cos_theta(ret.wi);
+//    ret.wi = shading_frame_.to_world(ret.wi);
+    BSDFSample ret{*swl_};
+    dispatch([&](const Lobe *lobe) {
+        ret = lobe->sample(world_wo, flag,sampler, tm);
+    });
+    ret.eval.f *= abs_dot(ret.wi, shading_frame_.normal());
     Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
     ret.eval.pdfs = select(discard, 0.f, ret.eval.pdfs);
     return ret;
