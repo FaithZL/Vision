@@ -25,7 +25,7 @@ option(OIDN_ON "Build oidn" TRUE)
 
 #set(OCARINA_BUILD_TESTS FALSE)
 #set(OCARINA_PY TRUE)
-set(OIDN_ON FALSE)
+#set(OIDN_ON FALSE)
 
 if (MSVC)
 add_compile_options(
