@@ -20,8 +20,9 @@ protected:
     }
 
 public:
-    PlasticLobe(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl, UP<BxDF> diff)
-        : MicrofacetLobe(fresnel, std::move(refl)),
+    PlasticLobe(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl, UP<BxDF> diff,
+                PartialDerivative<Float3> shading_frame = {})
+        : MicrofacetLobe(fresnel, std::move(refl), std::move(shading_frame)),
           diffuse_(std::move(diff)) {}
 
     [[nodiscard]] Float PDF_diffuse(const Float3 &wo, const Float3 &wi) const noexcept {
@@ -35,7 +36,7 @@ public:
     }
 
     [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
-                                             const Uint &flag, TransportMode tm) const noexcept override {
+                                                  const Uint &flag, TransportMode tm) const noexcept override {
         ScatterEval ret{*swl()};
         Float3 wh = normalize(wo + wi);
         SampledSpectrum F = fresnel_->evaluate(abs_dot(wh, wo));
@@ -50,7 +51,7 @@ public:
     }
 
     [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
-                                             TSampler &sampler) const noexcept override {
+                                                  TSampler &sampler) const noexcept override {
         Float3 wh = microfacet()->sample_wh(wo, sampler->next_2d());
         auto fresnel = fresnel_.ptr();
         SampledDirection sd;
@@ -123,7 +124,7 @@ public:
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(spectrum()->one(), swl, microfacet);
         UP<LambertReflection> diffuse = make_unique<LambertReflection>(Rd, swl);
 
-        return make_unique<PlasticLobe>(fresnel_schlick, std::move(refl), std::move(diffuse));
+        return make_unique<PlasticLobe>(fresnel_schlick, std::move(refl), std::move(diffuse), shading_frame);
     }
 };
 

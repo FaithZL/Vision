@@ -69,7 +69,7 @@ protected:
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         SP<Fresnel> fresnel = make_shared<FresnelConstant>(swl);
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
-        return make_unique<MirrorLobe>(fresnel, std::move(refl));
+        return make_unique<MirrorLobe>(fresnel, std::move(refl), shading_frame);
     }
 };
 

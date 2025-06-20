@@ -439,7 +439,7 @@ public:
         if (switches_[EDiffuse]) {
             outline("principled diffuse", [&] {
                 SampledSpectrum diff_weight = color * weight * front_factor;
-                WeightedLobe diffuse_lobe{diff_weight.average(), make_shared<DiffuseLobe>(shading_frame, diff_weight, swl)};
+                WeightedLobe diffuse_lobe{diff_weight.average(), make_shared<DiffuseLobe>(diff_weight, swl)};
                 lobes.push_back(std::move(diffuse_lobe));
             });
         }

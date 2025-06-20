@@ -24,9 +24,9 @@ public:
         SampledSpectrum kr = color_.eval_albedo_spectrum(it, swl).sample;
         if (sigma_) {
             Float sigma = sigma_.evaluate(it, swl)->as_scalar();
-            return make_unique<DiffuseLobe>(shading_frame, kr, sigma, swl);
+            return make_unique<DiffuseLobe>(kr, sigma, swl, shading_frame);
         }
-        return make_unique<DiffuseLobe>(shading_frame, kr, swl);
+        return make_unique<DiffuseLobe>(kr, swl, shading_frame);
     }
     [[nodiscard]] bool enable_delta() const noexcept override { return false; }
     bool render_UI(ocarina::Widgets *widgets) noexcept override {

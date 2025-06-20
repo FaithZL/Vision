@@ -253,7 +253,7 @@ public:
 
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{iors}, swl);
-        return make_unique<DielectricLobe>(fresnel, microfacet, color, is_dispersive(), flag);
+        return make_unique<DielectricLobe>(fresnel, microfacet, color, is_dispersive(), flag, shading_frame);
     }
 };
 }// namespace vision

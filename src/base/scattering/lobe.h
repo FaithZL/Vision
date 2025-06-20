@@ -97,7 +97,8 @@ protected:
     [[nodiscard]] uint64_t compute_topology_hash() const noexcept override;
 
 public:
-    MicrofacetLobe(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl);
+    MicrofacetLobe(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl,
+                   optional<PartialDerivative<Float3>> shading_frame = {});
 
     template<typename T = Fresnel>
     [[nodiscard]] const T *fresnel() const noexcept { return static_cast<const T *>(fresnel_.get()); }
@@ -138,11 +139,11 @@ protected:
                                                   TSampler &sampler) const noexcept override;
 
 public:
-    DiffuseLobe(optional<PartialDerivative<Float3>> shading_frame,
-                const SampledSpectrum &kr, const SampledWavelengths &swl)
+    DiffuseLobe(const SampledSpectrum &kr, const SampledWavelengths &swl,
+                optional<PartialDerivative<Float3>> shading_frame = {})
         : Lobe(std::move(shading_frame)), bxdf_(std::make_unique<LambertReflection>(kr, swl)) {}
-    DiffuseLobe(optional<PartialDerivative<Float3>> shading_frame,
-                SampledSpectrum R, Float sigma, const SampledWavelengths &swl)
+    DiffuseLobe(SampledSpectrum R, Float sigma, const SampledWavelengths &swl,
+                optional<PartialDerivative<Float3>> shading_frame = {})
         : Lobe(std::move(shading_frame)), bxdf_(std::make_unique<OrenNayar>(R, sigma, swl)) {}
     [[nodiscard]] Uint flag() const noexcept override { return bxdf_->flags(); }
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override { return bxdf_->albedo(cos_theta); }
@@ -206,8 +207,9 @@ protected:
 
 public:
     DielectricLobe(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
-                   SampledSpectrum color, Bool dispersive, Uint flag)
-        : fresnel_(fresnel), microfacet_(microfacet),
+                   SampledSpectrum color, Bool dispersive, Uint flag,
+                   optional<PartialDerivative<Float3>> shading_frame = {})
+        : Lobe(std::move(shading_frame)), fresnel_(fresnel), microfacet_(microfacet),
           kt_(std::move(color)), dispersive_(ocarina::move(dispersive)),
           flag_(std::move(flag)) {}
     VS_MAKE_LOBE_ASSIGNMENT(DielectricLobe)

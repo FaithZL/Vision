@@ -56,7 +56,7 @@ public:
         fresnel_f82->init_from_F82(edge_tint);
 
         UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(color, swl, microfacet);
-        return make_unique<MetallicLobe>(fresnel_f82, std::move(metal_refl));
+        return make_unique<MetallicLobe>(fresnel_f82, std::move(metal_refl), shading_frame);
     }
 };
 }// namespace vision

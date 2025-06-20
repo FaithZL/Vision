@@ -149,7 +149,7 @@ public:
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl);
 
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
-        return make_unique<ConductorLobe>(fresnel, std::move(refl));
+        return make_unique<ConductorLobe>(fresnel, std::move(refl), shading_frame);
     }
 };
 
