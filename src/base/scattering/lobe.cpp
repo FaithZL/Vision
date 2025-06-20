@@ -33,7 +33,7 @@ SampledSpectrum Lobe::precompute_with_radio(const Float3 &ratio, TSampler &sampl
 }
 
 Float Lobe::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
-    Bool valid = same_hemisphere(wo, wi, shading_frame().normal());
+    Bool valid = same_hemisphere(wo, wi);
     return cast<float>(valid);
 }
 
