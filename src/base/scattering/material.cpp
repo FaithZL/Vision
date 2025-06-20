@@ -123,6 +123,10 @@ ScatterEval MaterialEvaluator::evaluate(const Float3 &world_wo, const Float3 &wo
     Float3 wo = shading_frame_.to_local(world_wo);
     Float3 wi = shading_frame_.to_local(world_wi);
     ScatterEval ret = evaluate_local(wo, wi, mode, flag, tm);
+//    ScatterEval ret{*swl_};
+//    dispatch([&](const Lobe *lobe_set) {
+//        ret = lobe_set->evaluate(world_wo, world_wi, mode, flag, tm);
+//    });
     Bool discard = same_hemisphere(world_wo, world_wi, ng_) == BxDFFlag::is_transmission(ret.flags);
     ret.pdfs = select(discard, 0.f, ret.pdfs);
     ret.f *= abs_cos_theta(wi);
@@ -297,15 +301,15 @@ void Material::add_material_reference(SP<ShapeInstance> shape_instance) noexcept
 PartialDerivative<Float3> Material::compute_shading_frame(const Interaction &it,
                                                           const SampledWavelengths &swl) const noexcept {
     PartialDerivative<Float3> ret = it.shading;
-    if (!normal_) {
-        return ret;
-    }
-    Float3 normal = normal_.evaluate(it, swl)->as_vec3();
-    Float3 world_normal = it.shading.to_world(normal);
-    world_normal = normalize(world_normal);
-    world_normal = detail::clamp_ns(world_normal, it.ng, it.wo);
-    world_normal = normalize(face_forward(world_normal, it.shading.normal()));
-    ret.update(world_normal);
+//    if (!normal_) {
+//        return ret;
+//    }
+//    Float3 normal = normal_.evaluate(it, swl)->as_vec3();
+//    Float3 world_normal = it.shading.to_world(normal);
+//    world_normal = normalize(world_normal);
+//    world_normal = detail::clamp_ns(world_normal, it.ng, it.wo);
+//    world_normal = normalize(face_forward(world_normal, it.shading.normal()));
+//    ret.update(world_normal);
     return ret;
 }
 
