@@ -37,6 +37,26 @@ Float Lobe::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
     return cast<float>(valid);
 }
 
+ScatterEval Lobe::evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
+                                const Uint &flag, TransportMode tm) const noexcept {
+    Float3 wo = shading_frame().to_local(world_wo);
+    Float3 wi = shading_frame().to_local(world_wi);
+    string label = string(class_name()) + "::evaluate_local";
+    return outline(label, [&] {
+        return evaluate_local_impl(wo, wi, mode, flag, tm);
+    });
+}
+
+ScatterEval Lobe::evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
+                                const Uint &flag, TransportMode tm, Float *eta) const noexcept {
+    Float3 wo = shading_frame().to_local(world_wo);
+    Float3 wi = shading_frame().to_local(world_wi);
+    string label = string(class_name()) + "::evaluate_local with eta";
+    return outline(label, [&] {
+        return evaluate_local_impl(wo, wi, mode, flag, tm, eta);
+    });
+}
+
 const PartialDerivative<Float3> &Lobe::shading_frame() const noexcept {
     return shading_frame_ ? shading_frame_.value() : parent_->shading_frame();
 }
@@ -47,18 +67,12 @@ void Lobe::set_shading_frame(const PartialDerivative<ocarina::Float3> &frame) no
 
 ScatterEval Lobe::evaluate(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
                            const Uint &flag, TransportMode tm) const noexcept {
-    string label = string(class_name()) + "::evaluate";
-    return outline(label, [&] {
-        return evaluate_impl(world_wo, world_wi, mode, flag, tm);
-    });
+    return evaluate_impl(world_wo, world_wi, mode, flag, tm);
 }
 
 ScatterEval Lobe::evaluate(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
                            const Uint &flag, TransportMode tm, Float *eta) const noexcept {
-    string label = string(class_name()) + "::evaluate with eta";
-    return outline(label, [&] {
-        return evaluate_impl(world_wo, world_wi, mode, flag, tm, eta);
-    });
+    return evaluate_impl(world_wo, world_wi, mode, flag, tm, eta);
 }
 
 ScatterEval Lobe::evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,

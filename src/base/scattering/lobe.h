@@ -41,17 +41,9 @@ protected:
     }
 
     [[nodiscard]] virtual ScatterEval evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
-                                                    const Uint &flag, TransportMode tm) const noexcept {
-        Float3 wo = shading_frame().to_local(world_wo);
-        Float3 wi = shading_frame().to_local(world_wi);
-        return evaluate_local_impl(wo, wi, mode, flag, tm);
-    }
+                                                    const Uint &flag, TransportMode tm) const noexcept ;
     [[nodiscard]] virtual ScatterEval evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
-                                                    const Uint &flag, TransportMode tm, Float *eta) const noexcept {
-        Float3 wo = shading_frame().to_local(world_wo);
-        Float3 wi = shading_frame().to_local(world_wi);
-        return evaluate_local_impl(wo, wi, mode, flag, tm, eta);
-    }
+                                                    const Uint &flag, TransportMode tm, Float *eta) const noexcept;
 
 public:
     Lobe() = default;
