@@ -33,7 +33,7 @@ SampledSpectrum Lobe::precompute_with_radio(const Float3 &ratio, TSampler &sampl
 }
 
 Float Lobe::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
-    Bool valid = same_hemisphere(wo, wi);
+    Bool valid = same_hemisphere(wo, wi, shading_frame().normal());
     return cast<float>(valid);
 }
 
@@ -555,6 +555,28 @@ Uint LobeSet::flag() const noexcept {
     Uint ret = BxDFFlag::Unset;
     for_each([&](const WeightedLobe &lobe) {
         ret |= lobe->flag();
+    });
+    return ret;
+}
+
+ScatterEval LobeSet::evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
+                                   const Uint &flag, TransportMode tm) const noexcept {
+    return evaluate_impl(world_wo, world_wi, mode, flag, tm, nullptr);
+}
+
+ScatterEval LobeSet::evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
+                                   const Uint &flag, TransportMode tm, Float *eta) const noexcept {
+    ScatterEval ret{*swl()};
+    for_each([&](const WeightedLobe &lobe) {
+        /// for custom function auto merge
+        Float weight = lobe.weight();
+        ScatterEval se = lobe->evaluate(world_wo, world_wi, mode, flag, tm, eta);
+        Float factor = lobe->valid_factor(world_wo, world_wi);
+        se.f *= weight * factor;
+        se.pdfs *= lobe.sample_weight() * factor;
+        ret.f += se.f;
+        ret.pdfs += se.pdfs;
+        ret.flags = ret.flags | se.flags;
     });
     return ret;
 }

@@ -41,7 +41,7 @@ protected:
     }
 
     [[nodiscard]] virtual ScatterEval evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
-                                                    const Uint &flag, TransportMode tm) const noexcept ;
+                                                    const Uint &flag, TransportMode tm) const noexcept;
     [[nodiscard]] virtual ScatterEval evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
                                                     const Uint &flag, TransportMode tm, Float *eta) const noexcept;
 
@@ -285,6 +285,10 @@ protected:
                                                   const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
                                                   TSampler &sampler) const noexcept override;
+    [[nodiscard]] ScatterEval evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
+                                            const Uint &flag, TransportMode tm) const noexcept override;
+    [[nodiscard]] ScatterEval evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
+                                            const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
 
 public:
     LobeSet() = default;
