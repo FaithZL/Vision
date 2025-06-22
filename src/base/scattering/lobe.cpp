@@ -32,9 +32,13 @@ SampledSpectrum Lobe::precompute_with_radio(const Float3 &ratio, TSampler &sampl
     return integral_albedo(wo, sampler, sample_num);
 }
 
-Float Lobe::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
-//    Bool valid = same_hemisphere(wo, wi);
+Float Lobe::valid_world_factor(const Float3 &wo, const Float3 &wi) const noexcept {
     Bool valid = same_hemisphere(wo, wi, shading_frame_->normal());
+    return cast<float>(valid);
+}
+
+Float Lobe::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
+    Bool valid = same_hemisphere(wo, wi);
     return cast<float>(valid);
 }
 
@@ -340,6 +344,10 @@ ScatterEval DielectricLobe::evaluate_transmission(const Float3 &wo, const Float3
     return se;
 }
 
+Float DielectricLobe::valid_world_factor(const Float3 &wo, const Float3 &wi) const noexcept {
+    return 1.f;
+}
+
 Float DielectricLobe::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
     return 1.f;
 }
@@ -508,9 +516,22 @@ SampledSpectrum LobeSet::albedo(const Float &cos_theta) const noexcept {
     return ret;
 }
 
-Float LobeSet::valid_factor(const ocarina::Float3 &wo, const ocarina::Float3 &wi) const noexcept {
+Float LobeSet::valid_world_factor(const Float3 &wo, const Float3 &wi) const noexcept {
     if (MaterialRegistry::instance().flatten_lobes()) {
-        OC_ERROR("LobeSet::valid_factor");
+        OC_ERROR("LobeSet::valid_world_factor");
+        return 0;
+    } else {
+        Bool ret = false;
+        for_each([&](const WeightedLobe &lobe, uint i) {
+            ret = ret | cast<bool>(lobe->valid_world_factor(wo, wi));
+        });
+        return ret;
+    }
+}
+
+Float LobeSet::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
+    if (MaterialRegistry::instance().flatten_lobes()) {
+        OC_ERROR("LobeSet::valid_world_factor");
         return 0;
     } else {
         Bool ret = false;
@@ -572,7 +593,7 @@ ScatterEval LobeSet::evaluate_impl(const Float3 &world_wo, const Float3 &world_w
         /// for custom function auto merge
         Float weight = lobe.weight();
         ScatterEval se = lobe->evaluate(world_wo, world_wi, mode, flag, tm, eta);
-        Float factor = lobe->valid_factor(world_wo, world_wi);
+        Float factor = lobe->valid_world_factor(world_wo, world_wi);
         se.f *= weight * factor;
         se.pdfs *= lobe.sample_weight() * factor;
         ret.f += se.f;

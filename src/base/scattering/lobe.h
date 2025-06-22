@@ -61,6 +61,7 @@ public:
     [[nodiscard]] ScatterEval evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                              const Uint &flag, TransportMode tm, Float *eta) const noexcept;
     [[nodiscard]] virtual bool is_multi() const noexcept { return false; }
+    [[nodiscard]] virtual Float valid_world_factor(const Float3 &wo, const Float3 &wi) const noexcept;
     [[nodiscard]] virtual Float valid_factor(const Float3 &wo, const Float3 &wi) const noexcept;
     [[nodiscard]] BSDFSample sample(const Float3 &world_wo, const Uint &flag,
                                     TSampler &sampler, TransportMode tm) const noexcept;
@@ -226,6 +227,7 @@ public:
     VS_MAKE_LOBE_ASSIGNMENT(DielectricLobe)
     [[nodiscard]] virtual bool compensate() const noexcept { return true; }
     static void prepare() noexcept;
+    [[nodiscard]] Float valid_world_factor(const Float3 &wo, const Float3 &wi) const noexcept override;
     [[nodiscard]] Float valid_factor(const Float3 &wo, const Float3 &wi) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override { return fresnel_->swl(); }
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
@@ -307,7 +309,8 @@ public:
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] uint lobe_num() const noexcept { return lobes_.size(); }
     [[nodiscard]] Uint flag() const noexcept override;
-    Float valid_factor(const ocarina::Float3 &wo, const ocarina::Float3 &wi) const noexcept override;
+    [[nodiscard]] Float valid_world_factor(const Float3 &wo, const Float3 &wi) const noexcept override;
+    [[nodiscard]] Float valid_factor(const Float3 &wo, const Float3 &wi) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override { return lobes_[0]->swl(); }
     void for_each(const std::function<void(const WeightedLobe &)> &func) const;
     void for_each(const std::function<void(WeightedLobe &)> &func);
