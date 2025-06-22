@@ -611,7 +611,7 @@ ScatterEval LobeSet::evaluate_local_impl(const Float3 &wo, const Float3 &wi,
         /// for custom function auto merge
         Float weight = lobe.weight();
         ScatterEval se = lobe->evaluate_local(wo, wi, mode, flag, tm, eta);
-        Float factor = valid_factor(wo, wi);
+        Float factor = lobe->valid_factor(wo, wi);
         se.f *= weight * factor;
         se.pdfs *= lobe.sample_weight() * factor;
         ret.f += se.f;
