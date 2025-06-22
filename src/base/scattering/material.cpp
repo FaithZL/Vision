@@ -174,7 +174,6 @@ BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
     BSDFSample ret = sample_local(wo, flag, sampler, tm);
     ret.eval.f *= abs_cos_theta(ret.wi);
     ret.wi = shading_frame_.to_world(ret.wi);
-    ret.eval.f *= abs_dot(ret.wi, shading_frame_.normal());
     Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
     ret.eval.pdfs = select(discard, 0.f, ret.eval.pdfs);
     return ret;
