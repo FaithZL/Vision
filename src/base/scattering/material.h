@@ -58,6 +58,7 @@ public:
     OC_MAKE_MEMBER_GETTER_SETTER(shading_frame, &)
     void regularize() noexcept;
     void mollify() noexcept;
+    void update_frame(ShadingFrame shading_frame) noexcept;
     [[nodiscard]] SampledSpectrum albedo(const Float3 &world_wo) const noexcept;
     [[nodiscard]] Bool splittable() const noexcept;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept;

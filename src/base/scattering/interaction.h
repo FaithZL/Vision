@@ -108,6 +108,8 @@ public:
     [[nodiscard]] boolean_t<T> valid() const noexcept { return nonzero(normal()); }
 };
 
+using ShadingFrame = PartialDerivative<Float3>;
+
 struct MediumInterface {
 public:
     Uint inside{InvalidUI32};

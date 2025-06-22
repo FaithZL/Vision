@@ -84,6 +84,10 @@ void MaterialEvaluator::mollify() noexcept {
     });
 }
 
+void MaterialEvaluator::update_frame(vision::ShadingFrame shading_frame) noexcept {
+    shading_frame_ = std::move(shading_frame);
+}
+
 SampledSpectrum MaterialEvaluator::albedo(const Float3 &world_wo) const noexcept {
     SampledSpectrum ret{swl_->dimension()};
     Float cos_theta = dot(shading_frame_.normal(), world_wo);
@@ -117,32 +121,32 @@ Uint MaterialEvaluator::flag() const noexcept {
     return ret;
 }
 
-ScatterEval MaterialEvaluator::evaluate(const Float3 &world_wo, const Float3 &world_wi,
-                                        MaterialEvalMode mode, const Uint &flag,
-                                        TransportMode tm) const noexcept {
-    Float3 wo = shading_frame_.to_local(world_wo);
-    Float3 wi = shading_frame_.to_local(world_wi);
-    ScatterEval ret = evaluate_local(wo, wi, mode, flag, tm);
-    Bool discard = same_hemisphere(world_wo, world_wi, ng_) == BxDFFlag::is_transmission(ret.flags);
-    ret.pdfs = select(discard, 0.f, ret.pdfs);
-    ret.f *= abs_cos_theta(wi);
-    return ret;
-}
-
 //ScatterEval MaterialEvaluator::evaluate(const Float3 &world_wo, const Float3 &world_wi,
 //                                        MaterialEvalMode mode, const Uint &flag,
 //                                        TransportMode tm) const noexcept {
 //    Float3 wo = shading_frame_.to_local(world_wo);
 //    Float3 wi = shading_frame_.to_local(world_wi);
-//    ScatterEval ret{*swl_};
-//    dispatch([&](const Lobe *lobe_set) {
-//        ret = lobe_set->evaluate(world_wo, world_wi, mode, flag, tm);
-//    });
+//    ScatterEval ret = evaluate_local(wo, wi, mode, flag, tm);
 //    Bool discard = same_hemisphere(world_wo, world_wi, ng_) == BxDFFlag::is_transmission(ret.flags);
 //    ret.pdfs = select(discard, 0.f, ret.pdfs);
 //    ret.f *= abs_cos_theta(wi);
 //    return ret;
 //}
+
+ScatterEval MaterialEvaluator::evaluate(const Float3 &world_wo, const Float3 &world_wi,
+                                        MaterialEvalMode mode, const Uint &flag,
+                                        TransportMode tm) const noexcept {
+    Float3 wo = shading_frame_.to_local(world_wo);
+    Float3 wi = shading_frame_.to_local(world_wi);
+    ScatterEval ret{*swl_};
+    dispatch([&](const Lobe *lobe_set) {
+        ret = lobe_set->evaluate(world_wo, world_wi, mode, flag, tm);
+    });
+    Bool discard = same_hemisphere(world_wo, world_wi, ng_) == BxDFFlag::is_transmission(ret.flags);
+    ret.pdfs = select(discard, 0.f, ret.pdfs);
+    ret.f *= abs_cos_theta(wi);
+    return ret;
+}
 
 BSDFSample MaterialEvaluator::sample_delta(const Float3 &world_wo,
                                            TSampler &sampler) const noexcept {
@@ -153,31 +157,31 @@ BSDFSample MaterialEvaluator::sample_delta(const Float3 &world_wo,
     return ret;
 }
 
-//BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
-//                                     const Uint &flag,
-//                                     TransportMode tm) const noexcept {
-//    Float3 wo = shading_frame_.to_local(world_wo);
-//    BSDFSample ret{*swl_};
-//    dispatch([&](const Lobe *lobe) {
-//        ret = lobe->sample(world_wo, flag,sampler, tm);
-//    });
-//    ret.eval.f *= abs_dot(ret.wi, shading_frame_.normal());
-//    Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
-//    ret.eval.pdfs = select(discard, 0.f, ret.eval.pdfs);
-//    return ret;
-//}
-
 BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
                                      const Uint &flag,
                                      TransportMode tm) const noexcept {
     Float3 wo = shading_frame_.to_local(world_wo);
-    BSDFSample ret = sample_local(wo, flag, sampler, tm);
-    ret.eval.f *= abs_cos_theta(ret.wi);
-    ret.wi = shading_frame_.to_world(ret.wi);
+    BSDFSample ret{*swl_};
+    dispatch([&](const Lobe *lobe) {
+        ret = lobe->sample(world_wo, flag,sampler, tm);
+    });
+    ret.eval.f *= abs_dot(ret.wi, shading_frame_.normal());
     Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
     ret.eval.pdfs = select(discard, 0.f, ret.eval.pdfs);
     return ret;
 }
+//
+//BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
+//                                     const Uint &flag,
+//                                     TransportMode tm) const noexcept {
+//    Float3 wo = shading_frame_.to_local(world_wo);
+//    BSDFSample ret = sample_local(wo, flag, sampler, tm);
+//    ret.eval.f *= abs_cos_theta(ret.wi);
+//    ret.wi = shading_frame_.to_world(ret.wi);
+//    Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
+//    ret.eval.pdfs = select(discard, 0.f, ret.eval.pdfs);
+//    return ret;
+//}
 
 ///#endregion
 
@@ -327,15 +331,15 @@ void Material::add_material_reference(SP<ShapeInstance> shape_instance) noexcept
 PartialDerivative<Float3> Material::compute_shading_frame(const Interaction &it,
                                                           const SampledWavelengths &swl) const noexcept {
     PartialDerivative<Float3> ret = it.shading;
-//    if (!normal_) {
-//        return ret;
-//    }
-//    Float3 normal = normal_.evaluate(it, swl)->as_vec3();
-//    Float3 world_normal = it.shading.to_world(normal);
-//    world_normal = normalize(world_normal);
-//    world_normal = detail::clamp_ns(world_normal, it.ng, it.wo);
-//    world_normal = normalize(face_forward(world_normal, it.shading.normal()));
-//    ret.update(world_normal);
+    if (!normal_) {
+        return ret;
+    }
+    Float3 normal = normal_.evaluate(it, swl)->as_vec3();
+    Float3 world_normal = it.shading.to_world(normal);
+    world_normal = normalize(world_normal);
+    world_normal = detail::clamp_ns(world_normal, it.ng, it.wo);
+    world_normal = normalize(face_forward(world_normal, it.shading.normal()));
+    ret.update(world_normal);
     return ret;
 }
 
@@ -349,6 +353,7 @@ MaterialEvaluator Material::create_evaluator(const Interaction &it,
                                              const SampledWavelengths &swl) const noexcept {
     MaterialEvaluator evaluator{it, swl};
     build_evaluator(evaluator, it, swl);
+    evaluator.update_frame(it.shading);
     return evaluator;
 }
 

@@ -49,7 +49,7 @@ public:
 
     void initialize_slots(const vision::ShaderNodeDesc &desc) noexcept override {
         VS_INIT_SLOT(color, make_float3(0.5, 0.5, 1), Albedo);
-        VS_INIT_SLOT(strength, 1.f, Number).set_range(-1, 1);
+        VS_INIT_SLOT(strength, 1.f, Number).set_range(-10, 10);
         init_slot_cursor(&color_, &strength_);
     }
 
