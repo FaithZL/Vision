@@ -350,7 +350,7 @@ public:
     }
     [[nodiscard]] UP<Lobe> create_lobe_set(const Interaction &it, const SampledWavelengths &swl) const noexcept override {
         auto shading_frame = compute_shading_frame(it, swl);
-//        const_cast<Interaction &>(it).shading = shading_frame;
+        const_cast<Interaction &>(it).shading = shading_frame;
         LobeSet::Lobes lobes;
         auto [color, color_lum] = color_.eval_albedo_spectrum(it, swl);
         DynamicArray<float> iors = ior_.evaluate(it, swl).array;
