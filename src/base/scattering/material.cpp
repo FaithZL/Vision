@@ -136,15 +136,12 @@ Uint MaterialEvaluator::flag() const noexcept {
 ScatterEval MaterialEvaluator::evaluate(const Float3 &world_wo, const Float3 &world_wi,
                                         MaterialEvalMode mode, const Uint &flag,
                                         TransportMode tm) const noexcept {
-    Float3 wo = shading_frame_.to_local(world_wo);
-    Float3 wi = shading_frame_.to_local(world_wi);
     ScatterEval ret{*swl_};
     dispatch([&](const Lobe *lobe_set) {
         ret = lobe_set->evaluate(world_wo, world_wi, mode, flag, tm);
     });
     Bool discard = same_hemisphere(world_wo, world_wi, ng_) == BxDFFlag::is_transmission(ret.flags);
     ret.pdfs = select(discard, 0.f, ret.pdfs);
-    ret.f *= abs_cos_theta(wi);
     return ret;
 }
 
@@ -165,7 +162,6 @@ BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
     dispatch([&](const Lobe *lobe) {
         ret = lobe->sample(world_wo, flag, sampler, tm);
     });
-    ret.eval.f *= abs_dot(ret.wi, shading_frame_.normal());
     Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
     ret.eval.pdfs = select(discard, 0.f, ret.eval.pdfs);
     return ret;

@@ -48,7 +48,9 @@ ScatterEval Lobe::evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, 
     Float3 wi = shading_frame().to_local(world_wi);
     string label = string(class_name()) + "::evaluate_local";
     return outline(label, [&] {
-        return evaluate_local_impl(wo, wi, mode, flag, tm);
+        ScatterEval se = evaluate_local_impl(wo, wi, mode, flag, tm);
+        se.f *= abs_cos_theta(wi);
+        return se;
     });
 }
 
@@ -58,7 +60,9 @@ ScatterEval Lobe::evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, 
     Float3 wi = shading_frame().to_local(world_wi);
     string label = string(class_name()) + "::evaluate_local with eta";
     return outline(label, [&] {
-        return evaluate_local_impl(wo, wi, mode, flag, tm, eta);
+        ScatterEval se =  evaluate_local_impl(wo, wi, mode, flag, tm, eta);
+        se.f *= abs_cos_theta(wi);
+        return se;
     });
 }
 
@@ -100,6 +104,7 @@ BSDFSample Lobe::sample(const Float3 &world_wo, const Uint &flag,
                         TSampler &sampler, TransportMode tm) const noexcept {
     Float3 wo = shading_frame().to_local(world_wo);
     BSDFSample ret = sample_local(wo, flag, sampler, tm);
+    ret.eval.f *= abs_cos_theta(ret.wi);
     ret.wi = shading_frame().to_world(ret.wi);
     return ret;
 }
