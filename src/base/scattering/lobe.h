@@ -28,7 +28,7 @@ protected:
     optional<PartialDerivative<Float3>> shading_frame_{};
 
 protected:
-    [[nodiscard]] virtual SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
+    [[nodiscard]] virtual SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
                                                           TSampler &sampler) const noexcept {
         OC_ASSERT(false);
         return {};
@@ -68,7 +68,7 @@ public:
     [[nodiscard]] virtual BSDFSample sample_local(const Float3 &wo, const Uint &flag,
                                                   TSampler &sampler,
                                                   TransportMode tm) const noexcept;
-    [[nodiscard]] SampledDirection sample_wi(const Float3 &wo, const Uint &flag,
+    [[nodiscard]] SampledDirection sample_wi_local(const Float3 &wo, const Uint &flag,
                                              TSampler &sampler) const noexcept;
     [[nodiscard]] virtual BSDFSample sample_delta_local(const Float3 &wo,
                                                         TSampler &sampler) const noexcept {
@@ -131,7 +131,7 @@ public:
     [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
                                                 TSampler &sampler) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
-    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
+    [[nodiscard]] SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
                                                   TSampler &sampler) const noexcept override;
 };
 
@@ -147,7 +147,7 @@ protected:
                                                   MaterialEvalMode mode,
                                                   const Uint &flag,
                                                   TransportMode tm) const noexcept override;
-    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
+    [[nodiscard]] SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
                                                   TSampler &sampler) const noexcept override;
 
 public:
@@ -214,7 +214,7 @@ protected:
                                                   const Uint &flag, TransportMode tm) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                                   const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
-    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
+    [[nodiscard]] SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
                                                   TSampler &sampler) const noexcept override;
 
 public:
@@ -285,7 +285,7 @@ protected:
                                                   const Uint &flag, TransportMode tm) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                                   const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
-    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
+    [[nodiscard]] SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
                                                   TSampler &sampler) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
                                             const Uint &flag, TransportMode tm) const noexcept override;

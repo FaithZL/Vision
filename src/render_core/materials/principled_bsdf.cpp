@@ -96,7 +96,7 @@ public:
                            v.z);
     }
 
-    [[nodiscard]] SampledDirection sample_wi_impl(const Float3 &wo, const Uint &flag,
+    [[nodiscard]] SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
                                                   TSampler &sampler) const noexcept override {
 
         Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
