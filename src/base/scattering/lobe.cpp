@@ -102,19 +102,28 @@ ScatterEval Lobe::evaluate_local(const Float3 &wo, const Float3 &wi, MaterialEva
 
 BSDFSample Lobe::sample(const Float3 &world_wo, const Uint &flag,
                         TSampler &sampler, TransportMode tm) const noexcept {
-    Float3 wo = shading_frame().to_local(world_wo);
-    BSDFSample ret = sample_local(wo, flag, sampler, tm);
-    ret.eval.f *= abs_cos_theta(ret.wi);
-    ret.wi = shading_frame().to_world(ret.wi);
+    BSDFSample ret{*swl()};
+    SampledDirection sd = sample_wi(world_wo, flag, sampler);
+    ret.wi = sd.wi;
+    ret.eval = evaluate(world_wo, sd.wi, MaterialEvalMode::All, flag, tm, addressof(ret.eta));
+    ret.eval.pdfs *= sd.factor();
     return ret;
 }
 
 SampledDirection Lobe::sample_wi_local(const Float3 &wo, const Uint &flag,
                                  TSampler &sampler) const noexcept {
-    string label = string(class_name()) + "::sample_wi";
+    string label = string(class_name()) + "::sample_wi_local";
     return outline(label, [&] {
         return sample_wi_local_impl(wo, flag, sampler);
     });
+}
+
+SampledDirection Lobe::sample_wi(const Float3 &world_wo, const Uint &flag,
+                                 TSampler &sampler) const noexcept {
+    Float3 wo = shading_frame().to_local(world_wo);
+    auto sd = sample_wi_local(wo, flag, sampler);
+    sd.wi = shading_frame().to_world(sd.wi);
+    return sd;
 }
 
 BSDFSample Lobe::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,

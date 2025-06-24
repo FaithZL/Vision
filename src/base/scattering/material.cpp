@@ -166,7 +166,7 @@ BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
     ret.eval.pdfs = select(discard, 0.f, ret.eval.pdfs);
     return ret;
 }
-//
+
 //BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
 //                                     const Uint &flag,
 //                                     TransportMode tm) const noexcept {

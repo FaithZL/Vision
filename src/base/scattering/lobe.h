@@ -29,7 +29,7 @@ protected:
 
 protected:
     [[nodiscard]] virtual SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
-                                                          TSampler &sampler) const noexcept {
+                                                                TSampler &sampler) const noexcept {
         OC_ASSERT(false);
         return {};
     }
@@ -69,6 +69,8 @@ public:
                                                   TSampler &sampler,
                                                   TransportMode tm) const noexcept;
     [[nodiscard]] SampledDirection sample_wi_local(const Float3 &wo, const Uint &flag,
+                                                   TSampler &sampler) const noexcept;
+    [[nodiscard]] SampledDirection sample_wi(const Float3 &world_wo, const Uint &flag,
                                              TSampler &sampler) const noexcept;
     [[nodiscard]] virtual BSDFSample sample_delta_local(const Float3 &wo,
                                                         TSampler &sampler) const noexcept {
@@ -132,7 +134,7 @@ public:
                                                 TSampler &sampler) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
     [[nodiscard]] SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
-                                                  TSampler &sampler) const noexcept override;
+                                                        TSampler &sampler) const noexcept override;
 };
 
 class DiffuseLobe : public Lobe {
@@ -148,7 +150,7 @@ protected:
                                                   const Uint &flag,
                                                   TransportMode tm) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
-                                                  TSampler &sampler) const noexcept override;
+                                                        TSampler &sampler) const noexcept override;
 
 public:
     DiffuseLobe(const SampledSpectrum &kr, const SampledWavelengths &swl,
@@ -215,7 +217,7 @@ protected:
     [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                                   const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
-                                                  TSampler &sampler) const noexcept override;
+                                                        TSampler &sampler) const noexcept override;
 
 public:
     DielectricLobe(const SP<Fresnel> &fresnel, const SP<Microfacet<D>> &microfacet,
@@ -286,7 +288,7 @@ protected:
     [[nodiscard]] ScatterEval evaluate_local_impl(const Float3 &wo, const Float3 &wi, MaterialEvalMode mode,
                                                   const Uint &flag, TransportMode tm, Float *eta) const noexcept override;
     [[nodiscard]] SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
-                                                  TSampler &sampler) const noexcept override;
+                                                        TSampler &sampler) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
                                             const Uint &flag, TransportMode tm) const noexcept override;
     [[nodiscard]] ScatterEval evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
