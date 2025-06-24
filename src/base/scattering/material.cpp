@@ -163,7 +163,7 @@ BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
     Float3 wo = shading_frame_.to_local(world_wo);
     BSDFSample ret{*swl_};
     dispatch([&](const Lobe *lobe) {
-        ret = lobe->sample(world_wo, flag,sampler, tm);
+        ret = lobe->sample(world_wo, flag, sampler, tm);
     });
     ret.eval.f *= abs_dot(ret.wi, shading_frame_.normal());
     Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
@@ -335,7 +335,12 @@ PartialDerivative<Float3> Material::compute_shading_frame(const Interaction &it,
         return ret;
     }
     Float3 normal = normal_.evaluate(it, swl)->as_vec3();
-    Float3 world_normal = it.shading.to_world(normal);
+    float3 n = make_float3(0, 0, 1);
+    Float3 axis = cross(n, normal);
+    Float theta = acos(dot(n, normal));
+    Quaternion q = Quaternion::from_axis_angle(axis, theta);
+    Float3x3 m = q.to_float3x3();
+    Float3 world_normal = m * ret.z;
     world_normal = normalize(world_normal);
     world_normal = detail::clamp_ns(world_normal, it.ng, it.wo);
     world_normal = normalize(face_forward(world_normal, it.shading.normal()));
