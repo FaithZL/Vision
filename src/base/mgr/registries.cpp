@@ -144,6 +144,7 @@ namespace detail {
 
 void MaterialRegistry::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     widgets->check_box("flatten lobes", addressof(flatten_lobes_));
+    widgets->check_box("individual ns", addressof(individual_ns_));
     TRegistry<Material>::render_sub_UI(widgets);
 }
 

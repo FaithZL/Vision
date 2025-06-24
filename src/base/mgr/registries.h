@@ -41,10 +41,12 @@ class MaterialRegistry : public TRegistry<Material> {
 private:
     OC_MAKE_INSTANCE_CONSTRUCTOR(MaterialRegistry, s_material_registry)
     bool flatten_lobes_{true};
+    bool individual_ns_{true};
 
 public:
     OC_MAKE_INSTANCE_FUNC_DECL(MaterialRegistry)
     OC_MAKE_MEMBER_GETTER(flatten_lobes, &)
+    OC_MAKE_MEMBER_GETTER(individual_ns, &)
     [[nodiscard]] string_view UI_title() const noexcept override { return "materials"; }
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     void precompute_albedo() noexcept;

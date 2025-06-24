@@ -121,28 +121,26 @@ Uint MaterialEvaluator::flag() const noexcept {
     return ret;
 }
 
-//ScatterEval MaterialEvaluator::evaluate(const Float3 &world_wo, const Float3 &world_wi,
-//                                        MaterialEvalMode mode, const Uint &flag,
-//                                        TransportMode tm) const noexcept {
-//    Float3 wo = shading_frame_.to_local(world_wo);
-//    Float3 wi = shading_frame_.to_local(world_wi);
-//    ScatterEval ret = evaluate_local(wo, wi, mode, flag, tm);
-//    Bool discard = same_hemisphere(world_wo, world_wi, ng_) == BxDFFlag::is_transmission(ret.flags);
-//    ret.pdfs = select(discard, 0.f, ret.pdfs);
-//    ret.f *= abs_cos_theta(wi);
-//    return ret;
-//}
-
 ScatterEval MaterialEvaluator::evaluate(const Float3 &world_wo, const Float3 &world_wi,
                                         MaterialEvalMode mode, const Uint &flag,
                                         TransportMode tm) const noexcept {
-    ScatterEval ret{*swl_};
-    dispatch([&](const Lobe *lobe_set) {
-        ret = lobe_set->evaluate(world_wo, world_wi, mode, flag, tm);
-    });
-    Bool discard = same_hemisphere(world_wo, world_wi, ng_) == BxDFFlag::is_transmission(ret.flags);
-    ret.pdfs = select(discard, 0.f, ret.pdfs);
-    return ret;
+    if (MaterialRegistry::instance().individual_ns()) {
+        ScatterEval ret{*swl_};
+        dispatch([&](const Lobe *lobe_set) {
+            ret = lobe_set->evaluate(world_wo, world_wi, mode, flag, tm);
+        });
+        Bool discard = same_hemisphere(world_wo, world_wi, ng_) == BxDFFlag::is_transmission(ret.flags);
+        ret.pdfs = select(discard, 0.f, ret.pdfs);
+        return ret;
+    } else {
+        Float3 wo = shading_frame_.to_local(world_wo);
+        Float3 wi = shading_frame_.to_local(world_wi);
+        ScatterEval ret = evaluate_local(wo, wi, mode, flag, tm);
+        Bool discard = same_hemisphere(world_wo, world_wi, ng_) == BxDFFlag::is_transmission(ret.flags);
+        ret.pdfs = select(discard, 0.f, ret.pdfs);
+        ret.f *= abs_cos_theta(wi);
+        return ret;
+    }
 }
 
 BSDFSample MaterialEvaluator::sample_delta(const Float3 &world_wo,
@@ -157,27 +155,26 @@ BSDFSample MaterialEvaluator::sample_delta(const Float3 &world_wo,
 BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
                                      const Uint &flag,
                                      TransportMode tm) const noexcept {
-    Float3 wo = shading_frame_.to_local(world_wo);
-    BSDFSample ret{*swl_};
-    dispatch([&](const Lobe *lobe) {
-        ret = lobe->sample(world_wo, flag, sampler, tm);
-    });
-    Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
-    ret.eval.pdfs = select(discard, 0.f, ret.eval.pdfs);
-    return ret;
+    if (MaterialRegistry::instance().individual_ns()) {
+        Float3 wo = shading_frame_.to_local(world_wo);
+        BSDFSample ret{*swl_};
+        dispatch([&](const Lobe *lobe) {
+            ret = lobe->sample(world_wo, flag, sampler, tm);
+        });
+        Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
+        ret.eval.pdfs = select(discard, 0.f, ret.eval.pdfs);
+        return ret;
+    } else {
+        Float3 wo = shading_frame_.to_local(world_wo);
+        BSDFSample ret = sample_local(wo, flag, sampler, tm);
+        ret.eval.f *= abs_cos_theta(ret.wi);
+        ret.wi = shading_frame_.to_world(ret.wi);
+        Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
+        ret.eval.pdfs = select(discard, 0.f, ret.eval.pdfs);
+        return ret;
+    }
 }
 
-//BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
-//                                     const Uint &flag,
-//                                     TransportMode tm) const noexcept {
-//    Float3 wo = shading_frame_.to_local(world_wo);
-//    BSDFSample ret = sample_local(wo, flag, sampler, tm);
-//    ret.eval.f *= abs_cos_theta(ret.wi);
-//    ret.wi = shading_frame_.to_world(ret.wi);
-//    Bool discard = same_hemisphere(world_wo, ret.wi, ng_) == BxDFFlag::is_transmission(ret.eval.flags);
-//    ret.eval.pdfs = select(discard, 0.f, ret.eval.pdfs);
-//    return ret;
-//}
 
 ///#endregion
 
