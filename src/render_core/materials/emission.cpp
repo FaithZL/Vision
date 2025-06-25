@@ -10,7 +10,7 @@
 namespace vision {
 
 class EmissionLobe : public Lobe {
-    
+
 };
 
 class EmissionMaterial : public Material {
