@@ -17,6 +17,16 @@
 namespace vision {
 using namespace ocarina;
 
+class RayGenerator : public Node, public Observer {
+public:
+    using Desc = RayGeneratorDesc;
+
+public:
+    RayGenerator() = default;
+    explicit RayGenerator(const RayGeneratorDesc &desc)
+        : Node(desc) {}
+};
+
 struct SensorSample {
     Float2 p_film;
     Float2 p_lens;
@@ -49,8 +59,8 @@ public:
     void upload_immediately() noexcept override {
         EncodedObject::upload_immediately();
     }
-    [[nodiscard]] auto& filter() noexcept { return filter_; }
-    [[nodiscard]] auto& filter() const noexcept { return filter_; }
+    [[nodiscard]] auto &filter() noexcept { return filter_; }
+    [[nodiscard]] auto &filter() const noexcept { return filter_; }
     [[nodiscard]] auto film() noexcept { return film_.get(); }
     [[nodiscard]] auto film() const noexcept { return film_.get(); }
     [[nodiscard]] uint2 resolution() const noexcept { return film_->resolution(); }

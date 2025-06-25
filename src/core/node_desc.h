@@ -360,6 +360,12 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
+struct RayGeneratorDesc : public NodeDesc {
+public:
+    VISION_DESC_COMMON(RayGenerator)
+    void init(const ParameterSet &ps) noexcept override;
+};
+
 struct IntegratorDesc : public NodeDesc {
 public:
     DenoiserDesc denoiser_desc;

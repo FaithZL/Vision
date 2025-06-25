@@ -99,6 +99,11 @@ void SensorDesc::init(const ParameterSet &ps) noexcept {
     }
 }
 
+void RayGeneratorDesc::init(const ParameterSet &ps) noexcept {
+    NodeDesc::init(ps);
+    sub_type = ps["type"].as_string("normal");
+}
+
 void IntegratorDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("pt");
