@@ -17,6 +17,7 @@ add_subdirectory(uvunwrappers)
 add_subdirectory(rasterizers)
 add_subdirectory(passes)
 add_subdirectory(framebuffers)
+add_subdirectory(lightfield)
 
 add_library(vision-plugins INTERFACE)
 target_link_libraries(vision-plugins INTERFACE
@@ -38,4 +39,5 @@ target_link_libraries(vision-plugins INTERFACE
         vision-spectrum
         vision-material
         vision-medium
-        vision-sampler)
+        vision-sampler
+        vision-lightfield)
