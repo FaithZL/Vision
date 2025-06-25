@@ -67,7 +67,6 @@ public:
         Float frac = frac_.evaluate(it, swl).array[0];
         auto ret = LobeSet::create_mix(frac, mat0_->create_lobe_set(it, swl),
                                        mat1_->create_lobe_set(it, swl));
-        ret->set_shading_frame(it.shading);
         return ret;
     }
 };

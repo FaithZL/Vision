@@ -42,6 +42,14 @@ Float Lobe::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
     return cast<float>(valid);
 }
 
+SampledDirection Lobe::sample_wi_impl(const Float3 &world_wo, const Uint &flag,
+                                      TSampler &sampler) const noexcept {
+    Float3 wo = shading_frame().to_local(world_wo);
+    auto sd = sample_wi_local_impl(wo, flag, sampler);
+    sd.wi = shading_frame().to_world(sd.wi);
+    return sd;
+}
+
 ScatterEval Lobe::evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, MaterialEvalMode mode,
                                 const Uint &flag, TransportMode tm) const noexcept {
     Float3 wo = shading_frame().to_local(world_wo);
@@ -60,7 +68,7 @@ ScatterEval Lobe::evaluate_impl(const Float3 &world_wo, const Float3 &world_wi, 
     Float3 wi = shading_frame().to_local(world_wi);
     string label = string(class_name()) + "::evaluate_local with eta";
     return outline(label, [&] {
-        ScatterEval se =  evaluate_local_impl(wo, wi, mode, flag, tm, eta);
+        ScatterEval se = evaluate_local_impl(wo, wi, mode, flag, tm, eta);
         se.f *= abs_cos_theta(wi);
         return se;
     });
@@ -111,7 +119,7 @@ BSDFSample Lobe::sample(const Float3 &world_wo, const Uint &flag,
 }
 
 SampledDirection Lobe::sample_wi_local(const Float3 &wo, const Uint &flag,
-                                 TSampler &sampler) const noexcept {
+                                       TSampler &sampler) const noexcept {
     string label = string(class_name()) + "::sample_wi_local";
     return outline(label, [&] {
         return sample_wi_local_impl(wo, flag, sampler);
@@ -120,10 +128,10 @@ SampledDirection Lobe::sample_wi_local(const Float3 &wo, const Uint &flag,
 
 SampledDirection Lobe::sample_wi(const Float3 &world_wo, const Uint &flag,
                                  TSampler &sampler) const noexcept {
-    Float3 wo = shading_frame().to_local(world_wo);
-    auto sd = sample_wi_local(wo, flag, sampler);
-    sd.wi = shading_frame().to_world(sd.wi);
-    return sd;
+    string label = string(class_name()) + "::sample_wi";
+    return outline(label, [&] {
+        return sample_wi_impl(world_wo, flag, sampler);
+    });
 }
 
 BSDFSample Lobe::sample_local(const Float3 &wo, const Uint &flag, TSampler &sampler,
@@ -218,8 +226,8 @@ BSDFSample MicrofacetLobe::sample_delta_local(const Float3 &wo,
 }
 
 SampledDirection MicrofacetLobe::sample_wi_local_impl(const Float3 &wo,
-                                                const Uint &flag,
-                                                TSampler &sampler) const noexcept {
+                                                      const Uint &flag,
+                                                      TSampler &sampler) const noexcept {
     return bxdf_->sample_wi(wo, sampler->next_2d(), fresnel_.ptr());
 }
 ///#endregion
@@ -232,7 +240,7 @@ ScatterEval DiffuseLobe::evaluate_local_impl(const Float3 &wo, const Float3 &wi,
 }
 
 SampledDirection DiffuseLobe::sample_wi_local_impl(const Float3 &wo, const Uint &flag,
-                                             TSampler &sampler) const noexcept {
+                                                   TSampler &sampler) const noexcept {
     return bxdf_->sample_wi(wo, sampler->next_2d(), nullptr);
 }
 ///#endregion
@@ -390,7 +398,7 @@ ScatterEval DielectricLobe::evaluate_local_impl(const Float3 &wo, const Float3 &
 }
 
 SampledDirection DielectricLobe::sample_wi_local_impl(const Float3 &wo, const Uint &flag,
-                                                TSampler &sampler) const noexcept {
+                                                      TSampler &sampler) const noexcept {
     Float3 wh = microfacet_->sample_wh(wo, sampler->next_2d());
     Float d = dot(wo, wh);
     auto fresnel = fresnel_.ptr();
@@ -557,7 +565,7 @@ Float LobeSet::valid_factor(const Float3 &wo, const Float3 &wi) const noexcept {
 }
 
 SampledDirection LobeSet::sample_wi_local_impl(const Float3 &wo, const Uint &flag,
-                                         TSampler &sampler) const noexcept {
+                                               TSampler &sampler) const noexcept {
     Float uc = sampler->next_1d();
     Float2 u = sampler->next_2d();
     SampledDirection sd;
@@ -575,6 +583,37 @@ SampledDirection LobeSet::sample_wi_local_impl(const Float3 &wo, const Uint &fla
             for_each([&](const WeightedLobe &lobe, uint i) {
                 $case(i) {
                     sd = lobe->sample_wi_local(wo, flag, sampler);
+                    $break;
+                };
+            });
+            $default {
+                unreachable();
+                $break;
+            };
+        };
+    }
+    return sd;
+}
+
+SampledDirection LobeSet::sample_wi_impl(const Float3 &world_wo, const Uint &flag,
+                                         TSampler &sampler) const noexcept {
+    Float uc = sampler->next_1d();
+    Float2 u = sampler->next_2d();
+    SampledDirection sd;
+    Uint sampling_strategy = 0u;
+    Float sum_weights = 0.f;
+
+    for_each([&](const WeightedLobe &lobe, uint i) {
+        sampling_strategy = select(uc > sum_weights, i, sampling_strategy);
+        sum_weights += lobe.sample_weight();
+    });
+    if (lobe_num() == 1) {
+        sd = lobes_[0]->sample_wi(world_wo, flag, sampler);
+    } else {
+        $switch(sampling_strategy) {
+            for_each([&](const WeightedLobe &lobe, uint i) {
+                $case(i) {
+                    sd = lobe->sample_wi(world_wo, flag, sampler);
                     $break;
                 };
             });

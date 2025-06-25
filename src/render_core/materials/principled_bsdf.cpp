@@ -450,7 +450,6 @@ public:
             });
         }
         UP<LobeSet> ret = make_unique<LobeSet>(std::move(lobes));
-//        ret->set_shading_frame(shading_frame);
         return ret;
     }
 };
