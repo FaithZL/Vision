@@ -9,6 +9,10 @@
 
 namespace vision {
 
+class EmissionLobe : public Lobe {
+    
+};
+
 class EmissionMaterial : public Material {
 private:
     VS_MAKE_SLOT(color);
