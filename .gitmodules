@@ -1,6 +1,6 @@
 [submodule "src/ocarina"]
 	path = src/ocarina
-	url = https://github.com/FaithZL/ocarina.git
+	url = https://github.com/CoronaEngine/ocarina.git
 [submodule "src/ext/cxxopts"]
 	path = src/ext/cxxopts
 	url = https://github.com/jarro2783/cxxopts.git
