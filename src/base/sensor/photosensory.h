@@ -13,20 +13,9 @@
 #include "filter.h"
 #include "film.h"
 #include "hotfix/hotfix.h"
+#include "ray_generator.h"
 
 namespace vision {
-using namespace ocarina;
-
-class RayGenerator : public Node, public Observer {
-public:
-    using Desc = RayGeneratorDesc;
-
-public:
-    RayGenerator() = default;
-    explicit RayGenerator(const RayGeneratorDesc &desc)
-        : Node(desc) {}
-};
-
 struct SensorSample {
     Float2 p_film;
     Float2 p_lens;
