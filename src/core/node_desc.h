@@ -360,9 +360,9 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct RayGeneratorDesc : public NodeDesc {
+struct RadianceCollectorDesc : public NodeDesc {
 public:
-    VISION_DESC_COMMON(RayGenerator)
+    VISION_DESC_COMMON(RadianceCollector)
     void init(const ParameterSet &ps) noexcept override;
 };
 

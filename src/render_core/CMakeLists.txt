@@ -17,7 +17,7 @@ add_subdirectory(uvunwrappers)
 add_subdirectory(rasterizers)
 add_subdirectory(passes)
 add_subdirectory(framebuffers)
-add_subdirectory(raygenerators)
+add_subdirectory(radiancecollectors)
 
 add_library(vision-plugins INTERFACE)
 target_link_libraries(vision-plugins INTERFACE
@@ -25,7 +25,7 @@ target_link_libraries(vision-plugins INTERFACE
         vision-shape
         vision-tonemapper
         vision-denoiser
-        vision-raygenerator
+        vision-radiancecollector
         vision-uvunwrapper
         vision-pass
         vision-lightsampler

@@ -13,16 +13,16 @@
 namespace vision {
 using namespace ocarina;
 
-class RayGenerator : public Node, public Encodable, public Observer {
+class RadianceCollector : public Node, public Encodable, public Observer {
 public:
-    using Desc = RayGeneratorDesc;
+    using Desc = RadianceCollectorDesc;
 
 private:
     uint2 resolution_;
 
 public:
-    RayGenerator() = default;
-    explicit RayGenerator(const RayGeneratorDesc &desc)
+    RadianceCollector() = default;
+    explicit RadianceCollector(const RadianceCollectorDesc &desc)
         : Node(desc) {}
 
     [[nodiscard]] virtual uint2 launch_dim() const noexcept { return resolution_; }
