@@ -147,7 +147,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
     Float3 ret = make_float3(0.f);
 
     Float3 primary_dir = rs.direction();
-    auto mis_bsdf = [&](auto &bounces, bool inner) {
+    auto mis_bsdf = [&](auto &bounces, bool inner, auto continue_, auto break_) {
         hit = geometry.trace_closest(rs.ray);
         comment("miss");
         if (!inner) {
@@ -206,7 +206,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
 
     Float eta_scale = 1.f;
     $for(&bounces, 0, max_depth) {
-        mis_bsdf(bounces, true);
+        mis_bsdf(bounces, true, continue_, break_);
         Env::instance().set("bounces", bounces);
         comment("estimate direct lighting");
         comment("sample light");
@@ -276,7 +276,7 @@ Float3 IlluminationIntegrator::Li(RayState rs, Float scatter_pdf, const Uint &ma
     if (only_direct && mis_mode_ == MISMode::EBoth) {
         /// Supplement only direct light BSDF sampling
         $for(&bounce, 1u) {
-            mis_bsdf(bounce, false);
+            mis_bsdf(bounce, false, continue_, break_);
         };
     }
     return ret;
