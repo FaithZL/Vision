@@ -52,6 +52,8 @@ public:
     void set_resolution(uint2 res) noexcept { resolution_ = res; }
     void update_resolution(uint2 res) noexcept {
         set_resolution(res);
+        on_resize(res);
+        update_screen_window();
     }
     virtual void on_resize(uint2 res) noexcept {}
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
@@ -59,6 +61,10 @@ public:
     [[nodiscard]] auto tone_mapper() const noexcept { return tone_mapper_; }
     [[nodiscard]] auto tone_mapper() noexcept { return tone_mapper_; }
     [[nodiscard]] uint pixel_num() const noexcept { return resolution_.x * resolution_.y; }
+    virtual void add_sample(const Uint index, const Float3 &val, const Uint &frame_index) noexcept;
+    [[nodiscard]] virtual const RegistrableManaged<float4> &rt_buffer() const noexcept = 0;
+    [[nodiscard]] virtual RegistrableManaged<float4> &rt_buffer() noexcept = 0;
+
 };
 
 }// namespace vision
