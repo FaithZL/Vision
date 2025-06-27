@@ -8,6 +8,7 @@
 #include "base/sample.h"
 #include "math/transform.h"
 #include "filter.h"
+#include "tonemapper.h"
 #include "hotfix/hotfix.h"
 
 namespace vision {
