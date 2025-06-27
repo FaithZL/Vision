@@ -13,7 +13,7 @@
 #include "filter.h"
 #include "film.h"
 #include "hotfix/hotfix.h"
-#include "ray_generator.h"
+#include "radiance_collector.h"
 
 namespace vision {
 struct SensorSample {
