@@ -61,13 +61,13 @@ void AtrousFilter::compile() noexcept {
                 Int2 offset = cur_pixel - neighbor;
                 Bool center = all(offset == 0);
                 $if(center) {
-                    syntax::continue_();
+                    $super_continue;
                 };
                 Float kernel_weight = kernel_weights[abs(offset.x)] * kernel_weights[abs(offset.y)];
                 Int2 new_offset = offset * param.step_size;
                 Int2 target_pixel = cur_pixel + new_offset;
                 $if(!in_screen(target_pixel, make_int2(dispatch_dim().xy()))) {
-                    syntax::continue_();
+                    $super_continue;
                 };
                 Uint index = dispatch_id(target_pixel);
                 PixelGeometryVar neighbor_geom = param.gbuffer.read(index);
