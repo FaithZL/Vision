@@ -12,7 +12,7 @@ using namespace ocarina;
 Photosensory::Photosensory(const SensorDesc &desc)
     : Node(desc),
       filter_(desc.filter_desc),
-      film_(Node::create_shared<Film>(desc.radiance_collector_desc)),
+      film_(Node::create_shared<RadianceCollector>(desc.radiance_collector_desc)),
       medium_id_(desc.medium.id) {
     if (!scene().process_mediums()) {
         return;

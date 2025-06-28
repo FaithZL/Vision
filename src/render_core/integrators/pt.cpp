@@ -39,8 +39,8 @@ public:
     VS_HOTFIX_MAKE_RESTORE(IlluminationIntegrator, inspector_, ray_buffer_, ray_generation_, separate_rg_)
     OC_ENCODABLE_FUNC(IlluminationIntegrator, inspector_)
     VS_MAKE_GUI_STATUS_FUNC(IlluminationIntegrator, inspector_)
-    [[nodiscard]] Film *film() noexcept { return scene().film(); }
-    [[nodiscard]] const Film *film() const noexcept { return scene().film(); }
+    [[nodiscard]] RadianceCollector *film() noexcept { return scene().film(); }
+    [[nodiscard]] const RadianceCollector *film() const noexcept { return scene().film(); }
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override {
         std::tuple tp = {addressof(inspector_)};
         HotfixSystem::replace_objects(constructor, tp);

@@ -308,7 +308,7 @@ Float3 ReSTIRGI::shading(GIReservoirVar rsv,
 
 void ReSTIRGI::compile_spatial_shading() noexcept {
     TSensor &camera = scene().sensor();
-    Film *film = camera->film();
+    RadianceCollector *film = camera->film();
     TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = pipeline()->spectrum();
 

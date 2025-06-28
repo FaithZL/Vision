@@ -11,7 +11,7 @@
 #include "math/transform.h"
 #include "base/scattering/medium.h"
 #include "filter.h"
-#include "film.h"
+#include "radiance_collector.h"
 #include "hotfix/hotfix.h"
 
 namespace vision {
@@ -31,7 +31,7 @@ public:
 
 protected:
     TFilter filter_{};
-    HotfixSlot<SP<Film>> film_{};
+    HotfixSlot<SP<RadianceCollector>> film_{};
     EncodedData<uint> medium_id_{InvalidUI32};
 
 public:

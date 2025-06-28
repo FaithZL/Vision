@@ -68,8 +68,8 @@ public:
         frame_buffer().prepare_motion_vectors();
     }
 
-    [[nodiscard]] Film *film() noexcept { return scene().film(); }
-    [[nodiscard]] const Film *film() const noexcept { return scene().film(); }
+    [[nodiscard]] RadianceCollector *film() noexcept { return scene().film(); }
+    [[nodiscard]] const RadianceCollector *film() const noexcept { return scene().film(); }
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         direct_->render_UI(widgets);

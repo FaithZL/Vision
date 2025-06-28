@@ -24,7 +24,7 @@ using namespace ocarina;
 //         "fb_state": 0
 //    }
 //}
-class Film : public Node, public Encodable, public Observer {
+class RadianceCollector : public Node, public Encodable, public Observer {
 public:
     using Desc = RadianceCollectorDesc;
 
@@ -37,8 +37,8 @@ protected:
     EncodedData<float> exposure_{};
 
 public:
-    Film() = default;
-    explicit Film(const RadianceCollectorDesc &desc);
+    RadianceCollector() = default;
+    explicit RadianceCollector(const RadianceCollectorDesc &desc);
     OC_ENCODABLE_FUNC(Encodable, accumulation_,gamma_correction_, tone_mapper_, exposure_)
     VS_HOTFIX_MAKE_RESTORE(Node, resolution_, screen_window_, gamma_correction_,
                            accumulation_, tone_mapper_, exposure_)

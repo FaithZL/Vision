@@ -2,7 +2,7 @@
 // Created by Zero on 13/10/2022.
 //
 
-#include "base/sensor/film.h"
+#include "base/sensor/radiance_collector.h"
 #include "base/mgr/pipeline.h"
 #include "math/base.h"
 
@@ -10,7 +10,7 @@ namespace vision {
 using namespace ocarina;
 
 /// temporary solution
-class RGBFilm : public Film {
+class RGBFilm : public RadianceCollector {
 private:
     RegistrableManaged<float4> rt_buffer_;
     RegistrableManaged<float4> accumulation_buffer_;
@@ -23,12 +23,12 @@ private:
 public:
     RGBFilm() = default;
     explicit RGBFilm(const RadianceCollectorDesc &desc)
-        : Film(desc),
+        : RadianceCollector(desc),
           rt_buffer_(pipeline()->bindless_array()) {}
 
-    OC_ENCODABLE_FUNC(Film, rt_buffer_, accumulation_buffer_, output_buffer_)
+    OC_ENCODABLE_FUNC(RadianceCollector, rt_buffer_, accumulation_buffer_, output_buffer_)
     VS_MAKE_PLUGIN_NAME_FUNC
-    VS_HOTFIX_MAKE_RESTORE(Film, rt_buffer_, accumulation_buffer_, output_buffer_,
+    VS_HOTFIX_MAKE_RESTORE(RadianceCollector, rt_buffer_, accumulation_buffer_, output_buffer_,
                            accumulate_, tone_mapping_, gamma_correct_)
 
     void on_resize(uint2 res) noexcept override {
@@ -43,7 +43,7 @@ public:
     }
 
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
-        Film::render_sub_UI(widgets);
+        RadianceCollector::render_sub_UI(widgets);
         changed_ |= widgets->check_box("accumulate", reinterpret_cast<bool *>(addressof(accumulation_.hv())));
     }
 
