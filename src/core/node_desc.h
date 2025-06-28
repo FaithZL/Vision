@@ -360,12 +360,6 @@ public:
     void init(const ParameterSet &ps) noexcept override;
 };
 
-struct RadianceCollectorDesc : public NodeDesc {
-public:
-    VISION_DESC_COMMON(RadianceCollector)
-    void init(const ParameterSet &ps) noexcept override;
-};
-
 struct IntegratorDesc : public NodeDesc {
 public:
     DenoiserDesc denoiser_desc;

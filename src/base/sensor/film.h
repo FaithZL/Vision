@@ -32,14 +32,16 @@ protected:
     uint2 resolution_;
     Box2f screen_window_;
     EncodedData<uint> accumulation_;
+    EncodedData<uint> gamma_correction_;
     TToneMapper tone_mapper_{};
     EncodedData<float> exposure_{};
 
 public:
     Film() = default;
     explicit Film(const FilmDesc &desc);
-    OC_ENCODABLE_FUNC(Encodable, accumulation_, tone_mapper_, exposure_)
-    VS_HOTFIX_MAKE_RESTORE(Node, resolution_, screen_window_, accumulation_, tone_mapper_, exposure_)
+    OC_ENCODABLE_FUNC(Encodable, accumulation_,gamma_correction_, tone_mapper_, exposure_)
+    VS_HOTFIX_MAKE_RESTORE(Node, resolution_, screen_window_, gamma_correction_,
+                           accumulation_, tone_mapper_, exposure_)
     VS_MAKE_GUI_STATUS_FUNC(Node, tone_mapper_)
     virtual void compile() noexcept = 0;
     [[nodiscard]] uint pixel_num() const noexcept { return resolution_.x * resolution_.y; }
@@ -50,6 +52,11 @@ public:
         set_resolution(res);
         on_resize(res);
         update_screen_window();
+    }
+    [[nodiscard]] virtual uint2 launch_dim() const noexcept { return resolution_; }
+    [[nodiscard]] virtual uint buffer_size() const noexcept {
+        uint2 dim = launch_dim();
+        return dim.x * dim.y;
     }
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
     void update_screen_window() noexcept;
