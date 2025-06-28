@@ -935,8 +935,8 @@
 //					"pitch": -43
 //				}
 //			},
-			"film" : {
-				"type" : "rgb",
+			"radiance_collector" : {
+				"type" : "normal",
 				"param" : {
 					"resolution" : [
 						1024,

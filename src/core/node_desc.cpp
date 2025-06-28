@@ -93,7 +93,7 @@ void SensorDesc::init(const ParameterSet &ps) noexcept {
     set_parameter(ps.value("param"));
     transform_desc.init(parameter_.value("transform"));
     filter_desc.init(parameter_.value("filter"));
-    film_desc.init(parameter_.value("film"));
+    film_desc.init(parameter_.value("radiance_collector"));
     if (parameter_.contains("medium")) {
         medium.name = parameter_["medium"].as_string();
     }

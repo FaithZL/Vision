@@ -1,0 +1,2 @@
+add_library(vision-radiancecollector INTERFACE)
+vision_add_plugin(normal CATEGORY radiancecollector SOURCES normal.cpp)

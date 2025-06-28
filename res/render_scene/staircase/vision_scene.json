@@ -31440,8 +31440,8 @@
                     ]
                 }
             },
-            "film": {
-                "type": "rgb",
+            "radiance_collector": {
+                "type": "normal",
                 "param": {
                     "resolution": [
                         720,

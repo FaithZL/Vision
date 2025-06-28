@@ -3869,8 +3869,8 @@
                     ]
                 }
             },
-            "film": {
-                "type": "rgb",
+            "radiance_collector": {
+                "type": "normal",
                 "param": {
 //                    "accumulation": 0,
                     "resolution": [

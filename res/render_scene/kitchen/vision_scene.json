@@ -13496,8 +13496,8 @@
                     ]
                 }
             },
-            "film": {
-                "type": "rgb",
+            "radiance_collector": {
+                "type": "normal",
                 "param": {
                     "exposure" : 0.8,
 //                    "accumulation": 0,

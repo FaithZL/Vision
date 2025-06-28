@@ -1075,7 +1075,7 @@
                     ]
                 }
             },
-            "film": {
+            "radiance_collector": {
                 "param": {
                     "resolution": [
                         800,
