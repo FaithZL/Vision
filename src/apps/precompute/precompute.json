@@ -1,7 +1,7 @@
 {
 	"materials" : [
 		{
-			"type" : "matte",
+			"type" : "diffuse",
 			"name" : "LeftWall",
 			"param" : {
 				"color" : [

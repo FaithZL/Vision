@@ -152,7 +152,7 @@ void SlotDesc::init(const ParameterSet &ps) noexcept {
 void MaterialDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     init_node_map(ps.value("node_tab"));
-    sub_type = ps["type"].as_string("matte");
+    sub_type = ps["type"].as_string("diffuse");
     if (sub_type == "mix" || sub_type == "add") {
         mat0 = make_shared<MaterialDesc>();
         mat0->init(ps["param"]["mat0"]);
