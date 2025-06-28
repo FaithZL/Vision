@@ -22,7 +22,7 @@ private:
 
 public:
     RGBFilm() = default;
-    explicit RGBFilm(const FilmDesc &desc)
+    explicit RGBFilm(const RadianceCollectorDesc &desc)
         : Film(desc),
           rt_buffer_(pipeline()->bindless_array()) {}
 

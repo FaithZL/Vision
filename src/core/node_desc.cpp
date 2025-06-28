@@ -93,7 +93,7 @@ void SensorDesc::init(const ParameterSet &ps) noexcept {
     set_parameter(ps.value("param"));
     transform_desc.init(parameter_.value("transform"));
     filter_desc.init(parameter_.value("filter"));
-    film_desc.init(parameter_.value("radiance_collector"));
+    radiance_collector_desc.init(parameter_.value("radiance_collector"));
     if (parameter_.contains("medium")) {
         medium.name = parameter_["medium"].as_string();
     }
@@ -331,7 +331,7 @@ void LightSamplerDesc::init(const ParameterSet &ps) noexcept {
     }
 }
 
-void FilmDesc::init(const ParameterSet &ps) noexcept {
+void RadianceCollectorDesc::init(const ParameterSet &ps) noexcept {
     NodeDesc::init(ps);
     sub_type = ps["type"].as_string("rgb");
     ParameterSet param = ps.value("param", DataWrap::object());

@@ -7,7 +7,7 @@
 
 namespace vision {
 
-Film::Film(const vision::FilmDesc &desc)
+Film::Film(const vision::RadianceCollectorDesc &desc)
     : Node(desc),
       tone_mapper_(desc.tone_mapper),
       resolution_(desc["resolution"].as_uint2(make_uint2(1280, 720))),

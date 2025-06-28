@@ -26,7 +26,7 @@ using namespace ocarina;
 //}
 class Film : public Node, public Encodable, public Observer {
 public:
-    using Desc = FilmDesc;
+    using Desc = RadianceCollectorDesc;
 
 protected:
     uint2 resolution_;
@@ -38,7 +38,7 @@ protected:
 
 public:
     Film() = default;
-    explicit Film(const FilmDesc &desc);
+    explicit Film(const RadianceCollectorDesc &desc);
     OC_ENCODABLE_FUNC(Encodable, accumulation_,gamma_correction_, tone_mapper_, exposure_)
     VS_HOTFIX_MAKE_RESTORE(Node, resolution_, screen_window_, gamma_correction_,
                            accumulation_, tone_mapper_, exposure_)
