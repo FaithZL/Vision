@@ -38,7 +38,7 @@ void App::init_pipeline() {
     Global::instance().set_device(&device);
     rp = Importer::import_scene(params.scene_file);
     pipeline().init();
-    _view_buffer.resize(pipeline().pixel_num());
+    view_buffer.resize(pipeline().pixel_num());
 }
 
 void App::prepare() {

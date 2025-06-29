@@ -52,6 +52,7 @@ public:
     [[nodiscard]] auto rad_collector() noexcept { return rad_collector_.get(); }
     [[nodiscard]] auto rad_collector() const noexcept { return rad_collector_.get(); }
     [[nodiscard]] uint2 resolution() const noexcept { return rad_collector_->resolution(); }
+    [[nodiscard]] uint frame_buffer_size() const noexcept { return rad_collector_->frame_buffer_size(); }
     virtual void set_resolution(uint2 res) noexcept { rad_collector_->set_resolution(res); }
     [[nodiscard]] virtual RayState generate_ray(const SensorSample &ss) const noexcept = 0;
 };

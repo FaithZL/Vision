@@ -54,7 +54,7 @@ public:
         update_screen_window();
     }
     [[nodiscard]] virtual uint2 launch_dim() const noexcept { return resolution_; }
-    [[nodiscard]] virtual uint buffer_size() const noexcept {
+    [[nodiscard]] virtual uint frame_buffer_size() const noexcept {
         uint2 dim = launch_dim();
         return dim.x * dim.y;
     }

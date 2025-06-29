@@ -47,7 +47,7 @@ public:
     Device device;
     mutable WindowWrapper window{nullptr, nullptr};
     SP<Pipeline> rp{};
-    vector<float4> _view_buffer;
+    vector<float4> view_buffer;
     float2 last_cursor_pos = make_float2(0);
     bool left_key_press{false};
     bool right_key_press{false};
