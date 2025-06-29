@@ -110,7 +110,7 @@ public:
                 $break;
             };
 
-            camera->film()->add_sample(pixel, L, frame_index);
+            camera->rad_collector()->add_sample(pixel, L, frame_index);
         };
         shader_ = rp->device().compile(kernel);
     }

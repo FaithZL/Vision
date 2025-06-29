@@ -604,7 +604,7 @@ Float3 ReSTIRDI::shading(vision::DIReservoirVar rsv, const SurfaceDataVar &surf)
 
 void ReSTIRDI::compile_shader1() noexcept {
     TSensor &camera = scene().sensor();
-    RadianceCollector *film = camera->film();
+    RadianceCollector *rad_collector = camera->rad_collector();
     TLightSampler &light_sampler = scene().light_sampler();
     TSpectrum &spectrum = pipeline()->spectrum();
     Kernel kernel = [&](Uint frame_index, Var<DIParam> param) {

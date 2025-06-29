@@ -12,7 +12,7 @@ using namespace ocarina;
 Photosensory::Photosensory(const SensorDesc &desc)
     : Node(desc),
       filter_(desc.filter_desc),
-      film_(Node::create_shared<RadianceCollector>(desc.radiance_collector_desc)),
+      rad_collector_(Node::create_shared<RadianceCollector>(desc.radiance_collector_desc)),
       medium_id_(desc.medium.id) {
     if (!scene().process_mediums()) {
         return;
@@ -53,13 +53,13 @@ bool Photosensory::render_UI(ocarina::Widgets *widgets) noexcept {
             render_sub_UI(widgets);
         });
     filter_.render_UI(widgets);
-    film_->render_UI(widgets);
+    rad_collector_->render_UI(widgets);
     return open;
 }
 
 void Photosensory::prepare() noexcept {
     filter_->prepare();
-    film_->prepare();
+    rad_collector_->prepare();
 }
 
 }// namespace vision

@@ -34,7 +34,7 @@ void CLIParser::init(int argc, char **argv) {
          {"m, mode", "run mode: cli or gui", cxxopts::value<std::string>()->default_value("cli")},
          {"t, thread-num", "the num of threads to render", cxxopts::value<std::string>()->default_value("0")},
          {"s, scene", "The scene to render,file name end with json or scene supported by assimp", cxxopts::value<std::string>()},
-         {"o, output", "The output film file path, output file will be saved as EXR format\n."
+         {"o, output", "The output rad_collector file path, output file will be saved as EXR format\n."
                        "Alternatively, you can specify the output file path in scene description \n"
                        "file(-s|--scene), this option will override the setting in scene file",
           cxxopts::value<std::string>()->default_value("")},

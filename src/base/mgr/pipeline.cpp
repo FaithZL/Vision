@@ -311,7 +311,7 @@ void Pipeline::display(double dt) noexcept {
 }
 
 float4 *Pipeline::final_picture(const OutputDesc &desc) noexcept {
-    RegistrableManaged<float4> &original = scene_.film()->output_buffer();
+    RegistrableManaged<float4> &original = scene_.rad_collector()->output_buffer();
     bool gamma = !(desc.fn.ends_with("exr") || desc.fn.ends_with("hdr"));
     if (desc.denoise) {
         OfflineDenoiseInput input;

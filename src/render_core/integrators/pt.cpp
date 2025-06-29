@@ -39,14 +39,14 @@ public:
     VS_HOTFIX_MAKE_RESTORE(IlluminationIntegrator, inspector_, ray_buffer_, ray_generation_, separate_rg_)
     OC_ENCODABLE_FUNC(IlluminationIntegrator, inspector_)
     VS_MAKE_GUI_STATUS_FUNC(IlluminationIntegrator, inspector_)
-    [[nodiscard]] RadianceCollector *film() noexcept { return scene().film(); }
-    [[nodiscard]] const RadianceCollector *film() const noexcept { return scene().film(); }
+    [[nodiscard]] RadianceCollector *rad_collector() noexcept { return scene().rad_collector(); }
+    [[nodiscard]] const RadianceCollector *rad_collector() const noexcept { return scene().rad_collector(); }
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override {
         std::tuple tp = {addressof(inspector_)};
         HotfixSystem::replace_objects(constructor, tp);
     }
     void add_sample(const Uint2 &pixel, Float3 val, const Uint &frame_index) noexcept {
-        val = film()->add_sample(pixel, val, frame_index);
+        val = rad_collector()->add_sample(pixel, val, frame_index);
         if (inspector_->on()) {
             inspector_->add_sample(pixel, val, frame_index);
         }
@@ -103,8 +103,8 @@ public:
         ret.gbuffer = frame_buffer().cur_gbuffer(frame_index_);
         ret.prev_gbuffer = frame_buffer().prev_gbuffer(frame_index_);
         ret.motion_vec = frame_buffer().motion_vectors();
-        ret.radiance = film()->rt_buffer();
-        ret.output = film()->output_buffer();
+        ret.radiance = rad_collector()->rt_buffer();
+        ret.output = rad_collector()->output_buffer();
         return ret;
     }
 

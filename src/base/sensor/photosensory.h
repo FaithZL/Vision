@@ -31,16 +31,16 @@ public:
 
 protected:
     TFilter filter_{};
-    HotfixSlot<SP<RadianceCollector>> film_{};
+    HotfixSlot<SP<RadianceCollector>> rad_collector_{};
     EncodedData<uint> medium_id_{InvalidUI32};
 
 public:
     Photosensory() = default;
     explicit Photosensory(const SensorDesc &desc);
     void update_runtime_object(const vision::IObjectConstructor *constructor) noexcept override;
-    OC_ENCODABLE_FUNC(EncodedObject, filter_, film_)
-    VS_HOTFIX_MAKE_RESTORE(Node, filter_, film_, medium_id_, datas_)
-    VS_MAKE_GUI_STATUS_FUNC(Node, filter_, film_)
+    OC_ENCODABLE_FUNC(EncodedObject, filter_, rad_collector_)
+    VS_HOTFIX_MAKE_RESTORE(Node, filter_, rad_collector_, medium_id_, datas_)
+    VS_MAKE_GUI_STATUS_FUNC(Node, filter_, rad_collector_)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
     void prepare() noexcept override;
@@ -49,10 +49,10 @@ public:
     }
     [[nodiscard]] auto &filter() noexcept { return filter_; }
     [[nodiscard]] auto &filter() const noexcept { return filter_; }
-    [[nodiscard]] auto film() noexcept { return film_.get(); }
-    [[nodiscard]] auto film() const noexcept { return film_.get(); }
-    [[nodiscard]] uint2 resolution() const noexcept { return film_->resolution(); }
-    virtual void set_resolution(uint2 res) noexcept { film_->set_resolution(res); }
+    [[nodiscard]] auto rad_collector() noexcept { return rad_collector_.get(); }
+    [[nodiscard]] auto rad_collector() const noexcept { return rad_collector_.get(); }
+    [[nodiscard]] uint2 resolution() const noexcept { return rad_collector_->resolution(); }
+    virtual void set_resolution(uint2 res) noexcept { rad_collector_->set_resolution(res); }
     [[nodiscard]] virtual RayState generate_ray(const SensorSample &ss) const noexcept = 0;
 };
 

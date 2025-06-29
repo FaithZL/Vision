@@ -37,7 +37,7 @@ public:
 
     bool render_UI(ocarina::Widgets *widgets) noexcept override {
         tone_mapper_->render_UI(widgets);
-        return widgets->use_folding_header(ocarina::format("{} film", impl_type().data()), [&] {
+        return widgets->use_folding_header(ocarina::format("{} rad_collector", impl_type().data()), [&] {
             render_sub_UI(widgets);
         });
     }
