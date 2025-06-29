@@ -9,8 +9,7 @@
 namespace vision {
 using namespace ocarina;
 
-/// temporary solution
-class RGBFilm : public RadianceCollector {
+class NormalRadianceCollector : public RadianceCollector {
 private:
     RegistrableManaged<float4> rt_buffer_;
     RegistrableManaged<float4> accumulation_buffer_;
@@ -21,8 +20,8 @@ private:
     Shader<void(Buffer<float4>, Buffer<float4>)> gamma_correct_;
 
 public:
-    RGBFilm() = default;
-    explicit RGBFilm(const RadianceCollectorDesc &desc)
+    NormalRadianceCollector() = default;
+    explicit NormalRadianceCollector(const Desc &desc)
         : RadianceCollector(desc),
           rt_buffer_(pipeline()->bindless_array()) {}
 
@@ -139,4 +138,4 @@ public:
 
 }// namespace vision
 
-VS_MAKE_CLASS_CREATOR_HOTFIX(vision, RGBFilm)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision, NormalRadianceCollector)
