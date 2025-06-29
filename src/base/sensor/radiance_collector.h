@@ -14,7 +14,7 @@
 namespace vision {
 using namespace ocarina;
 
-//"film": {
+//"radiance_collector": {
 //    "type": "rgb",
 //    "param": {
 //        "resolution": [
