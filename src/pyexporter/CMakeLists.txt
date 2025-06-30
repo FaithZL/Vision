@@ -12,7 +12,7 @@ if (CMAKE_GENERATOR MATCHES "Visual Studio")
             COMMAND ${CMAKE_COMMAND} -E echo "export libraries after all targets are built..."
             COMMAND ${CMAKE_COMMAND} -E echo "start copy"
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            COMMAND python.exe ${CMAKE_SOURCE_DIR}/src/scripts/after_build_pyd.py ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}
+            COMMAND PYTHON_PATH ${CMAKE_SOURCE_DIR}/src/scripts/after_build_pyd.py ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}
             COMMAND ${CMAKE_COMMAND} -E echo "Complete copy!"
             COMMENT "Executing script after building all targets"
     )
@@ -22,7 +22,7 @@ else ()
             COMMAND ${CMAKE_COMMAND} -E echo "export libraries after all targets are built..."
             COMMAND ${CMAKE_COMMAND} -E echo "start copy"
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            COMMAND python.exe ${CMAKE_SOURCE_DIR}/src/scripts/after_build_pyd.py ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+            COMMAND PYTHON_PATH ${CMAKE_SOURCE_DIR}/src/scripts/after_build_pyd.py ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
             COMMAND ${CMAKE_COMMAND} -E echo "Complete copy!"
             COMMENT "Executing script after building all targets"
     )
