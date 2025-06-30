@@ -17,7 +17,6 @@ private:
 
     Shader<void(Buffer<float4>, Buffer<float4>, uint)> accumulate_;
     Shader<void(Buffer<float4>, Buffer<float4>)> tone_mapping_;
-    Shader<void(Buffer<float4>, Buffer<float4>)> gamma_correct_;
 
 public:
     NormalRadianceCollector() = default;
@@ -28,7 +27,7 @@ public:
     OC_ENCODABLE_FUNC(RadianceCollector, rt_buffer_, accumulation_buffer_, output_buffer_)
     VS_MAKE_PLUGIN_NAME_FUNC
     VS_HOTFIX_MAKE_RESTORE(RadianceCollector, rt_buffer_, accumulation_buffer_, output_buffer_,
-                           accumulate_, tone_mapping_, gamma_correct_)
+                           accumulate_, tone_mapping_)
 
     void on_resize(uint2 res) noexcept override {
         prepare_buffers();
@@ -67,20 +66,9 @@ public:
         tone_mapping_ = device().compile(kernel, "RGBFilm-tone_mapping");
     }
 
-    void compile_gamma_correction() noexcept {
-        Kernel kernel = [&](BufferVar<float4> input, BufferVar<float4> output) {
-            Float4 val = input.read(dispatch_id());
-            val = linear_to_srgb(val);
-            val.w = 1.f;
-            output.write(dispatch_id(), val);
-        };
-        gamma_correct_ = device().compile(kernel, "RGBFilm-gamma_correction");
-    }
-
     void compile() noexcept override {
         compile_accumulation();
         compile_tone_mapping();
-        compile_gamma_correction();
     }
     void prepare_buffers() noexcept {
         auto prepare = [&](RegistrableManaged<float4> &managed, const string &desc = "") noexcept {
