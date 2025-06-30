@@ -1,3 +1,19 @@
+set(PYTHON_PATH  "DEFAULT_VALUE_IF_NOTHING_ELSE_SET")
+find_program(PYTHON_EXECUTABLE NAMES python python3 python2
+                             PATHS ENV PATH)
+
+if (PYTHON_EXECUTABLE)
+    message(STATUS "Found Python executable: ${PYTHON_EXECUTABLE}")
+    set(PYTHON_PATH "${PYTHON_EXECUTABLE}")
+else()
+    message(STATUS "Python executable not found in standard paths.")
+    if (CUSTOM_PYTHON_PATH) # Check if the user provided a custom path
+        message(STATUS "Using custom Python path from argument: ${CUSTOM_PYTHON_PATH}")
+        set(PYTHON_PATH "${CUSTOM_PYTHON_PATH}")
+    else()
+        message(FATAL_ERROR "No custom Python path provided.")
+    endif()
+endif()
 
 function(vision_add_plugin name)
     cmake_parse_arguments(PLUGIN "" "CATEGORY" "SOURCES;DEPENDENCE" ${ARGN})
