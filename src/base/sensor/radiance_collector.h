@@ -32,15 +32,14 @@ protected:
     uint2 resolution_;
     Box2f screen_window_;
     EncodedData<uint> accumulation_;
-    EncodedData<uint> gamma_correction_;
     TToneMapper tone_mapper_{};
     EncodedData<float> exposure_{};
 
 public:
     RadianceCollector() = default;
     explicit RadianceCollector(const RadianceCollectorDesc &desc);
-    OC_ENCODABLE_FUNC(Encodable, accumulation_,gamma_correction_, tone_mapper_, exposure_)
-    VS_HOTFIX_MAKE_RESTORE(Node, resolution_, screen_window_, gamma_correction_,
+    OC_ENCODABLE_FUNC(Encodable, accumulation_, tone_mapper_, exposure_)
+    VS_HOTFIX_MAKE_RESTORE(Node, resolution_, screen_window_,
                            accumulation_, tone_mapper_, exposure_)
     VS_MAKE_GUI_STATUS_FUNC(Node, tone_mapper_)
     virtual void compile() noexcept = 0;
