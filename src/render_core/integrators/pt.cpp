@@ -13,9 +13,6 @@ using namespace ocarina;
 class PathTracingIntegrator : public IlluminationIntegrator, public Observer {
 private:
     SP<ConvergenceInspector> inspector_;
-    Buffer<Ray> ray_buffer_{};
-    Shader<void(uint, Buffer<Ray>)> ray_generation_;
-    bool separate_rg_{false};
 
 public:
     PathTracingIntegrator() = default;
@@ -25,18 +22,16 @@ public:
     VS_MAKE_PLUGIN_NAME_FUNC
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         inspector_->render_UI(widgets);
-        changed_ |= widgets->check_box("separate_ray_generation", addressof(separate_rg_));
     }
 
     void prepare() noexcept override {
         IlluminationIntegrator::prepare();
         inspector_->prepare();
-        ray_buffer_ = device().create_buffer<Ray>(pipeline()->pixel_num());
         frame_buffer().prepare_hit_buffer();
         frame_buffer().prepare_gbuffer();
         frame_buffer().prepare_motion_vectors();
     }
-    VS_HOTFIX_MAKE_RESTORE(IlluminationIntegrator, inspector_, ray_buffer_, ray_generation_, separate_rg_)
+    VS_HOTFIX_MAKE_RESTORE(IlluminationIntegrator, inspector_)
     OC_ENCODABLE_FUNC(IlluminationIntegrator, inspector_)
     VS_MAKE_GUI_STATUS_FUNC(IlluminationIntegrator, inspector_)
     [[nodiscard]] RadianceCollector *rad_collector() noexcept { return scene().rad_collector(); }
@@ -50,21 +45,6 @@ public:
         if (inspector_->on()) {
             inspector_->add_sample(pixel, val, frame_index);
         }
-    }
-
-    void compile_ray_generation() noexcept {
-        TSensor &camera = scene().sensor();
-        TSampler &sampler = scene().sampler();
-        ocarina::Kernel rg = [&](Uint frame_index, BufferVar<Ray> ray_buffer) {
-            sampler->load_data();
-            camera->load_data();
-            Uint2 pixel = dispatch_idx().xy();
-            sampler->start(pixel, frame_index, 1);
-            SensorSample ss = sampler->sensor_sample(pixel, camera->filter());
-            RayState rs = camera->generate_ray(ss);
-            ray_buffer.write(dispatch_id(), rs.ray);
-        };
-        ray_generation_ = device().compile(rg, "pt_ray_generation");
     }
 
     void compile() noexcept override {
@@ -91,7 +71,6 @@ public:
             Float3 L = Li(rs, scatter_pdf, *max_depth_, spectrum()->one(), max_depth_.hv() < 2, {}, render_env) * ss.filter_weight;
             add_sample(dispatch_idx().xy(), L, frame_index);
         };
-        compile_ray_generation();
         shader_ = device().compile(kernel, "path tracing integrator");
     }
 
@@ -113,9 +92,6 @@ public:
         Stream &stream = rp->stream();
         if (frame_index_ == 0) {
             stream << inspector_->reset();
-        }
-        if (separate_rg_) {
-            stream << ray_generation_(frame_index_ , ray_buffer_).dispatch(rp->resolution());
         }
         stream << shader_(frame_index_).dispatch(rp->resolution());
         RealTimeDenoiseInput input = denoise_input();
