@@ -100,25 +100,41 @@ protected:
 
 protected:
     string cur_view_{final_result};
-    /// save two frames of data
-    RegistrableBuffer<PixelGeometry> gbuffer_{};
-
-    /// save two frames of data , use for ReSTIR
-    RegistrableBuffer<SurfaceData> surfaces_{};
-    RegistrableBuffer<SurfaceExtend> surface_extends_{};
-    RegistrableBuffer<HitBSDF> hit_bsdfs_{};
-    RegistrableBuffer<float2> motion_vectors_{};
-
-    /// used for editor
-    RegistrableManaged<TriangleHit> hit_buffer_;
     ScreenBuffer::manager_type screen_buffers_;
     Shader<void(Buffer<float4>, Buffer<float4>)> gamma_correct_;
-    /// Display in full screen on the screen
-    RegistrableBuffer<float4> view_buffer_;
 
     SP<Visualizer> visualizer_{make_shared<Visualizer>()};
 
     vector<float4> window_buffer_;
+
+#define VS_MAKE_BUFFER(Type, buffer_name, count)                           \
+protected:                                                                 \
+    RegistrableManaged<Type> buffer_name##_;                               \
+                                                                           \
+public:                                                                    \
+    OC_MAKE_MEMBER_GETTER(buffer_name, &)                                  \
+    void prepare_##buffer_name() noexcept {                                \
+        init_buffer(buffer_name##_, "FrameBuffer::" #buffer_name, count);  \
+    }                                                                      \
+    void reset_##buffer_name() noexcept {                                  \
+        reset_buffer(buffer_name##_, "FrameBuffer::" #buffer_name, count); \
+    }
+
+    /// save two frames of data , use for ReSTIR
+    VS_MAKE_BUFFER(SurfaceData, surfaces, 2)
+    VS_MAKE_BUFFER(SurfaceExtend, surface_extends, 2)
+    VS_MAKE_BUFFER(float2, motion_vectors, 1)
+    VS_MAKE_BUFFER(HitBSDF, hit_bsdfs, 1)
+
+    VS_MAKE_BUFFER(PixelGeometry, gbuffer, 2)
+
+    /// used for editor
+    VS_MAKE_BUFFER(TriangleHit, hit_buffer, 1)
+
+    /// Display in full screen on the screen
+    VS_MAKE_BUFFER(float4, view_buffer, 1)
+
+#undef VS_MAKE_BUFFER
 
 public:
     using Desc = FrameBufferDesc;
@@ -176,7 +192,6 @@ public:
     [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces(const Uint &frame_index) const noexcept;
 
     [[nodiscard]] const Buffer<float4> &cur_screen_buffer() const noexcept;
-    OC_MAKE_MEMBER_GETTER(view_buffer, &)
 
     void register_(const SP<ScreenBuffer> &buffer) noexcept;
     void unregister(const SP<ScreenBuffer> &buffer) noexcept;
@@ -186,24 +201,6 @@ public:
         init_screen_buffer(buffer);
         register_(buffer);
     }
-
-#define VS_MAKE_ATTR_FUNC(buffer_name, count)                              \
-    OC_MAKE_MEMBER_GETTER(buffer_name, &)                                  \
-    void prepare_##buffer_name() noexcept {                                \
-        init_buffer(buffer_name##_, "FrameBuffer::" #buffer_name, count);  \
-    }                                                                      \
-    void reset_##buffer_name() noexcept {                                  \
-        reset_buffer(buffer_name##_, "FrameBuffer::" #buffer_name, count); \
-    }
-
-    VS_MAKE_ATTR_FUNC(surfaces, 2)
-    VS_MAKE_ATTR_FUNC(surface_extends, 2)
-    VS_MAKE_ATTR_FUNC(gbuffer, 2)
-    VS_MAKE_ATTR_FUNC(hit_bsdfs, 1)
-    VS_MAKE_ATTR_FUNC(motion_vectors, 1)
-    VS_MAKE_ATTR_FUNC(hit_buffer, 1)
-
-#undef VS_MAKE_ATTR_FUNC
 
     [[nodiscard]] BindlessArray &bindless_array() noexcept;
     void after_render() noexcept;

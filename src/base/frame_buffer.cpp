@@ -18,7 +18,7 @@ FrameBuffer::FrameBuffer(const vision::FrameBufferDesc &desc)
 }
 
 void FrameBuffer::prepare() noexcept {
-    init_buffer(view_buffer_, "FrameBuffer::view_buffer_");
+    prepare_view_buffer();
 }
 
 void FrameBuffer::update_runtime_object(const vision::IObjectConstructor *constructor) noexcept {
