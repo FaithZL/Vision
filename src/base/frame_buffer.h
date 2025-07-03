@@ -90,6 +90,15 @@ public:
     static constexpr auto final_result = "FrameBuffer::final_result_";
 
 protected:
+    using gbuffer_signature = void(uint, Buffer<PixelGeometry>, Buffer<float2>, Buffer<float4>, Buffer<float4>);
+    Shader<gbuffer_signature> compute_geom_;
+
+    using grad_signature = void(uint, Buffer<PixelGeometry>);
+    Shader<grad_signature> compute_grad_;
+
+    Shader<void(Buffer<TriangleHit>, uint)> compute_hit_;
+
+protected:
     string cur_view_{final_result};
     /// save two frames of data
     RegistrableBuffer<PixelGeometry> gbuffer_{};
@@ -119,7 +128,8 @@ public:
     explicit FrameBuffer(const FrameBufferDesc &desc);
     VS_HOTFIX_MAKE_RESTORE(Node, cur_view_, gbuffer_, surfaces_, surface_extends_, hit_bsdfs_,
                            motion_vectors_, hit_buffer_, screen_buffers_, gamma_correct_,
-                           view_buffer_, visualizer_, window_buffer_)
+                           view_buffer_, visualizer_, window_buffer_,
+                           compute_geom_, compute_grad_, compute_hit_)
     void prepare() noexcept override;
     void update_runtime_object(const IObjectConstructor *constructor) noexcept override;
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
@@ -197,12 +207,6 @@ public:
 
     [[nodiscard]] BindlessArray &bindless_array() noexcept;
     void after_render() noexcept;
-    [[nodiscard]] virtual CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
-                                                      BufferView<float4> albedo, BufferView<float4> emission) const noexcept = 0;
-    [[nodiscard]] virtual CommandList compute_geom(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
-                                                   BufferView<float4> albedo, BufferView<float4> emission) const noexcept = 0;
-    [[nodiscard]] virtual CommandList compute_grad(uint frame_index, BufferView<PixelGeometry> gbuffer) const noexcept = 0;
-    [[nodiscard]] virtual CommandList compute_hit(uint frame_index) const noexcept = 0;
     [[nodiscard]] static Float2 compute_motion_vec(const TSensor &camera, const Float2 &p_film, const Float3 &cur_pos,
                                                    const Bool &is_hit) noexcept;
     [[nodiscard]] Float3 compute_motion_vector(const TSensor &camera, const Float2 &p_film, const Uint &frame_index) const noexcept;
@@ -210,9 +214,23 @@ public:
     [[nodiscard]] static Uint checkerboard_value(const Uint2 &coord) noexcept;
     [[nodiscard]] static Uint checkerboard_value(const Uint2 &coord, const Uint &frame_index) noexcept;
     virtual void compile() noexcept;
+    void compile_compute_geom() noexcept;
+    void compile_compute_grad() noexcept;
+    void compile_compute_hit() noexcept;
+    void compile_gamma() noexcept;
+    void compute_gradient(PixelGeometryVar &center_data,
+                          const BufferVar<PixelGeometry> &gbuffer) const noexcept;
     [[nodiscard]] CommandList gamma_correct(BufferView<float4> input,
                                             BufferView<float4> output) const noexcept;
     [[nodiscard]] CommandList gamma_correct() const noexcept;
+    [[nodiscard]] virtual CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer,
+                                                      BufferView<float2> motion_vectors, BufferView<float4> albedo,
+                                                      BufferView<float4> emission) const noexcept;
+    [[nodiscard]] virtual CommandList compute_geom(uint frame_index, BufferView<PixelGeometry> gbuffer,
+                                                   BufferView<float2> motion_vectors, BufferView<float4> albedo,
+                                                   BufferView<float4> emission) const noexcept;
+    [[nodiscard]] virtual CommandList compute_grad(uint frame_index, BufferView<PixelGeometry> gbuffer) const noexcept;
+    [[nodiscard]] virtual CommandList compute_hit(uint frame_index) const noexcept;
     template<typename T>
     void init_buffer(RegistrableBuffer<T> &buffer, const string &desc, uint count = 1) noexcept {
         uint element_num = count * pixel_num();
