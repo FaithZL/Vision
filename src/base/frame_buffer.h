@@ -109,7 +109,7 @@ protected:
 
 #define VS_MAKE_BUFFER(Type, buffer_name, count)                           \
 protected:                                                                 \
-    RegistrableManaged<Type> buffer_name##_;                               \
+    Type buffer_name##_;                                                   \
                                                                            \
 public:                                                                    \
     OC_MAKE_MEMBER_GETTER(buffer_name, &)                                  \
@@ -121,18 +121,18 @@ public:                                                                    \
     }
 
     /// save two frames of data , use for ReSTIR
-    VS_MAKE_BUFFER(SurfaceData, surfaces, 2)
-    VS_MAKE_BUFFER(SurfaceExtend, surface_extends, 2)
-    VS_MAKE_BUFFER(float2, motion_vectors, 1)
-    VS_MAKE_BUFFER(HitBSDF, hit_bsdfs, 1)
+    VS_MAKE_BUFFER(RegistrableBuffer<SurfaceData>, surfaces, 2)
+    VS_MAKE_BUFFER(RegistrableBuffer<SurfaceExtend>, surface_extends, 2)
+    VS_MAKE_BUFFER(RegistrableBuffer<float2>, motion_vectors, 1)
+    VS_MAKE_BUFFER(RegistrableBuffer<HitBSDF>, hit_bsdfs, 1)
 
-    VS_MAKE_BUFFER(PixelGeometry, gbuffer, 2)
+    VS_MAKE_BUFFER(RegistrableBuffer<PixelGeometry>, gbuffer, 2)
 
     /// used for editor
-    VS_MAKE_BUFFER(TriangleHit, hit_buffer, 1)
+    VS_MAKE_BUFFER(RegistrableManaged<TriangleHit>, hit_buffer, 1)
 
     /// Display in full screen on the screen
-    VS_MAKE_BUFFER(float4, view_buffer, 1)
+    VS_MAKE_BUFFER(RegistrableBuffer<float4>, view_buffer, 1)
 
 #undef VS_MAKE_BUFFER
 
