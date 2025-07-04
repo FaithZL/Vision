@@ -97,7 +97,7 @@ public:
     }
 
     [[nodiscard]] SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
-                                                  TSampler &sampler) const noexcept override {
+                                                        TSampler &sampler) const noexcept override {
 
         Float3 wi = square_to_cosine_hemisphere(sampler->next_2d());
         wi = M(wi);
@@ -138,7 +138,7 @@ public:
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(make_float2(alpha_lower), true);
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl.dimension()),
                                                                           swl, microfacet);
-        return make_unique<CoatLobe>(fresnel, ocarina::move(refl));
+        return make_unique<CoatLobe>(fresnel, ocarina::move(refl), SurfaceData::Glossy);
     }
     void from_ratio_z(ocarina::Float z) noexcept override {
         Float ior = lerp(z, ior_lower, ior_upper);
@@ -182,7 +182,7 @@ public:
         SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(f0, 1.5f, swl);
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f, true);
         UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
-        return make_unique<SpecularLobe>(fresnel_schlick, std::move(bxdf));
+        return make_unique<SpecularLobe>(fresnel_schlick, std::move(bxdf), SurfaceData::Glossy);
     }
     void from_ratio_z(ocarina::Float z) noexcept override {
         Float ior = schlick_ior_from_F0(Pow<4>(z));
@@ -231,6 +231,7 @@ public:
 #undef VS_MAKE_LOBE_TYPES
 
 private:
+    float alpha_threshold_{0.022};
     VS_MAKE_SLOT(color)
     VS_MAKE_SLOT(metallic)
     VS_MAKE_SLOT(ior)
@@ -362,6 +363,10 @@ public:
         Float aspect = sqrt(1 - anisotropic * 0.9f);
         Float2 alpha = make_float2(max(0.001f, sqr(roughness) / aspect),
                                    max(0.001f, sqr(roughness) * aspect));
+
+        Float alpha_min = min(alpha.x, alpha.y);
+        Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
+
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
 
         SampledSpectrum weight = SampledSpectrum::one(swl.dimension());
@@ -387,13 +392,14 @@ public:
                 Float cc_weight = coat_weight_.evaluate(it, swl)->as_scalar() * front_factor;
                 Float cc_roughness = clamp(coat_roughness_.evaluate(it, swl)->as_scalar(), 0.0001f, 1.f);
                 cc_roughness = sqr(cc_roughness);
+                Uint flag = select(cc_roughness < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
                 Float cc_ior = coat_ior_.evaluate(it, swl)->as_scalar();
                 SampledSpectrum cc_tint = coat_tint_.eval_albedo_spectrum(it, swl).sample;
                 SP<Fresnel> fresnel_cc = make_shared<FresnelDielectric>(SampledSpectrum(swl, cc_ior), swl);
                 SP<GGXMicrofacet> microfacet_cc = make_shared<GGXMicrofacet>(make_float2(cc_roughness));
                 UP<MicrofacetReflection> cc_refl = make_unique<MicrofacetReflection>(cc_weight * weight * cc_tint, swl,
                                                                                      microfacet_cc);
-                UP<CoatLobe> cc_lobe = make_unique<CoatLobe>(fresnel_cc, std::move(cc_refl), shading_frame);
+                UP<CoatLobe> cc_lobe = make_unique<CoatLobe>(fresnel_cc, std::move(cc_refl), flag, shading_frame);
                 SampledSpectrum cc_albedo = cc_lobe->albedo(cos_theta);
                 WeightedLobe w_cc_lobe(cc_albedo.average(), std::move(cc_lobe));
                 weight = layering_weight(cc_albedo, weight);
@@ -408,7 +414,7 @@ public:
                 UP<MicrofacetReflection> metal_refl = make_unique<MicrofacetReflection>(weight * metallic,
                                                                                         swl, microfacet);
                 WeightedLobe metal_lobe(metallic * weight.average(),
-                                        make_unique<MetallicLobe>(fresnel_f82, std::move(metal_refl), shading_frame));
+                                        make_unique<MetallicLobe>(fresnel_f82, std::move(metal_refl), flag, shading_frame));
                 lobes.push_back(std::move(metal_lobe));
                 weight *= (1.0f - metallic);
             });
@@ -422,7 +428,7 @@ public:
                 SampledSpectrum t_weight = trans_weight * weight;
                 SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(schlick_F0_from_ior(eta) * specular_tint, etas, swl);
                 UP<Lobe> dielectric = make_unique<DielectricLobe>(fresnel_schlick, microfacet, color, false,
-                                                                  SurfaceData::Glossy, shading_frame);
+                                                                  flag, shading_frame);
                 WeightedLobe trans_lobe(t_weight.average(), t_weight.average(), std::move(dielectric));
                 lobes.push_back(std::move(trans_lobe));
                 weight *= (1.0f - trans_weight);
@@ -434,6 +440,7 @@ public:
                 SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(f0 * specular_tint, iors, swl);
                 UP<Lobe> spec_refl = make_unique<SpecularLobe>(fresnel_schlick,
                                                                make_unique<MicrofacetReflection>(weight, swl, microfacet),
+                                                               flag,
                                                                shading_frame);
                 SampledSpectrum spec_refl_albedo = spec_refl->albedo(cos_theta);
                 WeightedLobe specular_lobe(spec_refl_albedo.average(), std::move(spec_refl));

@@ -181,8 +181,8 @@ uint64_t MicrofacetLobe::compute_topology_hash() const noexcept {
 }
 
 MicrofacetLobe::MicrofacetLobe(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl,
-                               optional<PartialDerivative<Float3>> shading_frame)
-    : Lobe(std::move(shading_frame)), fresnel_(fresnel), bxdf_(std::move(refl)) {}
+                               const Uint &flag, optional<ShadingFrame> shading_frame)
+    : Lobe(std::move(shading_frame)), fresnel_(fresnel), bxdf_(std::move(refl)), flag_{flag} {}
 
 void MicrofacetLobe::from_ratio_x(const Float &roughness) noexcept {
     bxdf()->set_alpha(clamp(sqr(roughness), alpha_lower, alpha_upper));

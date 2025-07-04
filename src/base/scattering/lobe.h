@@ -108,13 +108,14 @@ class MicrofacetLobe : public Lobe {
 protected:
     DCSP<Fresnel> fresnel_;
     DCUP<MicrofacetBxDF> bxdf_;
+    Uint flag_{};
 
 protected:
     [[nodiscard]] uint64_t compute_topology_hash() const noexcept override;
 
 public:
     MicrofacetLobe(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl,
-                   optional<PartialDerivative<Float3>> shading_frame = {});
+                   const Uint &flag, optional<ShadingFrame> shading_frame = {});
 
     template<typename T = Fresnel>
     [[nodiscard]] const T *fresnel() const noexcept { return static_cast<const T *>(fresnel_.get()); }
@@ -134,7 +135,7 @@ public:
                                                   TransportMode tm) const noexcept override;
     [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
                                                 TSampler &sampler) const noexcept override;
-    [[nodiscard]] Uint flag() const noexcept override { return BxDFFlag::GlossyRefl; }
+    [[nodiscard]] Uint flag() const noexcept override { return flag_; }
     [[nodiscard]] SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
                                                         TSampler &sampler) const noexcept override;
 };
@@ -343,7 +344,7 @@ public:
         SP<Fresnel> fresnel = make_shared<FresnelConstant>(swl);
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(0.00f, 0.0f, true);
         UP<MicrofacetBxDF> bxdf = make_unique<MicrofacetReflection>(SampledSpectrum::one(swl), swl, microfacet);
-        auto ret = make_unique<PureReflectionLobe>(fresnel, std::move(bxdf));
+        auto ret = make_unique<PureReflectionLobe>(fresnel, std::move(bxdf), SurfaceData::Glossy);
         return ret;
     }
     void from_ratio_z(ocarina::Float z) noexcept override {

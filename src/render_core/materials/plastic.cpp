@@ -21,8 +21,8 @@ protected:
 
 public:
     PlasticLobe(const SP<Fresnel> &fresnel, UP<MicrofacetBxDF> refl, UP<BxDF> diff,
-                PartialDerivative<Float3> shading_frame = {})
-        : MicrofacetLobe(fresnel, std::move(refl), std::move(shading_frame)),
+                const Uint flag, ShadingFrame shading_frame = {})
+        : MicrofacetLobe(fresnel, std::move(refl), flag, std::move(shading_frame)),
           diffuse_(std::move(diff)) {}
 
     [[nodiscard]] Float PDF_diffuse(const Float3 &wo, const Float3 &wi) const noexcept {
@@ -51,7 +51,7 @@ public:
     }
 
     [[nodiscard]] SampledDirection sample_wi_local_impl(const Float3 &wo, const Uint &flag,
-                                                  TSampler &sampler) const noexcept override {
+                                                        TSampler &sampler) const noexcept override {
         Float3 wh = microfacet()->sample_wh(wo, sampler->next_2d());
         auto fresnel = fresnel_.ptr();
         SampledDirection sd;
@@ -117,14 +117,15 @@ public:
 
         alpha = remapping_roughness_ ? roughness_to_alpha(alpha) : alpha;
         alpha = clamp(alpha, make_float2(0.0001f), make_float2(1.f));
-
+        Float alpha_min = min(alpha.x, alpha.y);
+        Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
         SP<Fresnel> fresnel_schlick = make_shared<FresnelSchlick>(schlick_F0_from_ior(iors[0]) * Rs, iors, swl);
 
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(spectrum()->one(), swl, microfacet);
         UP<LambertReflection> diffuse = make_unique<LambertReflection>(Rd, swl);
 
-        return make_unique<PlasticLobe>(fresnel_schlick, std::move(refl), std::move(diffuse), shading_frame);
+        return make_unique<PlasticLobe>(fresnel_schlick, std::move(refl), std::move(diffuse),flag, shading_frame);
     }
 };
 

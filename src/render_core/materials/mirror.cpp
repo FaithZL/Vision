@@ -65,11 +65,12 @@ protected:
 
         roughness = remapping_roughness_ ? roughness_to_alpha(roughness) : roughness;
         Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
-
+        Float alpha_min = min(alpha.x, alpha.y);
+        Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
         SP<GGXMicrofacet> microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
         SP<Fresnel> fresnel = make_shared<FresnelConstant>(swl);
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
-        return make_unique<MirrorLobe>(fresnel, std::move(refl), shading_frame);
+        return make_unique<MirrorLobe>(fresnel, std::move(refl), flag ,shading_frame);
     }
 };
 

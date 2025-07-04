@@ -144,12 +144,15 @@ public:
         Float2 alpha = calculate_alpha<D>(roughness, anisotropic);
         auto microfacet = make_shared<GGXMicrofacet>(alpha.x, alpha.y);
 
+        Float alpha_min = min(alpha.x, alpha.y);
+        Uint flag = select(alpha_min < alpha_threshold_, SurfaceData::NearSpec, SurfaceData::Glossy);
+
         SampledSpectrum eta = SampledSpectrum{eta_.evaluate(it, swl).array};
         SampledSpectrum k = SampledSpectrum{k_.evaluate(it, swl).array};
         auto fresnel = make_shared<FresnelConductor>(eta, k, swl);
 
         UP<MicrofacetReflection> refl = make_unique<MicrofacetReflection>(kr, swl, microfacet);
-        return make_unique<ConductorLobe>(fresnel, std::move(refl), shading_frame);
+        return make_unique<ConductorLobe>(fresnel, std::move(refl), flag, shading_frame);
     }
 };
 
