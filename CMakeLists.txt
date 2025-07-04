@@ -48,9 +48,8 @@ option(OIDN_ON "Build oidn" TRUE)
 #set(OIDN_ON FALSE)
 
 if (MSVC)
-add_compile_options(
-        /wd4996
-)
+add_compile_options(/wd4996)
+add_compile_options(/MP)
 endif ()
 
 function(vision_add_application name)
