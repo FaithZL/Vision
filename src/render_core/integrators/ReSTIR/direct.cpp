@@ -439,11 +439,9 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, TriangleHitVar &hit, Interacti
     SurfaceDataVar cur_surf;
     Uint counter = 0;
 
-    $loop {
-        cur_surf.hit = hit;
-        $if(!hit->is_hit()) {
-            $break;
-        };
+    cur_surf.hit = hit;
+
+    $if(hit->is_hit()) {
         it = geometry.compute_surface_interaction(hit, rs.ray, true);
         surf_ext.t_max += rs.ray->t_max();
         Float3 v_pos = camera_ray->at(surf_ext.t_max);
@@ -466,19 +464,6 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, TriangleHitVar &hit, Interacti
             cur_surf->set_position(it.pos);
         };
         counter += 1;
-        $if(counter >= max_recursion_) {
-            $break;
-        };
-        $if(cur_surf->near_specular()) {
-            surf_ext.view_pos = it.pos;
-            rs = it.spawn_ray_state(w);
-            hit = pipeline()->trace_closest(rs.ray);
-            cur_surf.is_replaced = true;
-            //            cur_surf->set_depth(0);
-        }
-        $else {
-            $break;
-        };
     };
     return cur_surf;
 }
