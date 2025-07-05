@@ -209,6 +209,10 @@ SampledSpectrum MicrofacetLobe::albedo(const Float &cos_theta) const noexcept {
     return bxdf_->albedo(cos_theta) * fresnel_->evaluate(cos_theta);
 }
 
+Float MicrofacetLobe::diffuse_factor() noexcept {
+    return ocarina::sqrt(bxdf_->alpha_average());
+}
+
 ScatterEval MicrofacetLobe::evaluate_local_impl(const Float3 &wo, const Float3 &wi,
                                                 vision::MaterialEvalMode mode,
                                                 const Uint &flag,
@@ -401,14 +405,27 @@ BSDFSample DielectricLobe::sample_delta_local(const Float3 &wo, TSampler &sample
     BSDFSample ret{*swl()};
     auto fresnel = fresnel_.ptr();
     SampledSpectrum F = fresnel->evaluate(abs_cos_theta(wo));
+    SampledSpectrum eta = fresnel->eta();
     Float uc = sampler->next_1d();
+    float3 wh = make_float3(0, 0, 1);
     $if(uc < refl_prob(F)) {
-
+        Float3 wi = wo;
+        wi.xy() = -wi.xy();
+        ret.eval = evaluate_reflection(wo, wh, wi, F, eta, MaterialEvalMode::All);
+        ret.wi = wi;
     }
     $else{
-
+        Float3 wi;
+        Float3 n = face_forward(wh, wo);
+        refract(wo, n, fresnel->eta()[0], &wi);
+        ret.eval = evaluate_transmission(wo, wh, wi, F, eta, MaterialEvalMode::All, TransportMode::Radiance);
+        ret.wi = wi;
     };
     return ret;
+}
+
+Float DielectricLobe::diffuse_factor() noexcept {
+    return ocarina::sqrt(microfacet_->alpha_x());
 }
 
 SampledDirection DielectricLobe::sample_wi_local_impl(const Float3 &wo, const Uint &flag,

@@ -22,7 +22,7 @@ public:
 public:
     TriangleHit hit{};
     float4 normal_depth{};
-    float3 pos{};
+    float4 pos_diff{};
     uint mat_id{};
     uint is_replaced{false};
     uint is_split{false};
@@ -30,14 +30,16 @@ public:
 };
 }// namespace vision
 // clang-format off
-OC_STRUCT(vision, SurfaceData, hit, normal_depth, pos, mat_id, is_replaced, is_split, flag) {
+OC_STRUCT(vision, SurfaceData, hit, normal_depth, pos_diff, mat_id, is_replaced, is_split, flag) {
     void set_normal(const Float3 &n) {
         normal_depth = make_float4(n, normal_depth.w);
     }
     [[nodiscard]] Float3 normal() const noexcept { return normal_depth.xyz();}
     void set_depth(const Float &t) { normal_depth.w = t; }
-    void set_position(const Float3 &p) noexcept { pos = p; }
-    [[nodiscard]] Float3 position() const noexcept { return pos; }
+    void set_position(const Float3 &p) noexcept { pos_diff.xyz() = p; }
+    void set_diffuse_factor(const Float &value) noexcept { return pos_diff.w = value; }
+    [[nodiscard]] Float diffuse_factor() const noexcept { return pos_diff.w;}
+    [[nodiscard]] Float3 position() const noexcept { return pos_diff.xyz(); }
     [[nodiscard]] Bool near_specular() const noexcept { return flag == vision::SurfaceData::NearSpec; }
     [[nodiscard]] Float depth() const noexcept { return normal_depth.w; }
 };
@@ -125,7 +127,7 @@ public:
 };
 
 template<EPort p = D>
-[[nodiscard]] Float phase_HG(const oc_float<p> &cos_theta, const oc_float<p> & g) {
+[[nodiscard]] Float phase_HG(const oc_float<p> &cos_theta, const oc_float<p> &g) {
     oc_float<p> denom = 1 + sqr(g) + 2 * g * cos_theta;
     return Inv4Pi * (1 - sqr(g)) / (denom * sqrt(denom));
 }
