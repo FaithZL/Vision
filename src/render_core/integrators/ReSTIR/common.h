@@ -27,7 +27,7 @@ public:
 public:
     SpatialResamplingParam() = default;
     explicit SpatialResamplingParam(const ParameterSet &ps)
-        : theta(ps["theta"].as_float(5)),
+        : theta(ps["theta"].as_float(35)),
           depth_threshold(ps["depth"].as_float(0.3f)),
           sampling_radius(ps["radius"].as_float(30)),
           sample_num(ps["sample_num"].as_uint(1)),
@@ -54,9 +54,9 @@ public:
     TemporalResamplingParam() = default;
     explicit TemporalResamplingParam(const ParameterSet &ps)
         : limit(ps["history_limit"].as_uint(5)),
-          sampling_radius(ps["radius"].as_float(4)),
-          theta(ps["theta"].as_float(5)),
-          depth_threshold(ps["depth"].as_float(0.5)),
+          sampling_radius(ps["radius"].as_float(8)),
+          theta(ps["theta"].as_float(35)),
+          depth_threshold(ps["depth"].as_float(0.3)),
           open{ps["open"].as_bool(true)},
           N{ps["N"].as_uint(9)},
           mis{ps["mis"].as_bool(false)} {}
