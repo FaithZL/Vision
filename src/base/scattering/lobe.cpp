@@ -397,6 +397,20 @@ ScatterEval DielectricLobe::evaluate_local_impl(const Float3 &wo, const Float3 &
     return evaluate_impl(wo, wh, wi, fresnel, mode, tm);
 }
 
+BSDFSample DielectricLobe::sample_delta_local(const Float3 &wo, TSampler &sampler) const noexcept {
+    BSDFSample ret{*swl()};
+    auto fresnel = fresnel_.ptr();
+    SampledSpectrum F = fresnel->evaluate(abs_cos_theta(wo));
+    Float uc = sampler->next_1d();
+    $if(uc < refl_prob(F)) {
+
+    }
+    $else{
+
+    };
+    return ret;
+}
+
 SampledDirection DielectricLobe::sample_wi_local_impl(const Float3 &wo, const Uint &flag,
                                                       TSampler &sampler) const noexcept {
     Float3 wh = microfacet_->sample_wh(wo, sampler->next_2d());

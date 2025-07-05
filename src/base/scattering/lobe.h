@@ -238,7 +238,8 @@ public:
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] optional<Bool> is_dispersive() const noexcept override { return dispersive_; }
     [[nodiscard]] Bool splittable() const noexcept override { return true; }
-
+    [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
+                                                TSampler &sampler) const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override { return flag_; }
     [[nodiscard]] Float to_ratio_z() const noexcept override {
         Float ior = fresnel_->eta().average();
