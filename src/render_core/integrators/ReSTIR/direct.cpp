@@ -31,6 +31,7 @@ void ReSTIRDI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     changed_ |= widgets->input_uint_limit("M BSDF", &M_bsdf_, 0, 100);
     changed_ |= widgets->drag_uint("max age", &max_age_, 1, 0, 100);
     changed_ |= widgets->input_uint_limit("max recursion", &max_recursion_, 1, 100);
+    changed_ |= widgets->drag_float("diffuse factor threshold", &diff_factor_, 0, 1);
     changed_ |= widgets->check_box("temporal", &temporal_.open);
     if (temporal_.open) {
         changed_ |= widgets->input_uint_limit("history", &temporal_.limit, 0, 50, 1, 3);
@@ -484,31 +485,31 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, TriangleHitVar &hit, Interacti
         };
     };
 
-//    $if(hit->is_hit()) {
-//        it = geometry.compute_surface_interaction(hit, rs.ray, true);
-//        surf_ext.t_max += rs.ray->t_max();
-//        Float3 v_pos = camera_ray->at(surf_ext.t_max);
-//        Float3 w;
-//        scene().materials().dispatch(it.material_id(), [&](const Material *material) {
-//            auto bsdf = material->create_evaluator(it, sampled_wavelengths());
-//            cur_surf.flag = bsdf.flag();
-//            Float diff_factor = bsdf.diffuse_factor();
-//            cur_surf->set_diffuse_factor(diff_factor);
-//            if (material->enable_delta()) {
-//                $if(cur_surf->near_specular()) {
-//                    BSDFSample bsdf_sample = bsdf.sample_delta(it.wo, scene().sampler());
-//                    w = bsdf_sample.wi;
-//                    surf_ext.throughput *= bsdf_sample.eval.throughput().vec3();
-//                };
-//            }
-//        });
-//        $if(counter == 0) {
-//            cur_surf->set_depth(camera->linear_depth(v_pos));
-//            cur_surf->set_normal(it.shading.normal());
-//            cur_surf->set_position(it.pos);
-//        };
-//        counter += 1;
-//    };
+    //    $if(hit->is_hit()) {
+    //        it = geometry.compute_surface_interaction(hit, rs.ray, true);
+    //        surf_ext.t_max += rs.ray->t_max();
+    //        Float3 v_pos = camera_ray->at(surf_ext.t_max);
+    //        Float3 w;
+    //        scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+    //            auto bsdf = material->create_evaluator(it, sampled_wavelengths());
+    //            cur_surf.flag = bsdf.flag();
+    //            Float diff_factor = bsdf.diffuse_factor();
+    //            cur_surf->set_diffuse_factor(diff_factor);
+    //            if (material->enable_delta()) {
+    //                $if(cur_surf->near_specular()) {
+    //                    BSDFSample bsdf_sample = bsdf.sample_delta(it.wo, scene().sampler());
+    //                    w = bsdf_sample.wi;
+    //                    surf_ext.throughput *= bsdf_sample.eval.throughput().vec3();
+    //                };
+    //            }
+    //        });
+    //        $if(counter == 0) {
+    //            cur_surf->set_depth(camera->linear_depth(v_pos));
+    //            cur_surf->set_normal(it.shading.normal());
+    //            cur_surf->set_position(it.pos);
+    //        };
+    //        counter += 1;
+    //    };
     return cur_surf;
 }
 
@@ -564,7 +565,7 @@ DIReservoirVar ReSTIRDI::spatial_reuse(DIReservoirVar rsv, const SurfaceDataVar 
             another_pixel = ocarina::clamp(another_pixel, make_int2(0u), res - 1);
             Uint index = dispatch_id(another_pixel);
             SurfaceDataVar other_surf = cur_surfaces().read(index);
-            $if(is_neighbor(cur_surf, other_surf, param)) {
+            $if(is_valid_neighbor(cur_surf, other_surf, param)) {
                 rsv_idx.push_back(index);
             };
         };
@@ -697,6 +698,7 @@ DIParam ReSTIRDI::construct_param() const noexcept {
     param.M_light = M_light_;
     param.M_bsdf = M_bsdf_;
     param.max_age = max_age_;
+    param.diff_factor = diff_factor_;
 
     param.spatial = static_cast<uint>(spatial_.open);
     param.N = spatial_.sample_num;

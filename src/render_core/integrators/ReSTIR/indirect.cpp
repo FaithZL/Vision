@@ -39,6 +39,8 @@ bool ReSTIRGI::render_UI(ocarina::Widgets *widgets) noexcept {
 void ReSTIRGI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     changed_ |= widgets->check_box("temporal", &temporal_.open);
     changed_ |= widgets->drag_uint("max age", &max_age_, 1, 0, 100);
+    changed_ |= widgets->drag_float("diffuse factor threshold", &diff_factor_, 0, 1);
+    
     if (temporal_.open) {
         changed_ |= widgets->input_uint_limit("history", &temporal_.limit, 0, 50, 1, 3);
         changed_ |= widgets->input_float_limit("temporal theta",
@@ -280,7 +282,7 @@ GIReservoirVar ReSTIRGI::spatial_reuse(GIReservoirVar rsv, const SurfaceDataVar 
             another_pixel = ocarina::clamp(another_pixel, make_int2(0u), res - 1);
             Uint index = dispatch_id(another_pixel);
             SurfaceDataVar other_surf = cur_surfaces().read(index);
-            $if(is_neighbor(cur_surf, other_surf, param)) {
+            $if(is_valid_neighbor(cur_surf, other_surf, param)) {
                 rsv_idx.push_back(index);
             };
         };
@@ -333,6 +335,7 @@ void ReSTIRGI::compile_spatial_shading() noexcept {
 GIParam ReSTIRGI::construct_param() const noexcept {
     GIParam param;
     param.max_age = max_age_;
+    param.diff_factor = diff_factor_;
 
     param.spatial = static_cast<uint>(spatial_.open);
     param.N = spatial_.sample_num;

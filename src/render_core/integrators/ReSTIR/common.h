@@ -69,12 +69,12 @@ public:
 }// namespace vision
 
 namespace vision {
-[[nodiscard]] inline Bool is_neighbor(const SurfaceDataVar &cur_surface,
-                                      const SurfaceDataVar &another_surface,
-                                      const Float &dot_threshold, const Float &depth_threshold) noexcept {
+[[nodiscard]] inline Bool is_valid_neighbor(const SurfaceDataVar &cur_surface, const SurfaceDataVar &another_surface,
+                                            const Float &dot_threshold, const Float &depth_threshold,
+                                            const Float &diff_threshold) noexcept {
     Bool cond0 = abs_dot(cur_surface->normal(), another_surface->normal()) > dot_threshold;
     Bool cond1 = (abs(cur_surface->depth() - another_surface->depth()) / cur_surface->depth()) < depth_threshold;
-    Bool cond2 = (abs(cur_surface->diffuse_factor() - another_surface->diffuse_factor())) / cur_surface->diffuse_factor() < 0.3f;
+    Bool cond2 = (abs(cur_surface->diffuse_factor() - another_surface->diffuse_factor())) / cur_surface->diffuse_factor() < diff_threshold;
     return cond0 && cond1 &&
            cond2 && cur_surface.hit->is_hit() && another_surface.hit->is_hit();
 }
@@ -85,6 +85,7 @@ protected:
     TemporalResamplingParam temporal_{};
     bool open_{true};
     uint max_age_{};
+    float diff_factor_{0.3f};
     IlluminationIntegrator *integrator_{};
 
 public:
@@ -94,8 +95,10 @@ public:
           spatial_(desc["spatial"]),
           temporal_(desc["temporal"]),
           open_(desc["open"].as_bool(true)),
+          diff_factor_(desc["diffuse_factor"].as_float(0.3f)),
           max_age_(desc["max_age"].as_uint(30)) {}
-    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, spatial_, temporal_, open_, max_age_, integrator_)
+    VS_HOTFIX_MAKE_RESTORE(RuntimeObject, spatial_, temporal_, open_,
+                           max_age_, diff_factor_, integrator_)
     OC_MAKE_MEMBER_SETTER(integrator)
     OC_MAKE_MEMBER_GETTER(open, )
     virtual void update_resolution(uint2 res) noexcept {}

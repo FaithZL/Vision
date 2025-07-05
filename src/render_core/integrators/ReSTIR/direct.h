@@ -11,6 +11,7 @@ struct DIParam {
     uint M_light{};
     uint M_bsdf{};
     uint max_age{};
+    float diff_factor{};
 
     /// spatial
     uint spatial{1};
@@ -28,7 +29,7 @@ struct DIParam {
 };
 }// namespace vision
 
-OC_PARAM_STRUCT(vision, DIParam, M_light, M_bsdf, max_age, spatial, N,
+OC_PARAM_STRUCT(vision, DIParam, M_light, M_bsdf, max_age, diff_factor, spatial, N,
                 s_dot, s_depth, s_radius, temporal, history_limit,
                 t_dot, t_depth, t_radius){};
 
@@ -83,12 +84,11 @@ public:
     OC_MAKE_MEMBER_SETTER(integrator)
     bool render_UI(ocarina::Widgets *widgets) noexcept override;
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override;
-    [[nodiscard]] static Bool is_neighbor(const SurfaceDataVar &cur_surface,
-                                          const SurfaceDataVar &another_surface,
-                                          const Var<DIParam> &param) noexcept {
-        return vision::is_neighbor(cur_surface, another_surface,
-                                   param.s_dot,
-                                   param.s_depth);
+    [[nodiscard]] static Bool is_valid_neighbor(const SurfaceDataVar &cur_surface,
+                                                const SurfaceDataVar &another_surface,
+                                                const Var<DIParam> &param) noexcept {
+        return vision::is_valid_neighbor(cur_surface, another_surface,
+                                         param.s_dot, param.s_depth, param.diff_factor);
     }
     void update_resolution(uint2 res) noexcept override;
     [[nodiscard]] static Bool is_temporal_valid(const SurfaceDataVar &cur_surface,
@@ -96,9 +96,9 @@ public:
                                                 const Var<DIParam> &param,
                                                 DISampleVar *sample) noexcept {
         Bool cond = sample ? sample->age < param.max_age : true;
-        return vision::is_neighbor(cur_surface, prev_surface,
-                                   param.t_dot,
-                                   param.t_depth) &&
+        return vision::is_valid_neighbor(cur_surface, prev_surface,
+                                         param.t_dot,
+                                         param.t_depth, param.diff_factor) &&
                cond;
     }
     [[nodiscard]] uint reservoir_base() const noexcept { return reservoirs_.index().hv(); }
