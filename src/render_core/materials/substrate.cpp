@@ -72,6 +72,11 @@ public:
 class SubstrateLobe : public MicrofacetLobe {
 public:
     using MicrofacetLobe::MicrofacetLobe;
+
+public:
+    [[nodiscard]] Float diffuse_factor() const noexcept override {
+        return sqrt(MicrofacetLobe::diffuse_factor());
+    }
 };
 
 //    "type" : "substrate",

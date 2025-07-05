@@ -121,6 +121,14 @@ Uint MaterialEvaluator::flag() const noexcept {
     return ret;
 }
 
+Float MaterialEvaluator::diffuse_factor() const noexcept {
+    Float ret;
+    dispatch([&](const Lobe *lobe_set) {
+        ret = lobe_set->diffuse_factor();
+    });
+    return ret;
+}
+
 ScatterEval MaterialEvaluator::evaluate(const Float3 &world_wo, const Float3 &world_wi,
                                         MaterialEvalMode mode, const Uint &flag,
                                         TransportMode tm) const noexcept {
@@ -174,7 +182,6 @@ BSDFSample MaterialEvaluator::sample(const Float3 &world_wo, TSampler &sampler,
         return ret;
     }
 }
-
 
 ///#endregion
 

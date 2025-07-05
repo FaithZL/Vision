@@ -74,8 +74,9 @@ namespace vision {
                                       const Float &dot_threshold, const Float &depth_threshold) noexcept {
     Bool cond0 = abs_dot(cur_surface->normal(), another_surface->normal()) > dot_threshold;
     Bool cond1 = (abs(cur_surface->depth() - another_surface->depth()) / cur_surface->depth()) < depth_threshold;
+    Bool cond2 = (abs(cur_surface->diffuse_factor() - another_surface->diffuse_factor())) / cur_surface->diffuse_factor() < 0.3f;
     return cond0 && cond1 &&
-           (cur_surface.mat_id == another_surface.mat_id) && cur_surface.hit->is_hit() && another_surface.hit->is_hit();
+           cond2 && cur_surface.hit->is_hit() && another_surface.hit->is_hit();
 }
 
 class ReSTIR : public EncodedObject, public Context, public RenderEnv, public GUI, public RuntimeObject {
@@ -93,7 +94,7 @@ public:
           spatial_(desc["spatial"]),
           temporal_(desc["temporal"]),
           open_(desc["open"].as_bool(true)),
-          max_age_(desc["max_age"].as_uint(30)){}
+          max_age_(desc["max_age"].as_uint(30)) {}
     VS_HOTFIX_MAKE_RESTORE(RuntimeObject, spatial_, temporal_, open_, max_age_, integrator_)
     OC_MAKE_MEMBER_SETTER(integrator)
     OC_MAKE_MEMBER_GETTER(open, )
@@ -117,7 +118,8 @@ public:
         Float3 view_pos;
         $if(is_replace) {
             view_pos = cur_surface_extends().read(dispatch_id()).view_pos;
-        }$else {
+        }
+        $else {
             view_pos = scene().sensor()->device_position();
         };
         return view_pos;

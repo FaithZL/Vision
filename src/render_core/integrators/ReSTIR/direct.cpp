@@ -441,57 +441,20 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, TriangleHitVar &hit, Interacti
 
     cur_surf.hit = hit;
 
-//    $loop {
-//        cur_surf.hit = hit;
-//        $if(!hit->is_hit()) {
-//            $break;
-//        };
-//        it = geometry.compute_surface_interaction(hit, rs.ray, true);
-//        surf_ext.t_max += rs.ray->t_max();
-//        Float3 v_pos = camera_ray->at(surf_ext.t_max);
-//        cur_surf.mat_id = it.material_id();
-//        Float3 w;
-//        scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
-//            auto bsdf = material->create_evaluator(it, sampled_wavelengths());
-//            cur_surf.flag = bsdf.flag();
-//            if (material->enable_delta()) {
-//                $if(cur_surf->near_specular()) {
-//                    BSDFSample bsdf_sample = bsdf.sample_delta(it.wo, scene().sampler());
-//                    w = bsdf_sample.wi;
-//                    surf_ext.throughput *= bsdf_sample.eval.throughput().vec3();
-//                };
-//            }
-//        });
-//        $if(counter == 0) {
-//            cur_surf->set_depth(camera->linear_depth(v_pos));
-//            cur_surf->set_normal(it.shading.normal());
-//            cur_surf->set_position(it.pos);
-//        };
-//        counter += 1;
-//        $if(counter >= max_recursion_) {
-//            $break;
-//        };
-//        $if(cur_surf->near_specular()) {
-//            surf_ext.view_pos = it.pos;
-//            rs = it.spawn_ray_state(w);
-//            hit = pipeline()->trace_closest(rs.ray);
-//            cur_surf.is_replaced = true;
-//            //            cur_surf->set_depth(0);
-//        }
-//        $else {
-//            $break;
-//        };
-//    };
-
-    $if(hit->is_hit()) {
+    $loop {
+        cur_surf.hit = hit;
+        $if(!hit->is_hit()) {
+            $break;
+        };
         it = geometry.compute_surface_interaction(hit, rs.ray, true);
         surf_ext.t_max += rs.ray->t_max();
         Float3 v_pos = camera_ray->at(surf_ext.t_max);
-        cur_surf.mat_id = it.material_id();
         Float3 w;
-        scene().materials().dispatch(cur_surf.mat_id, [&](const Material *material) {
+        scene().materials().dispatch(it.material_id(), [&](const Material *material) {
             auto bsdf = material->create_evaluator(it, sampled_wavelengths());
             cur_surf.flag = bsdf.flag();
+            Float diff_factor = bsdf.diffuse_factor();
+            cur_surf->set_diffuse_factor(diff_factor);
             if (material->enable_delta()) {
                 $if(cur_surf->near_specular()) {
                     BSDFSample bsdf_sample = bsdf.sample_delta(it.wo, scene().sampler());
@@ -506,7 +469,46 @@ SurfaceDataVar ReSTIRDI::compute_hit(RayState rs, TriangleHitVar &hit, Interacti
             cur_surf->set_position(it.pos);
         };
         counter += 1;
+        $if(counter >= max_recursion_) {
+            $break;
+        };
+        $if(cur_surf->near_specular()) {
+            surf_ext.view_pos = it.pos;
+            rs = it.spawn_ray_state(w);
+            hit = pipeline()->trace_closest(rs.ray);
+            cur_surf.is_replaced = true;
+            //            cur_surf->set_depth(0);
+        }
+        $else {
+            $break;
+        };
     };
+
+//    $if(hit->is_hit()) {
+//        it = geometry.compute_surface_interaction(hit, rs.ray, true);
+//        surf_ext.t_max += rs.ray->t_max();
+//        Float3 v_pos = camera_ray->at(surf_ext.t_max);
+//        Float3 w;
+//        scene().materials().dispatch(it.material_id(), [&](const Material *material) {
+//            auto bsdf = material->create_evaluator(it, sampled_wavelengths());
+//            cur_surf.flag = bsdf.flag();
+//            Float diff_factor = bsdf.diffuse_factor();
+//            cur_surf->set_diffuse_factor(diff_factor);
+//            if (material->enable_delta()) {
+//                $if(cur_surf->near_specular()) {
+//                    BSDFSample bsdf_sample = bsdf.sample_delta(it.wo, scene().sampler());
+//                    w = bsdf_sample.wi;
+//                    surf_ext.throughput *= bsdf_sample.eval.throughput().vec3();
+//                };
+//            }
+//        });
+//        $if(counter == 0) {
+//            cur_surf->set_depth(camera->linear_depth(v_pos));
+//            cur_surf->set_normal(it.shading.normal());
+//            cur_surf->set_position(it.pos);
+//        };
+//        counter += 1;
+//    };
     return cur_surf;
 }
 

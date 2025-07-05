@@ -81,7 +81,7 @@ public:
     [[nodiscard]] virtual Bool splittable() const noexcept { return false; }
     virtual Lobe &operator=(const Lobe &other) noexcept = default;
     virtual void regularize() noexcept {}
-    [[nodiscard]] virtual Float diffuse_factor() noexcept { return 1; }
+    [[nodiscard]] virtual Float diffuse_factor() const noexcept { return 1; }
     virtual void mollify() noexcept {}
     [[nodiscard]] virtual const SampledWavelengths *swl() const = 0;
     [[nodiscard]] virtual Uint flag() const noexcept = 0;
@@ -127,7 +127,7 @@ public:
     [[nodiscard]] const Microfacet<D> *microfacet() const noexcept { return bxdf()->microfacet(); }
     void from_ratio_x(const ocarina::Float &roughness) noexcept override;
     [[nodiscard]] Float to_ratio_x() const noexcept override;
-    [[nodiscard]] Float diffuse_factor() noexcept override;
+    [[nodiscard]] Float diffuse_factor() const noexcept override;
     VS_MAKE_LOBE_ASSIGNMENT(MicrofacetLobe)
     [[nodiscard]] SampledSpectrum albedo(const Float &cos_theta) const noexcept override;
     [[nodiscard]] const SampledWavelengths *swl() const override;
@@ -241,7 +241,7 @@ public:
     [[nodiscard]] Bool splittable() const noexcept override { return true; }
     [[nodiscard]] BSDFSample sample_delta_local(const Float3 &wo,
                                                 TSampler &sampler) const noexcept override;
-    [[nodiscard]] Float diffuse_factor() noexcept override;
+    [[nodiscard]] Float diffuse_factor() const noexcept override;
     [[nodiscard]] Uint flag() const noexcept override { return flag_; }
     [[nodiscard]] Float to_ratio_z() const noexcept override {
         Float ior = fresnel_->eta().average();

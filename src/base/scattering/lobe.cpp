@@ -209,7 +209,7 @@ SampledSpectrum MicrofacetLobe::albedo(const Float &cos_theta) const noexcept {
     return bxdf_->albedo(cos_theta) * fresnel_->evaluate(cos_theta);
 }
 
-Float MicrofacetLobe::diffuse_factor() noexcept {
+Float MicrofacetLobe::diffuse_factor() const noexcept {
     return ocarina::sqrt(bxdf_->alpha_average());
 }
 
@@ -424,7 +424,7 @@ BSDFSample DielectricLobe::sample_delta_local(const Float3 &wo, TSampler &sample
     return ret;
 }
 
-Float DielectricLobe::diffuse_factor() noexcept {
+Float DielectricLobe::diffuse_factor() const noexcept {
     return ocarina::sqrt(microfacet_->alpha_x());
 }
 

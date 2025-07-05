@@ -71,6 +71,7 @@ public:
                                     const Uint &flag = BxDFFlag::All,
                                     TransportMode tm = Radiance) const noexcept;
     [[nodiscard]] Uint flag() const noexcept;
+    [[nodiscard]] Float diffuse_factor() const noexcept;
 };
 
 class ShapeInstance;
