@@ -37,7 +37,7 @@ public:
     Filter() = default;
     explicit Filter(const FilterDesc &desc)
         : Node(desc),
-          radius_(make_float2(desc["radius"].as_float(1.5f))) {}
+          radius_(make_float2(desc["radius"].as_float(0.5f))) {}
     OC_ENCODABLE_FUNC(Encodable, radius_)
     VS_HOTFIX_MAKE_RESTORE(Node, radius_)
 
