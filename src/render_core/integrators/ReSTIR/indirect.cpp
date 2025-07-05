@@ -177,28 +177,22 @@ GIReservoirVar ReSTIRGI::temporal_reuse(GIReservoirVar rsv, const SurfaceDataVar
         auto prev_surf = data.first;
         auto prev_rsv = data.second;
 
-        Float4 cur_surf_normal = cur_surf.normal_depth;
-        Float4 prev_surf_normal = prev_surf.normal_depth;
-        $if(cur_surf.mat_id == prev_surf.mat_id ||
-            (dot(cur_surf_normal.xyz(), prev_surf_normal.xyz()) > 0.3f)) {
-
-            $if(is_temporal_valid(cur_surf, prev_surf,
-                                  param, addressof(prev_rsv.sample))) {
-                rsv = combine_temporal(rsv, cur_surf, prev_rsv, nullptr,
-                                       view_pos, prev_view_pos);
-            }
-            $else {
-                $for(i, temporal_.N) {
-                    Float2 p = square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film;
-                    auto data = get_prev_data(p, prev_view_pos);
-                    auto another_surf = data.first;
-                    auto another_rsv = data.second;
-                    $if(is_temporal_valid(cur_surf, another_surf,
-                                          param, addressof(another_rsv.sample))) {
-                        rsv = combine_temporal(rsv, cur_surf, another_rsv, addressof(another_surf),
-                                               view_pos, prev_view_pos);
-                        $break;
-                    };
+        $if(is_temporal_valid(cur_surf, prev_surf,
+                              param, addressof(prev_rsv.sample))) {
+            rsv = combine_temporal(rsv, cur_surf, prev_rsv, nullptr,
+                                   view_pos, prev_view_pos);
+        }
+        $else {
+            $for(i, temporal_.N) {
+                Float2 p = square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film;
+                auto data = get_prev_data(p, prev_view_pos);
+                auto another_surf = data.first;
+                auto another_rsv = data.second;
+                $if(is_temporal_valid(cur_surf, another_surf,
+                                      param, addressof(another_rsv.sample))) {
+                    rsv = combine_temporal(rsv, cur_surf, another_rsv, addressof(another_surf),
+                                           view_pos, prev_view_pos);
+                    $break;
                 };
             };
         };
@@ -286,14 +280,6 @@ GIReservoirVar ReSTIRGI::spatial_reuse(GIReservoirVar rsv, const SurfaceDataVar 
             another_pixel = ocarina::clamp(another_pixel, make_int2(0u), res - 1);
             Uint index = dispatch_id(another_pixel);
             SurfaceDataVar other_surf = cur_surfaces().read(index);
-
-            Float4 cur_surf_normal = cur_surf.normal_depth;
-            Float4 other_surf_normal = other_surf.normal_depth;
-            $if(cur_surf.mat_id != other_surf.mat_id ||
-                (dot(cur_surf_normal.xyz(), other_surf_normal.xyz()) < 0.3f)) {
-                $continue;
-            };
-
             $if(is_neighbor(cur_surf, other_surf, param)) {
                 rsv_idx.push_back(index);
             };
