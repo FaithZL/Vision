@@ -13450,16 +13450,16 @@
             "direct": {
                 "spatial": {
 //                                        					"open": false,
-                    "theta": 5,
+                    "theta": 35,
                     "depth": 0.3,
                     "radius": 30,
                     "sample_num": 1
                 },
                 "temporal": {
 //                                        					"open": false,
-                    "theta": 5,
-                    "depth": 0.1,
-                    "radius": 0,
+                    "theta": 35,
+                    "depth": 0.3,
+                    "radius": 8,
                     "motion_vec": 0.15,
                     "history_limit": 20
                 },
@@ -13470,7 +13470,7 @@
             "indirect": {
                 "spatial": {
                     //					"open": false,
-                    "theta": 5,
+                    "theta": 35,
                     "depth": 0.3,
                     "radius": 30,
                     "sample_num": 1
@@ -13478,9 +13478,9 @@
                 "temporal": {
                     //					"open": false,
                     //					"mis": true,
-                    "theta": 2,
-                    "depth": 1,
-                    "radius": 0,
+                    "theta": 35,
+                    "depth": 0.3,
+                    "radius": 8,
                     "history_limit": 10
                 },
                 "correct_mode" : 0,
