@@ -140,7 +140,7 @@ public:
         auto fresnel = make_shared<FresnelDielectric>(SampledSpectrum{swl.dimension(), 1.5f},
                                                       swl);
         UP<FresnelBlend> refl = make_unique<FresnelBlend>(Rd, Rs, swl, microfacet);
-        return make_unique<SubstrateLobe>(fresnel, std::move(refl), flag, shading_frame);
+        return make_unique<SubstrateLobe>(fresnel, std::move(refl), SurfaceData::Glossy, shading_frame);
     }
 };
 
