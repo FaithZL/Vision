@@ -166,6 +166,10 @@ public:
         if (oidn_on_) {
             OfflineDenoiseInput input;
             RegistrableManaged<float4> &original = scene().rad_collector()->output_buffer();
+            stream << frame_buffer().color().copy_from(original.device_buffer());
+            stream << synchronize();
+            stream << commit();
+
             input.resolution = frame_buffer().resolution();
             input.output = &original;
             input.color = &original;
