@@ -13487,6 +13487,18 @@
 //                "open": false,
                 "pairwise": true
             },
+            "denoiser" : {
+                "type" : "svgf",
+                "param" : {
+                    "N": 3,
+                    "filter": {
+                        "type": "gaussian",
+                        "param" : {
+                            "radius": 2.5
+                        }
+                    }
+                }
+            },
             "min_depth" : 5,
             "max_depth" : 16,
             "rr_threshold" : 1
