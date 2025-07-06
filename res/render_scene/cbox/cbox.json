@@ -258,9 +258,9 @@
 				"x" : 1,
 				"y" : 1,
 				"z" : 1,
-				"material": "TallBox",
+//				"material": "TallBox",
 //				"material" : "mix2",
-//				"material" : "Mirror",
+				"material" : "Mirror",
 //				                "material": "Mirror2",
 //								                "material": "Glass",
 //												"material" : "Metal",
@@ -1171,7 +1171,7 @@
 		"polymorphic_mode" : 1
 	},
 	"denoiser" : {
-		"type" : "oidn",
+		"type" : "svgf",
 		"param" : {
 			"backend": "GPU"
 		}
