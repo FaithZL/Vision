@@ -20,6 +20,7 @@ private:
     SP<ScreenBuffer> specular_buffer_{make_shared<ScreenBuffer>("RealTimeIntegrator::specular_buffer_")};
     Shader<void(uint, float, float)> combine_;
     Shader<void(uint, Buffer<SurfaceData>)> path_tracing_;
+    bool oidn_on_{false};
 
 public:
     RealTimeIntegrator() = default;
@@ -68,6 +69,7 @@ public:
         frame_buffer().prepare_gbuffer();
         frame_buffer().prepare_normal();
         frame_buffer().prepare_motion_vectors();
+        frame_buffer().prepare_color();
     }
 
     [[nodiscard]] RadianceCollector *rad_collector() noexcept { return scene().rad_collector(); }
@@ -76,6 +78,7 @@ public:
     void render_sub_UI(ocarina::Widgets *widgets) noexcept override {
         direct_->render_UI(widgets);
         indirect_->render_UI(widgets);
+        widgets->check_box("oidn on", &oidn_on_);
     }
 
     void compile_path_tracing() noexcept {
@@ -160,15 +163,16 @@ public:
         stream << synchronize();
         stream << commit();
 
-        OfflineDenoiseInput input;
-
-        RegistrableManaged<float4> &original = scene().rad_collector()->output_buffer();
-        input.resolution = frame_buffer().resolution();
-        input.output = &original;
-        input.color = &original;
-        input.normal = &frame_buffer().normal();
-        input.albedo = &frame_buffer().albedo();
-        denoiser_->apply(input);
+        if (oidn_on_) {
+            OfflineDenoiseInput input;
+            RegistrableManaged<float4> &original = scene().rad_collector()->output_buffer();
+            input.resolution = frame_buffer().resolution();
+            input.output = &original;
+            input.color = &original;
+            input.normal = &frame_buffer().normal();
+            input.albedo = &frame_buffer().albedo();
+            denoiser_->apply(input);
+        }
 
         stream << frame_buffer().gamma_correct();
         stream << synchronize();

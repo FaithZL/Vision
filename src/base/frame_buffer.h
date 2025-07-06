@@ -129,6 +129,8 @@ public:                                                                    \
     VS_MAKE_BUFFER(RegistrableManaged<float4>, albedo, 1)
     VS_MAKE_BUFFER(RegistrableManaged<float4>, normal, 1)
 
+    VS_MAKE_BUFFER(RegistrableManaged<float4>, color, 2)
+
     VS_MAKE_BUFFER(RegistrableBuffer<PixelGeometry>, gbuffer, 2)
 
     /// used for editor
@@ -163,6 +165,7 @@ public:
     [[nodiscard]] uint pixel_index(uint2 pos) const noexcept;
     [[nodiscard]] uint gbuffer_base() const noexcept { return gbuffer_.index().hv(); }
     [[nodiscard]] uint surface_base() const noexcept { return surfaces_.index().hv(); }
+    [[nodiscard]] uint color_buffer_base() const noexcept { return color_.index().hv(); }
     [[nodiscard]] uint surface_ext_base() const noexcept { return surface_extends_.index().hv(); }
     template<typename T>
     requires is_integral_expr_v<T>
