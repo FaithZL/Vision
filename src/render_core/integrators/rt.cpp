@@ -20,15 +20,13 @@ private:
     SP<ScreenBuffer> specular_buffer_{make_shared<ScreenBuffer>("RealTimeIntegrator::specular_buffer_")};
     Shader<void(uint, float, float)> combine_;
     Shader<void(uint, Buffer<SurfaceData>)> path_tracing_;
-    SP<Denoiser> denoiser_;
 
 public:
     RealTimeIntegrator() = default;
     explicit RealTimeIntegrator(const IntegratorDesc &desc)
         : IlluminationIntegrator(desc),
           direct_(make_shared<ReSTIRDI>(this, desc["direct"])),
-          indirect_(make_shared<ReSTIRGI>(this, desc["indirect"])),
-          denoiser_(Node::create_shared<Denoiser>(desc.denoiser_desc)) {
+          indirect_(make_shared<ReSTIRGI>(this, desc["indirect"])) {
         max_depth_ = max_depth_.hv() - 1;
     }
 
@@ -65,6 +63,7 @@ public:
         frame_buffer().prepare_surfaces();
         frame_buffer().prepare_surface_extends();
         frame_buffer().prepare_hit_buffer();
+        frame_buffer().prepare_gbuffer();
         frame_buffer().prepare_motion_vectors();
     }
 
@@ -104,6 +103,7 @@ public:
     void compile() noexcept override {
         direct_->compile();
         indirect_->compile();
+        denoiser_->compile();
         //        compile_path_tracing();
 
         TSensor &camera = scene().sensor();
@@ -117,10 +117,24 @@ public:
         combine_ = device().compile(kernel, "combine");
     }
 
+    RealTimeDenoiseInput denoise_input() const noexcept {
+        RealTimeDenoiseInput ret;
+        TSensor &camera = scene().sensor();
+        ret.frame_index = frame_index_;
+        ret.resolution = pipeline()->resolution();
+        ret.gbuffer = frame_buffer().cur_gbuffer(frame_index_);
+        ret.prev_gbuffer = frame_buffer().prev_gbuffer(frame_index_);
+        ret.motion_vec = frame_buffer().motion_vectors();
+        ret.radiance = rad_collector()->rt_buffer();
+        ret.output = rad_collector()->output_buffer();
+        return ret;
+    }
+
     void render() const noexcept override {
         const Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
-//        stream << frame_buffer().compute_hit(frame_index_);
+        stream << frame_buffer().compute_hit(frame_index_);
+
         stream << direct_->dispatch(frame_index_);
         //        stream << path_tracing_(frame_index_,
         //                                frame_buffer().cur_surfaces(frame_index_))
@@ -129,6 +143,8 @@ public:
         stream << combine_(frame_index_, direct_->factor(),
                            indirect_->factor())
                       .dispatch(pipeline()->resolution());
+        auto dn_input = denoise_input();
+        stream << denoiser_->dispatch(dn_input);
         increase_frame_index();
     }
 };
