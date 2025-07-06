@@ -318,6 +318,8 @@ float4 *Pipeline::final_picture(const OutputDesc &desc) noexcept {
         input.resolution = resolution();
         input.output = &final_picture_;
         input.color = &original;
+        input.normal = &frame_buffer_->normal();
+        input.albedo = &frame_buffer_->albedo();
         postprocessor_.denoise(input);
         postprocessor_.tone_mapping(final_picture_, final_picture_, gamma);
     } else {

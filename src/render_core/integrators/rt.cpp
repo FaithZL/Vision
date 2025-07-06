@@ -66,6 +66,7 @@ public:
         frame_buffer().prepare_surface_extends();
         frame_buffer().prepare_hit_buffer();
         frame_buffer().prepare_gbuffer();
+        frame_buffer().prepare_normal();
         frame_buffer().prepare_motion_vectors();
     }
 
@@ -105,7 +106,7 @@ public:
     [[nodiscard]] CommandList compute_GBuffer() const noexcept {
         return frame_buffer().compute_GBuffer(frame_index_, frame_buffer().cur_gbuffer(frame_index_),
                                               frame_buffer().motion_vectors(), frame_buffer().albedo(),
-                                              frame_buffer().emission());
+                                              frame_buffer().emission(), frame_buffer().normal());
     }
 
     void compile() noexcept override {

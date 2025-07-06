@@ -76,7 +76,7 @@ public:
 
     /// for real time denoise
     virtual CommandList dispatch(RealTimeDenoiseInput &input) noexcept {
-        OC_ERROR_FORMAT("denoiser {} error dispatch", typeid(*this).name());
+//        OC_ERROR_FORMAT("denoiser {} error dispatch", typeid(*this).name());
         return {};
     }
     [[nodiscard]] Backend backend() const noexcept { return backend_; }

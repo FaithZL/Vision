@@ -90,7 +90,7 @@ public:
     static constexpr auto final_result = "FrameBuffer::final_result_";
 
 protected:
-    using gbuffer_signature = void(uint, Buffer<PixelGeometry>, Buffer<float2>, Buffer<float4>, Buffer<float4>);
+    using gbuffer_signature = void(uint, Buffer<PixelGeometry>, Buffer<float2>, Buffer<float4>, Buffer<float4>, Buffer<float4>);
     Shader<gbuffer_signature> compute_geom_;
 
     using grad_signature = void(uint, Buffer<PixelGeometry>);
@@ -126,7 +126,8 @@ public:                                                                    \
     VS_MAKE_BUFFER(RegistrableBuffer<float2>, motion_vectors, 1)
     VS_MAKE_BUFFER(RegistrableBuffer<HitBSDF>, hit_bsdfs, 1)
     VS_MAKE_BUFFER(RegistrableBuffer<float4>, emission, 1)
-    VS_MAKE_BUFFER(RegistrableBuffer<float4>, albedo, 1)
+    VS_MAKE_BUFFER(RegistrableManaged<float4>, albedo, 1)
+    VS_MAKE_BUFFER(RegistrableManaged<float4>, normal, 1)
 
     VS_MAKE_BUFFER(RegistrableBuffer<PixelGeometry>, gbuffer, 2)
 
@@ -224,10 +225,10 @@ public:
     [[nodiscard]] CommandList gamma_correct() const noexcept;
     [[nodiscard]] virtual CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer,
                                                       BufferView<float2> motion_vectors, BufferView<float4> albedo,
-                                                      BufferView<float4> emission) const noexcept;
+                                                      BufferView<float4> emission,BufferView<float4> normal) const noexcept;
     [[nodiscard]] virtual CommandList compute_geom(uint frame_index, BufferView<PixelGeometry> gbuffer,
                                                    BufferView<float2> motion_vectors, BufferView<float4> albedo,
-                                                   BufferView<float4> emission) const noexcept;
+                                                   BufferView<float4> emission,BufferView<float4> normal) const noexcept;
     [[nodiscard]] virtual CommandList compute_grad(uint frame_index, BufferView<PixelGeometry> gbuffer) const noexcept;
     [[nodiscard]] virtual CommandList compute_hit(uint frame_index) const noexcept;
     template<typename T>

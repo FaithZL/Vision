@@ -74,7 +74,7 @@ void FrameBuffer::compile_compute_geom() noexcept {
     TSampler &sampler = scene().sampler();
     TLightSampler &light_sampler = scene().light_sampler();
     Kernel kernel = [&](Uint frame_index, BufferVar<PixelGeometry> gbuffer, BufferVar<float2> motion_vectors,
-                        BufferVar<float4> albedo_buffer, BufferVar<float4> emission_buffer) {
+                        BufferVar<float4> albedo_buffer, BufferVar<float4> emission_buffer, BufferVar<float4> normal_buffer) {
         RenderEnv render_env;
         render_env.initial(sampler, frame_index, spectrum());
         Uint2 pixel = dispatch_idx().xy();
@@ -96,6 +96,7 @@ void FrameBuffer::compile_compute_geom() noexcept {
         $if(hit->is_hit()) {
             Interaction it = pipeline()->compute_surface_interaction(hit, rs.ray, true);
             geom->set_normal(it.shading.normal());
+            normal_buffer.write(dispatch_id(), make_float4(it.shading.normal(), 1.f));
             geom.linear_depth = camera->linear_depth(it.pos);
             $if(it.has_material()) {
                 scene().materials().dispatch(it.material_id(), [&](const Material *material) {
@@ -205,9 +206,9 @@ CommandList FrameBuffer::compute_hit(uint frame_index) const noexcept {
 }
 
 CommandList FrameBuffer::compute_geom(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
-                                      BufferView<float4> albedo, BufferView<float4> emission) const noexcept {
+                                      BufferView<float4> albedo, BufferView<float4> emission,BufferView<float4> normal) const noexcept {
     CommandList ret;
-    ret << compute_geom_(frame_index, gbuffer, motion_vectors, albedo, emission).dispatch(resolution());
+    ret << compute_geom_(frame_index, gbuffer, motion_vectors, albedo, emission, normal).dispatch(resolution());
     return ret;
 }
 
@@ -219,10 +220,10 @@ CommandList FrameBuffer::compute_grad(uint frame_index, BufferView<vision::Pixel
 
 CommandList FrameBuffer::compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer,
                                          BufferView<float2> motion_vectors,
-                                         BufferView<float4> albedo,
-                                         BufferView<float4> emission) const noexcept {
+                                         BufferView<float4> albedo,BufferView<float4> emission,
+                                         BufferView<float4> normal) const noexcept {
     CommandList ret;
-    ret << compute_geom_(frame_index, gbuffer, motion_vectors, albedo, emission).dispatch(resolution());
+    ret << compute_geom_(frame_index, gbuffer, motion_vectors, albedo, emission, normal).dispatch(resolution());
     ret << compute_grad_(frame_index, gbuffer).dispatch(resolution());
     return ret;
 }
