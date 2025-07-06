@@ -1,31 +1,12 @@
 {
   "shapes": [
-    //        {
-    //            "type": "model",
-    //            "name": "shape_0",
-    //            "param" : {
-    //                "fn": "models/Prism.obj",
-    //                "material": "Glass",
-    //                "name" : "prism",
-    //                "transform": {
-    //                    "type" : "trs",
-    //                    "param": {
-    //                        "t": [ -0.7776312828063965,
-    //                            1.4423744678497314,
-    //                            -0.07520569860935211],
-    //                        "r" : [1,0,0,0],
-    //                        "s" : [1,1,1]
-    //                    }
-    //                }
-    //            }
-    //        },
     {
       "type": "model",
       "name": "shape_0",
       "param": {
-        "fn": "models/Mesh036.obj",
-        "smooth": false,
-        "material": "Walls",
+        "fn": "models/Mesh029.obj",
+        "smooth": true,
+        "material": "RoughGlass",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -63,9 +44,9 @@
       "type": "model",
       "name": "shape_1",
       "param": {
-        "fn": "models/Mesh048.obj",
-        "smooth": false,
-        "material": "FluorescentTube",
+        "fn": "models/Mesh038.obj",
+        "smooth": true,
+        "material": "Plastic",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -103,21 +84,9 @@
       "type": "model",
       "name": "shape_2",
       "param": {
-        "fn": "models/Mesh062.obj",
-        "smooth": false,
-        "material": "CeilingLight",
-        //                "emission": {
-        //                    "type": "area",
-        //                    "param": {
-        //                        "color": [
-        //                            12,
-        //                            12,
-        //                            12
-        //                        ],
-        //                        "two_sided": false,
-        //                        "scale": 5
-        //                    }
-        //                },
+        "fn": "models/Mesh036.obj",
+        "smooth": true,
+        "material": "Label",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -155,9 +124,9 @@
       "type": "model",
       "name": "shape_3",
       "param": {
-        "fn": "models/Mesh038.obj",
-        "smooth": false,
-        "material": "FluorescentTube",
+        "fn": "models/Mesh028.obj",
+        "smooth": true,
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -195,9 +164,9 @@
       "type": "model",
       "name": "shape_4",
       "param": {
-        "fn": "models/Mesh054.obj",
-        "smooth": false,
-        "material": "Black",
+        "fn": "models/Mesh035.obj",
+        "smooth": true,
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -235,9 +204,9 @@
       "type": "model",
       "name": "shape_5",
       "param": {
-        "fn": "models/Mesh077.obj",
-        "smooth": false,
-        "material": "Black",
+        "fn": "models/Mesh016.obj",
+        "smooth": true,
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -275,9 +244,9 @@
       "type": "model",
       "name": "shape_6",
       "param": {
-        "fn": "models/Mesh052.obj",
+        "fn": "models/Mesh026.obj",
         "smooth": true,
-        "material": "BlackPlastic",
+        "material": "Towel",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -315,9 +284,9 @@
       "type": "model",
       "name": "shape_7",
       "param": {
-        "fn": "models/Mesh061.obj",
+        "fn": "models/Mesh021.obj",
         "smooth": false,
-        "material": "Black",
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -355,9 +324,9 @@
       "type": "model",
       "name": "shape_8",
       "param": {
-        "fn": "models/Mesh031.obj",
-        "smooth": false,
-        "material": "Projector",
+        "fn": "models/Mesh023.obj",
+        "smooth": true,
+        "material": "BlackWoodLacquer",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -395,9 +364,9 @@
       "type": "model",
       "name": "shape_9",
       "param": {
-        "fn": "models/Mesh030.obj",
-        "smooth": true,
-        "material": "Projector",
+        "fn": "models/Mesh020.obj",
+        "smooth": false,
+        "material": "BlackWoodLacquer",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -435,9 +404,9 @@
       "type": "model",
       "name": "shape_10",
       "param": {
-        "fn": "models/Mesh057.obj",
+        "fn": "models/Mesh032.obj",
         "smooth": false,
-        "material": "Black",
+        "material": "BlackWoodLacquer",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -475,9 +444,9 @@
       "type": "model",
       "name": "shape_11",
       "param": {
-        "fn": "models/Mesh023.obj",
-        "smooth": false,
-        "material": "Walls",
+        "fn": "models/Mesh019.obj",
+        "smooth": true,
+        "material": "BlackWoodLacquer",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -515,9 +484,9 @@
       "type": "model",
       "name": "shape_12",
       "param": {
-        "fn": "models/Mesh027.obj",
-        "smooth": false,
-        "material": "Walls",
+        "fn": "models/Mesh033.obj",
+        "smooth": true,
+        "material": "BlackWoodLacquer",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -555,9 +524,9 @@
       "type": "model",
       "name": "shape_13",
       "param": {
-        "fn": "models/Mesh047.obj",
+        "fn": "models/Mesh056.obj",
         "smooth": true,
-        "material": "Bin2",
+        "material": "BlackWoodLacquer",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -595,9 +564,9 @@
       "type": "model",
       "name": "shape_14",
       "param": {
-        "fn": "models/Mesh049.obj",
+        "fn": "models/Mesh018.obj",
         "smooth": false,
-        "material": "Boxes1",
+        "material": "Wall",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -622,7 +591,7 @@
               ],
               [
                 0.0,
-                -0.07342231273651123,
+                0.0,
                 0.0,
                 1.0
               ]
@@ -635,9 +604,9 @@
       "type": "model",
       "name": "shape_15",
       "param": {
-        "fn": "models/Mesh022.obj",
+        "fn": "models/Mesh030.obj",
         "smooth": false,
-        "material": "Black",
+        "material": "Wall",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -675,9 +644,9 @@
       "type": "model",
       "name": "shape_16",
       "param": {
-        "fn": "models/Mesh029.obj",
-        "smooth": false,
-        "material": "Black",
+        "fn": "models/Mesh051.obj",
+        "smooth": true,
+        "material": "BlackWoodLacquer",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -715,9 +684,9 @@
       "type": "model",
       "name": "shape_17",
       "param": {
-        "fn": "models/Mesh033.obj",
-        "smooth": false,
-        "material": "Whiteboard",
+        "fn": "models/Mesh043.obj",
+        "smooth": true,
+        "material": "Wall",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -755,9 +724,9 @@
       "type": "model",
       "name": "shape_18",
       "param": {
-        "fn": "models/Mesh040.obj",
-        "smooth": false,
-        "material": "Walls",
+        "fn": "models/Mesh015.obj",
+        "smooth": true,
+        "material": "Wall",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -795,9 +764,9 @@
       "type": "model",
       "name": "shape_19",
       "param": {
-        "fn": "models/Mesh028.obj",
-        "smooth": false,
-        "material": "Black",
+        "fn": "models/Mesh059.obj",
+        "smooth": true,
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -835,9 +804,9 @@
       "type": "model",
       "name": "shape_20",
       "param": {
-        "fn": "models/Mesh076.obj",
+        "fn": "models/Mesh039.obj",
         "smooth": true,
-        "material": "ProjectorScreen",
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -875,9 +844,9 @@
       "type": "model",
       "name": "shape_21",
       "param": {
-        "fn": "models/Mesh050.obj",
-        "smooth": false,
-        "material": "ScreenEnds",
+        "fn": "models/Mesh027.obj",
+        "smooth": true,
+        "material": "Wall",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -916,8 +885,8 @@
       "name": "shape_22",
       "param": {
         "fn": "models/Mesh055.obj",
-        "smooth": false,
-        "material": "FlagBase",
+        "smooth": true,
+        "material": "Wall",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -955,9 +924,9 @@
       "type": "model",
       "name": "shape_23",
       "param": {
-        "fn": "models/Mesh053.obj",
-        "smooth": false,
-        "material": "FoamEraser",
+        "fn": "models/Mesh024.obj",
+        "smooth": true,
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -995,9 +964,9 @@
       "type": "model",
       "name": "shape_24",
       "param": {
-        "fn": "models/Mesh058.obj",
-        "smooth": false,
-        "material": "ChalkHolder",
+        "fn": "models/Mesh031.obj",
+        "smooth": true,
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1035,9 +1004,9 @@
       "type": "model",
       "name": "shape_25",
       "param": {
-        "fn": "models/Mesh060.obj",
+        "fn": "models/Mesh022.obj",
         "smooth": true,
-        "material": "ChairWood",
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1075,9 +1044,9 @@
       "type": "model",
       "name": "shape_26",
       "param": {
-        "fn": "models/Mesh063.obj",
+        "fn": "models/Mesh040.obj",
         "smooth": true,
-        "material": "ChairStainless",
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1115,9 +1084,9 @@
       "type": "model",
       "name": "shape_27",
       "param": {
-        "fn": "models/Mesh064.obj",
+        "fn": "models/Mesh041.obj",
         "smooth": true,
-        "material": "ChairFrame",
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1155,9 +1124,9 @@
       "type": "model",
       "name": "shape_28",
       "param": {
-        "fn": "models/Mesh037.obj",
+        "fn": "models/Mesh017.obj",
         "smooth": true,
-        "material": "ChairWood",
+        "material": "Mirror",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1195,9 +1164,9 @@
       "type": "model",
       "name": "shape_29",
       "param": {
-        "fn": "models/Mesh067.obj",
+        "fn": "models/Mesh042.obj",
         "smooth": true,
-        "material": "ChairWood",
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1235,9 +1204,9 @@
       "type": "model",
       "name": "shape_30",
       "param": {
-        "fn": "models/Mesh073.obj",
+        "fn": "models/Mesh044.obj",
         "smooth": true,
-        "material": "ChairWood",
+        "material": "Towel",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1275,9 +1244,9 @@
       "type": "model",
       "name": "shape_31",
       "param": {
-        "fn": "models/Mesh024.obj",
+        "fn": "models/Mesh047.obj",
         "smooth": true,
-        "material": "ChairWood",
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1315,9 +1284,9 @@
       "type": "model",
       "name": "shape_32",
       "param": {
-        "fn": "models/Mesh041.obj",
+        "fn": "models/Mesh034.obj",
         "smooth": true,
-        "material": "ChairWood",
+        "material": "DarkPlastic",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1355,9 +1324,9 @@
       "type": "model",
       "name": "shape_33",
       "param": {
-        "fn": "models/Mesh026.obj",
+        "fn": "models/Mesh049.obj",
         "smooth": true,
-        "material": "Rubber",
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1395,9 +1364,9 @@
       "type": "model",
       "name": "shape_34",
       "param": {
-        "fn": "models/Mesh069.obj",
+        "fn": "models/Mesh025.obj",
         "smooth": true,
-        "material": "ChairWood",
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1435,29 +1404,29 @@
       "type": "model",
       "name": "shape_35",
       "param": {
-        "fn": "models/Mesh035.obj",
-        "smooth": false,
-        "material": "Floor",
+        "fn": "models/Mesh037.obj",
+        "smooth": true,
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
             "matrix4x4": [
               [
-                11.651670455932617,
+                1.0,
                 0.0,
                 0.0,
                 0.0
               ],
               [
                 0.0,
-                11.651670455932617,
+                1.0,
                 0.0,
                 0.0
               ],
               [
                 0.0,
                 0.0,
-                11.651670455932617,
+                1.0,
                 0.0
               ],
               [
@@ -1475,9 +1444,9 @@
       "type": "model",
       "name": "shape_36",
       "param": {
-        "fn": "models/Mesh043.obj",
+        "fn": "models/Mesh050.obj",
         "smooth": false,
-        "material": "WoodFrame",
+        "material": "Towel",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1515,9 +1484,9 @@
       "type": "model",
       "name": "shape_37",
       "param": {
-        "fn": "models/Mesh072.obj",
+        "fn": "models/Mesh052.obj",
         "smooth": false,
-        "material": "Whiteboard2",
+        "material": "Towel",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1555,9 +1524,9 @@
       "type": "model",
       "name": "shape_38",
       "param": {
-        "fn": "models/Mesh045.obj",
+        "fn": "models/Mesh054.obj",
         "smooth": true,
-        "material": "StickyNote1",
+        "material": "Bin",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1595,9 +1564,9 @@
       "type": "model",
       "name": "shape_39",
       "param": {
-        "fn": "models/Mesh044.obj",
+        "fn": "models/Mesh053.obj",
         "smooth": true,
-        "material": "StickyNote2",
+        "material": "DarkPlastic",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1635,9 +1604,9 @@
       "type": "model",
       "name": "shape_40",
       "param": {
-        "fn": "models/Mesh074.obj",
+        "fn": "models/Mesh057.obj",
         "smooth": true,
-        "material": "RedPencil",
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1675,9 +1644,9 @@
       "type": "model",
       "name": "shape_41",
       "param": {
-        "fn": "models/Mesh070.obj",
+        "fn": "models/Mesh058.obj",
         "smooth": true,
-        "material": "BluePencil",
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1715,9 +1684,9 @@
       "type": "model",
       "name": "shape_42",
       "param": {
-        "fn": "models/Mesh078.obj",
+        "fn": "models/Mesh060.obj",
         "smooth": true,
-        "material": "GreenPencil",
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1755,9 +1724,9 @@
       "type": "model",
       "name": "shape_43",
       "param": {
-        "fn": "models/Mesh021.obj",
-        "smooth": false,
-        "material": "Whiteboard3",
+        "fn": "models/Mesh014.obj",
+        "smooth": true,
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1795,9 +1764,9 @@
       "type": "model",
       "name": "shape_44",
       "param": {
-        "fn": "models/Mesh018.obj",
-        "smooth": false,
-        "material": "WhiteboardFrame",
+        "fn": "models/Mesh013.obj",
+        "smooth": true,
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1835,9 +1804,9 @@
       "type": "model",
       "name": "shape_45",
       "param": {
-        "fn": "models/Mesh017.obj",
-        "smooth": false,
-        "material": "Lectern",
+        "fn": "models/Mesh012.obj",
+        "smooth": true,
+        "material": "StainlessRough",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1875,9 +1844,9 @@
       "type": "model",
       "name": "shape_46",
       "param": {
-        "fn": "models/Mesh066.obj",
-        "smooth": false,
-        "material": "Lectern",
+        "fn": "models/Mesh011.obj",
+        "smooth": true,
+        "material": "Ceramic",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1915,9 +1884,9 @@
       "type": "model",
       "name": "shape_47",
       "param": {
-        "fn": "models/Mesh056.obj",
-        "smooth": false,
-        "material": "Lectern",
+        "fn": "models/Mesh010.obj",
+        "smooth": true,
+        "material": "Ceramic",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -1955,1019 +1924,7 @@
       "type": "model",
       "name": "shape_48",
       "param": {
-        "fn": "models/Mesh016.obj",
-        "smooth": false,
-        "material": "Lectern",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_49",
-      "param": {
-        "fn": "models/Mesh015.obj",
-        "smooth": false,
-        "material": "Lectern",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_50",
-      "param": {
-        "fn": "models/Mesh014.obj",
-        "smooth": false,
-        "material": "Hallway",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_51",
-      "param": {
-        "fn": "models/Mesh025.obj",
-        "smooth": false,
-        "material": "WoodFrame",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_52",
-      "param": {
-        "fn": "models/Mesh046.obj",
-        "smooth": false,
-        "material": "Whiteboard2",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_53",
-      "param": {
-        "fn": "models/Mesh012.obj",
-        "smooth": true,
-        "material": "BluePencil",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_54",
-      "param": {
-        "fn": "models/Mesh011.obj",
-        "smooth": true,
-        "material": "GreenPencil",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_55",
-      "param": {
-        "fn": "models/Mesh010.obj",
-        "smooth": true,
-        "material": "GreenPencil",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_56",
-      "param": {
         "fn": "models/Mesh009.obj",
-        "smooth": true,
-        "material": "GreenPencil",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_57",
-      "param": {
-        "fn": "models/Mesh008.obj",
-        "smooth": true,
-        "material": "BluePencil",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_58",
-      "param": {
-        "fn": "models/Mesh059.obj",
-        "smooth": true,
-        "material": "RedPencil",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_59",
-      "param": {
-        "fn": "models/Mesh065.obj",
-        "smooth": true,
-        "material": "Bookshelf",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_60",
-      "param": {
-        "fn": "models/Mesh032.obj",
-        "smooth": true,
-        "material": "StickyNote3",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_61",
-      "param": {
-        "fn": "models/Mesh007.obj",
-        "smooth": true,
-        "material": "StickyNote4",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_62",
-      "param": {
-        "fn": "models/Mesh075.obj",
-        "smooth": true,
-        "material": "StickyNote5",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_63",
-      "param": {
-        "fn": "models/Mesh071.obj",
-        "smooth": true,
-        "material": "StickyNote6",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_64",
-      "param": {
-        "fn": "models/Mesh039.obj",
-        "smooth": true,
-        "material": "StickyNote7",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_65",
-      "param": {
-        "fn": "models/Mesh006.obj",
-        "smooth": true,
-        "material": "StickyNote8",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_66",
-      "param": {
-        "fn": "models/Mesh051.obj",
-        "smooth": false,
-        "material": "Black",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_67",
-      "param": {
-        "fn": "models/Mesh013.obj",
-        "smooth": true,
-        "material": "FlagRed",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_68",
-      "param": {
-        "fn": "models/Mesh005.obj",
-        "smooth": true,
-        "material": "FlagWhite",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_69",
-      "param": {
-        "fn": "models/Mesh042.obj",
-        "smooth": false,
-        "material": "Walls",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_70",
-      "param": {
-        "fn": "models/Mesh003.obj",
-        "smooth": false,
-        "material": "Speakers",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_71",
-      "param": {
-        "fn": "models/Mesh020.obj",
-        "smooth": false,
-        "material": "FluorescentTube",
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_72",
-      "param": {
-        "fn": "models/Mesh002.obj",
-        "smooth": false,
-        "material": "CeilingLight",
-        //                "emission": {
-        //                    "type": "area",
-        //                    "param": {
-        //                        "color": [
-        //                            12,
-        //                            12,
-        //                            12
-        //                        ],
-        //                        "two_sided": false,
-        //                        "scale": 5
-        //                    }
-        //                },
-        "transform": {
-          "type": "matrix4x4",
-          "param": {
-            "matrix4x4": [
-              [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            ]
-          }
-        }
-      }
-    },
-    {
-      "type": "model",
-      "name": "shape_73",
-      "param": {
-        "fn": "models/Mesh019.obj",
         "smooth": false,
         "material": "Wall",
         "transform": {
@@ -3005,11 +1962,11 @@
     },
     {
       "type": "model",
-      "name": "shape_74",
+      "name": "shape_49",
       "param": {
-        "fn": "models/Mesh068.obj",
+        "fn": "models/Mesh007.obj",
         "smooth": false,
-        "material": "WindowFrame",
+        "material": "Wall",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -3045,11 +2002,11 @@
     },
     {
       "type": "model",
-      "name": "shape_75",
+      "name": "shape_50",
       "param": {
-        "fn": "models/Mesh001.obj",
-        "smooth": true,
-        "material": "Bin1",
+        "fn": "models/Mesh006.obj",
+        "smooth": false,
+        "material": "Wood",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -3085,11 +2042,51 @@
     },
     {
       "type": "model",
-      "name": "shape_76",
+      "name": "shape_51",
+      "param": {
+        "fn": "models/Mesh005.obj",
+        "smooth": true,
+        "material": "Wood",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_52",
       "param": {
         "fn": "models/Mesh004.obj",
-        "smooth": false,
-        "material": "Boxes1",
+        "smooth": true,
+        "material": "Ceramic",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -3114,7 +2111,7 @@
               ],
               [
                 0.0,
-                -0.07342231273651123,
+                0.0,
                 0.0,
                 1.0
               ]
@@ -3125,11 +2122,11 @@
     },
     {
       "type": "model",
-      "name": "shape_77",
+      "name": "shape_53",
       "param": {
-        "fn": "models/Mesh034.obj",
-        "smooth": false,
-        "material": "Boxes2",
+        "fn": "models/Mesh003.obj",
+        "smooth": true,
+        "material": "DarkBorder",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -3154,7 +2151,7 @@
               ],
               [
                 0.0,
-                -0.07342231273651123,
+                0.0,
                 0.0,
                 1.0
               ]
@@ -3165,11 +2162,211 @@
     },
     {
       "type": "model",
-      "name": "shape_78",
+      "name": "shape_54",
+      "param": {
+        "fn": "models/Mesh002.obj",
+        "smooth": false,
+        "material": "Wood",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_55",
+      "param": {
+        "fn": "models/Mesh001.obj",
+        "smooth": false,
+        "material": "WoodFloor",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_56",
+      "param": {
+        "fn": "models/Mesh008.obj",
+        "smooth": false,
+        "material": "WallRight",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_57",
+      "param": {
+        "fn": "models/Mesh046.obj",
+        "smooth": false,
+        "material": "Wall",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_58",
+      "param": {
+        "fn": "models/Mesh045.obj",
+        "smooth": false,
+        "material": "Mirror",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_59",
       "param": {
         "fn": "models/Mesh000.obj",
         "smooth": false,
-        "material": "Boxes1",
+        "material": "Trims",
         "transform": {
           "type": "matrix4x4",
           "param": {
@@ -3194,11 +2391,503 @@
               ],
               [
                 0.0,
-                -0.07342231273651123,
+                0.0,
                 0.0,
                 1.0
               ]
             ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_60",
+      "param": {
+        "fn": "models/Mesh048.obj",
+        "smooth": false,
+        "material": "Wood",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_61",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_61_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                35.55469512939453,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                -1.554145228510606e-06,
+                35.5546989440918,
+                0.0
+              ],
+              [
+                0.0,
+                -35.5546989440918,
+                -1.554145228510606e-06,
+                0.0
+              ],
+              [
+                -0.5878720283508301,
+                17.100000381469727,
+                51.901798248291016,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_62",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_62_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                39.11019515991211,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                -1.7095610473916167e-06,
+                39.110198974609375,
+                0.0
+              ],
+              [
+                0.0,
+                -39.110198974609375,
+                -1.7095610473916167e-06,
+                0.0
+              ],
+              [
+                -0.5878720283508301,
+                17.100000381469727,
+                52.89999771118164,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_63",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_63_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                39.110198974609375,
+                -1.5230073586280923e-05,
+                1.5230073586280923e-05,
+                0.0
+              ],
+              [
+                -1.5230073586280923e-05,
+                -39.110198974609375,
+                -5.930809229143241e-12,
+                0.0
+              ],
+              [
+                2.969868728541769e-05,
+                0.0,
+                -76.26499938964844,
+                0.0
+              ],
+              [
+                -0.5878720283508301,
+                35.89999771118164,
+                15.399999618530273,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_64",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_64_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.7095610473916167e-06,
+                39.110198974609375,
+                -6.657276184311722e-13,
+                0.0
+              ],
+              [
+                39.110198974609375,
+                -1.7095610473916167e-06,
+                -1.5230073586280923e-05,
+                0.0
+              ],
+              [
+                -2.9698683647438884e-05,
+                0.0,
+                -76.2649917602539,
+                0.0
+              ],
+              [
+                -19.38789939880371,
+                17.399999618530273,
+                15.399999618530273,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_65",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_65_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.7095610473916167e-06,
+                39.110198974609375,
+                -6.657276184311722e-13,
+                0.0
+              ],
+              [
+                39.110198974609375,
+                -1.7095610473916167e-06,
+                -1.5230073586280923e-05,
+                0.0
+              ],
+              [
+                -2.9698683647438884e-05,
+                0.0,
+                -76.2649917602539,
+                0.0
+              ],
+              [
+                18.13800048828125,
+                17.399999618530273,
+                15.399900436401367,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_66",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_66_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                39.110198974609375,
+                -1.5230073586280923e-05,
+                1.5230073586280923e-05,
+                0.0
+              ],
+              [
+                -1.5230073586280923e-05,
+                -39.110198974609375,
+                -5.930809229143241e-12,
+                0.0
+              ],
+              [
+                2.969868728541769e-05,
+                0.0,
+                -76.26499938964844,
+                0.0
+              ],
+              [
+                -0.5878720283508301,
+                -1.2999999523162842,
+                15.399999618530273,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_67",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_67_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                39.110198974609375,
+                -1.5230073586280923e-05,
+                1.5230073586280923e-05,
+                0.0
+              ],
+              [
+                -1.5230073586280923e-05,
+                -39.110198974609375,
+                -5.930809229143241e-12,
+                0.0
+              ],
+              [
+                2.969868728541769e-05,
+                0.0,
+                -76.26499938964844,
+                0.0
+              ],
+              [
+                -0.58787602186203,
+                -0.07850909978151321,
+                15.399999618530273,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_68",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_68_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.7095610473916167e-06,
+                39.110198974609375,
+                -6.657276184311722e-13,
+                0.0
+              ],
+              [
+                39.110198974609375,
+                -1.7095610473916167e-06,
+                -1.5230073586280923e-05,
+                0.0
+              ],
+              [
+                -2.9698683647438884e-05,
+                0.0,
+                -76.2649917602539,
+                0.0
+              ],
+              [
+                -17.503599166870117,
+                17.399999618530273,
+                15.399999618530273,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_69",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_69_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.7095610473916167e-06,
+                39.110198974609375,
+                -6.657276184311722e-13,
+                0.0
+              ],
+              [
+                39.110198974609375,
+                -1.7095610473916167e-06,
+                -1.5230073586280923e-05,
+                0.0
+              ],
+              [
+                -2.9698683647438884e-05,
+                0.0,
+                -76.2649917602539,
+                0.0
+              ],
+              [
+                17.19729995727539,
+                17.399999618530273,
+                15.399900436401367,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_70",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_70_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                39.110198974609375,
+                -1.5230073586280923e-05,
+                1.5230073586280923e-05,
+                0.0
+              ],
+              [
+                -1.5230073586280923e-05,
+                -39.110198974609375,
+                -5.930809229143241e-12,
+                0.0
+              ],
+              [
+                2.969868728541769e-05,
+                0.0,
+                -76.26499938964844,
+                0.0
+              ],
+              [
+                -0.5878750085830688,
+                34.15409851074219,
+                15.399999618530273,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_71",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_71_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                9.025028228759766,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                -3.374888137841481e-07,
+                7.72084379196167,
+                0.0
+              ],
+              [
+                0.0,
+                -10.69359016418457,
+                -4.674316755881591e-07,
+                0.0
+              ],
+              [
+                -1.6504895687103271,
+                21.179363250732422,
+                -22.777523040771484,
+                1.0
+              ]
+            ]
+          }
+        },
+        "emission": {
+          "type": "area",
+          "param": {
+            "color": [
+              125.0,
+              100.0,
+              75.0
+            ],
+            "two_sided": false,
+            "scale": 0.3
           }
         }
       }
@@ -3207,363 +2896,88 @@
   "materials": [
     {
       "type": "diffuse",
-      "name": "Walls",
+      "name": "Wall",
       "param": {
         "color": [
-          0.6540709733963013,
-          0.6740800142288208,
-          0.800000011920929
+          0.578596,
+          0.578596,
+          0.578596
         ]
       }
     },
     {
-      "type": "glass",
-      "name": "Glass",
+      "type": "mirror",
+      "name": "Mirror",
       "param": {
-        "material_name": "BK7",
         "color": [
-          1,
-          1,
-          1
+          0.578596,
+          0.578596,
+          0.578596
         ],
-        "roughness": [ 0.001, 0.001 ]
+        "roughness": 0.001
       }
     },
     {
-      "type": "diffuse",
-      "name": "Lectern",
+      "type": "metal",
+      "name": "StainlessRough",
       "param": {
-        "color": {
-          "fn": "textures/wood1.jpg",
-          "color_space": "srgb"
-        }
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "FlagRed",
-      "param": {
-        "color": [
-          0.800000011920929,
-          0.008213999681174755,
-          0.0
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "FlagWhite",
-      "param": {
-        "color": [
-          1.0,
-          1.0,
-          1.0
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "FlagBase",
-      "param": {
-        "color": [
-          0.7796609997749329,
-          0.6531620025634766,
-          0.3491879999637604
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "ChalkHolder",
-      "param": {
-        "color": [
-          0.800000011920929,
-          0.6449009776115417,
-          0.4121190011501312
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "ProjectorScreen",
-      "param": {
-        "color": [
-          1.0,
-          1.0,
-          1.0
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "StickyNote1",
-      "param": {
-        "color": [
-          0.612066,
-          0.612066,
-          0.612066
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "Whiteboard",
-      "param": {
-        "color": [
-          1.0,
-          1.0,
-          1.0
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "StickyNote7",
-      "param": {
-        "color": [
-          0.612066,
-          0.612066,
-          0.612066
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "StickyNote8",
-      "param": {
-        "color": [
-          0.612066,
-          0.612066,
-          0.612066
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "Bin2",
-      "param": {
-        "color": [
-          0.800000011920929,
-          0.7175089716911316,
-          0.19045600295066833
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "Boxes2",
-      "param": {
-        "color": [
-          0.800000011920929,
-          0.7916420102119446,
-          0.38839900493621826
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "Boxes1",
-      "param": {
-        "color": [
-          0.6399999856948853,
-          0.47218799591064453,
-          0.3192330002784729
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "StickyNote4",
-      "param": {
-        "color": [
-          0.612066,
-          0.612066,
-          0.612066
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "Whiteboard2",
-      "param": {
-        "color": [
-          0.79311,
-          0.79311,
-          0.79311
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "BluePencil",
-      "param": {
-        "color": [
-          0.0,
-          0.030764000490307808,
-          0.800000011920929
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "GreenPencil",
-      "param": {
-        "color": [
-          0.14567600190639496,
-          0.6399999856948853,
-          0.0
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "RedPencil",
-      "param": {
-        "color": [
-          0.6266509890556335,
-          0.0,
-          0.0
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "Bookshelf",
-      "param": {
-        "color": [
-          0.4913010001182556,
-          0.3051770031452179,
-          0.800000011920929
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "Hallway",
-      "param": {
-        "color": [
-          0.784314,
-          0.784314,
-          0.784314
-        ]
-      }
-    },
-    {
-      "type": "substrate",
-      "name": "CeilingLight",
-      "param": {
-        "color": [
-          0.647814,
-          0.647814,
-          0.647814
+        "material_name": "Al",
+        "eta": [
+          0,
+          0,
+          0
         ],
-        "ior": 1.5,
-        "specular": [
-          0.04,
-          0.04,
-          0.04
+        "k": [
+          0,
+          0,
+          0
         ],
         "roughness": [
-          0.1,
-          0.1
+          0.01,
+          0.01
         ],
         "remapping_roughness": false
       }
     },
     {
       "type": "diffuse",
-      "name": "Black",
+      "name": "Towel",
       "param": {
         "color": [
-          0.00631,
-          0.00631,
-          0.00631
+          0.578596,
+          0.578596,
+          0.578596
         ]
       }
     },
     {
       "type": "substrate",
-      "name": "BlackPlastic",
+      "name": "BlackWoodLacquer",
       "param": {
         "color": [
-          0.00631,
-          0.00631,
-          0.00631
-        ],
-        "ior": 1.5,
-        "specular": [
-          0.04,
-          0.04,
-          0.04
-        ],
-        "roughness": [
-          0.1,
-          0.1
-        ],
-        "remapping_roughness": false
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "Projector",
-      "param": {
-        "color": [
-          0.00631,
-          0.00631,
-          0.00631
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "ScreenEnds",
-      "param": {
-        "color": [
-          0.028991,
-          0.028991,
-          0.028991
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "FoamEraser",
-      "param": {
-        "color": [
-          0.684615,
-          0.684615,
-          0.684615
-        ]
-      }
-    },
-    {
-      "type": "substrate",
-      "name": "Whiteboard3",
-      "param": {
-        "color": [
-          1.0,
-          1.0,
-          1.0
-        ],
-        "ior": 1.5,
-        "specular": [
-          0.04,
-          0.04,
-          0.04
-        ],
-        "roughness": [
+          0.05,
           0.05,
           0.05
         ],
+        "ior": 1.5,
+        "specular": [
+          0.04,
+          0.04,
+          0.04
+        ],
+        "roughness": [
+          0.1,
+          0.1
+        ],
         "remapping_roughness": false
       }
     },
     {
       "type": "substrate",
-      "name": "ChairWood",
+      "name": "Wood",
       "param": {
         "color": {
-          "fn": "textures/wood2.jpg",
+          "fn": "textures/WoodPanel.png",
           "color_space": "srgb"
         },
         "ior": 1.5,
@@ -3573,26 +2987,25 @@
           0.04
         ],
         "roughness": [
-          0.05,
-          0.05
+          0.1,
+          0.1
         ],
         "remapping_roughness": false
       }
     },
     {
-      "type": "metal",
-      "name": "ChairFrame",
+      "type": "substrate",
+      "name": "WoodFloor",
       "param": {
-        "material_name": "Al",
-        "eta": [
-          0,
-          0,
-          0
-        ],
-        "k": [
-          0,
-          0,
-          0
+        "color": {
+          "fn": "textures/WoodFloor.jpg",
+          "color_space": "srgb"
+        },
+        "ior": 1.5,
+        "specular": [
+          0.04,
+          0.04,
+          0.04
         ],
         "roughness": [
           0.1,
@@ -3602,166 +3015,39 @@
       }
     },
     {
-      "type": "metal",
-      "name": "ChairStainless",
-      "param": {
-        "material_name": "Al",
-        "eta": [
-          0,
-          0,
-          0
-        ],
-        "k": [
-          0,
-          0,
-          0
-        ],
-        "roughness": [
-          0.01,
-          0.01
-        ],
-        "remapping_roughness": false
-      }
-    },
-    {
       "type": "diffuse",
-      "name": "Floor",
-      "param": {
-        "color": [
-          0.6592240333557129,
-          0.5924380421638489,
-          0.517401397228241
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "WoodFrame",
+      "name": "Label",
       "param": {
         "color": {
-          "fn": "textures/blackboard.jpg",
+          "fn": "textures/Label.png",
           "color_space": "srgb"
         }
       }
     },
     {
-      "type": "diffuse",
-      "name": "WhiteboardFrame",
+      "type": "glass",
+      "name": "RoughGlass",
       "param": {
-        "color": [
-          0.056173,
-          0.056173,
-          0.056173
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "StickyNote3",
-      "param": {
-        "color": [
-          0.612066,
-          0.612066,
-          0.612066
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "StickyNote5",
-      "param": {
-        "color": [
-          0.612066,
-          0.612066,
-          0.612066
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "StickyNote6",
-      "param": {
-        "color": [
-          0.612066,
-          0.612066,
-          0.612066
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "Speakers",
-      "param": {
-        "color": [
-          0.03598,
-          0.03598,
-          0.03598
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "Wall",
-      "param": {
-        "color": [
-          0.4508373439311981,
-          0.4536627233028412,
-          0.49960458278656006
-        ]
-      }
-    },
-    {
-      "type": "metal",
-      "name": "WindowFrame",
-      "param": {
-        "material_name": "Al",
-        "eta": [
-          0,
-          0,
-          0
-        ],
-        "k": [
-          0,
-          0,
-          0
-        ],
+        "ior": 1.5,
         "roughness": [
           0.1,
           0.1
         ],
-        "remapping_roughness": false
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "Bin1",
-      "param": {
         "color": [
-          0.32712534070014954,
-          0.5785964727401733,
-          0.2805613875389099
-        ]
-      }
-    },
-    {
-      "type": "diffuse",
-      "name": "Rubber",
-      "param": {
-        "color": [
-          0.6870308518409729,
-          0.7154654264450073,
-          0.5604991912841797
+          0.578596,
+          0.578596,
+          0.578596
         ]
       }
     },
     {
       "type": "substrate",
-      "name": "FluorescentTube",
+      "name": "Plastic",
       "param": {
         "color": [
-          0.612066,
-          0.612066,
-          0.612066
+          0.578596,
+          0.578596,
+          0.578596
         ],
         "ior": 1.5,
         "specular": [
@@ -3778,12 +3064,200 @@
     },
     {
       "type": "diffuse",
-      "name": "StickyNote2",
+      "name": "DarkPlastic",
       "param": {
         "color": [
-          0.612066,
-          0.612066,
-          0.612066
+          0.05,
+          0.05,
+          0.05
+        ]
+      }
+    },
+    {
+      "type": "mirror",
+      "name": "Bin",
+      "param": {
+        "color": [
+          0.578596,
+          0.578596,
+          0.578596
+        ],
+        "roughness": 0.001
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "WallRight",
+      "param": {
+        "color": [
+          0.578596,
+          0.578596,
+          0.578596
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "DarkBorder",
+      "param": {
+        "color": [
+          0.05,
+          0.05,
+          0.05
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "Trims",
+      "param": {
+        "color": [
+          0.578596,
+          0.578596,
+          0.578596
+        ]
+      }
+    },
+    {
+      "type": "substrate",
+      "name": "Ceramic",
+      "param": {
+        "color": [
+          0.578596,
+          0.578596,
+          0.578596
+        ],
+        "ior": 1.5,
+        "specular": [
+          0.04,
+          0.04,
+          0.04
+        ],
+        "roughness": [
+          0.01,
+          0.01
+        ],
+        "remapping_roughness": false
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_61_material",
+      "param": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_62_material",
+      "param": {
+        "color": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_63_material",
+      "param": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_64_material",
+      "param": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_65_material",
+      "param": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_66_material",
+      "param": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_67_material",
+      "param": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_68_material",
+      "param": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_69_material",
+      "param": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_70_material",
+      "param": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_71_material",
+      "param": {
+        "color": [
+          0,
+          0,
+          0
         ]
       }
     }
@@ -3792,35 +3266,60 @@
     "type": "independent",
     "name": "sampler0",
     "param": {
-      "spp": 1
+      "spp": 500
+    }
+  },
+  "camera": {
+    "type": "thin_lens",
+    "param": {
+      "fov_y": 60.0,
+      "name": "view1",
+      "velocity": 5,
+      "transform": {
+        "type": "look_at",
+        "param": {
+          "position": [
+            4.443147659301758,
+            16.934431076049805,
+            49.91023254394531
+          ],
+          "up": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "target_pos": [
+            -2.5734899044036865,
+            9.991769790649414,
+            -10.588199615478516
+          ]
+        }
+      },
+      "radiance_collector": {
+        "type": "normal",
+        "param": {
+          "accumulation": 0,
+          "resolution": [
+            1280,
+            720
+          ],
+          "fb_state": 0
+        }
+      },
+      "filter": {
+        "type": "gaussian",
+        "name": "boxFilter",
+        "param": {
+          "radius": [
+            1.5,
+            1.5
+          ]
+        }
+      }
     }
   },
   "warper": {
     "type": "alias_table"
-  },
-  "mediums": {
-    "global": "fog",
-    //        "process" : true,
-    "list": [
-      {
-        "type": "homogeneous",
-        "name": "fog",
-        "param": {
-          "g": 0,
-          "scale": 0.0231,
-          "sigma_s": [ 1, 1, 1 ],
-          "sigma_a": [ 0, 0, 0 ]
-        }
-      }
-    ]
-  },
-  "output": {
-    "spp": 0,
-    "fn": "rt-1.exr"
-  },
-  "render_setting": {
-    "ray_offset_factor": 1.5,
-    "polymorphic_mode": 1
   },
   "integrator": {
     "type": "rt",
@@ -3884,57 +3383,6 @@
       "rr_threshold": 1
     }
   },
-  "camera": {
-    "type": "thin_lens",
-    "param": {
-      "fov_y": 35.98,
-      "name": "view1",
-      "velocity": 5,
-      //            "medium": "fog",
-      "transform": {
-        "type": "look_at",
-        "param": {
-          "position": [
-            -1.690487027168274,
-            1.2715795040130615,
-            5.886528015136719
-          ],
-          "up": [
-            0.0,
-            1.0,
-            0.0
-          ],
-          "target_pos": [
-            -0.7776312828063965,
-            1.4423744678497314,
-            -0.07520569860935211
-          ]
-        }
-      },
-      "radiance_collector": {
-        "type": "normal",
-        "param": {
-          "accumulation": 0,
-          "resolution": [
-            1280,
-            720
-          ],
-          //                    "gamma": false,
-          "fb_state": 0
-        }
-      },
-      "filter": {
-        "type": "box",
-        "name": "boxFilter",
-        "param": {
-          "radius": [
-            0.5,
-            0.5
-          ]
-        }
-      }
-    }
-  },
   "light_sampler": {
     "type": "uniform",
     "param": {
@@ -3943,7 +3391,7 @@
           "type": "spherical",
           "param": {
             "color": {
-              "fn": "textures/spaichingen_hill_2k.exr",
+              "fn": "textures/spruit_sunrise_2k.hdr",
               "color_space": "linear"
             },
             "o2w": {
@@ -3952,7 +3400,7 @@
                 "yaw": -30
               }
             },
-            "scale": 0.5
+            "scale": 3
           }
         }
       ]
@@ -3964,12 +3412,28 @@
       "dimension": 3
     }
   },
-
   "pipeline": {
-    //        "type": "customized"
+    //        "type": "bake",
     "param": {
-      //			"obfuscation" : false,
-      //            			"valid_check" : true
+      "rasterizer": {
+        "type": "CPU"
+      },
+      "uv_unwrapper": {
+        "type": "xatlas",
+        "param": {
+          "min": 300,
+          "max": 1024,
+          "scale": 1,
+          "padding": 3
+        }
+      }
     }
+  },
+  "render_setting": {
+    "polymorphic_mode": 1
+  },
+  "output": {
+    "spp": 0,
+    "fn": "output.png"
   }
 }

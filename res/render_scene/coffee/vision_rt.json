@@ -1,0 +1,1223 @@
+{
+  "shapes": [
+    {
+      "type": "model",
+      "name": "shape_0",
+      "param": {
+        "fn": "models/Mesh013.obj",
+        "smooth": true,
+        "material": "Plastic_Black",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_1",
+      "param": {
+        "fn": "models/Mesh008.obj",
+        "smooth": true,
+        "material": "Plastic_Black",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_2",
+      "param": {
+        "fn": "models/Mesh010.obj",
+        "smooth": true,
+        "material": "Glass",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_3",
+      "param": {
+        "fn": "models/Mesh009.obj",
+        "smooth": true,
+        "material": "Plastic_Orange",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_4",
+      "param": {
+        "fn": "models/Mesh015.obj",
+        "smooth": true,
+        "material": "Metal",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_5",
+      "param": {
+        "fn": "models/Mesh012.obj",
+        "smooth": true,
+        "material": "Plastic_Orange",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_6",
+      "param": {
+        "fn": "models/Mesh016.obj",
+        "smooth": true,
+        "material": "Plastic_Orange",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_7",
+      "param": {
+        "fn": "models/Mesh017.obj",
+        "smooth": true,
+        "material": "Plastic_Black",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_8",
+      "param": {
+        "fn": "models/Mesh018.obj",
+        "smooth": true,
+        "material": "Plastic_Black",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_9",
+      "param": {
+        "fn": "models/Mesh019.obj",
+        "smooth": true,
+        "material": "Plastic_Black",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_10",
+      "param": {
+        "fn": "models/Mesh007.obj",
+        "smooth": true,
+        "material": "Plastic_Black",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_11",
+      "param": {
+        "fn": "models/Mesh006.obj",
+        "smooth": true,
+        "material": "Plastic_Orange",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_12",
+      "param": {
+        "fn": "models/Mesh005.obj",
+        "smooth": false,
+        "material": "Plastic_Black",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_13",
+      "param": {
+        "fn": "models/Mesh003.obj",
+        "smooth": true,
+        "material": "Plastic_Black",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_14",
+      "param": {
+        "fn": "models/Mesh002.obj",
+        "smooth": true,
+        "material": "Metal",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_15",
+      "param": {
+        "fn": "models/Mesh001.obj",
+        "smooth": true,
+        "material": "Plastic_Orange",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_16",
+      "param": {
+        "fn": "models/Mesh011.obj",
+        "smooth": true,
+        "material": "Plastic_Black",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_17",
+      "param": {
+        "fn": "models/Mesh000.obj",
+        "smooth": true,
+        "material": "Plastic_Orange",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_18",
+      "param": {
+        "fn": "models/Mesh014.obj",
+        "smooth": true,
+        "material": "Plastic_Black",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "model",
+      "name": "shape_19",
+      "param": {
+        "fn": "models/Mesh004.obj",
+        "smooth": true,
+        "material": "Floor",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_20",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_20_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                0.16277167201042175,
+                6.796546614395993e-08,
+                0.34906506538391113,
+                0.0
+              ],
+              [
+                0.15667569637298584,
+                -1.4225136624190782e-08,
+                -0.07305905967950821,
+                0.0
+              ],
+              [
+                3.4032143964891903e-14,
+                0.44884392619132996,
+                -8.73931398359673e-08,
+                0.0
+              ],
+              [
+                -0.2779231071472168,
+                0.22527095675468445,
+                0.16372351348400116,
+                1.0
+              ]
+            ]
+          }
+        },
+        "emission": {
+          "type": "area",
+          "param": {
+            "color": [
+              2.0,
+              2.0,
+              2.0
+            ],
+            "two_sided": false,
+            "scale": 1
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_21",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_21_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                -1.9618120461473154e-08,
+                0.4488450288772583,
+                2.441842006373207e-10,
+                0.0
+              ],
+              [
+                -0.16400529444217682,
+                -7.169453919431135e-09,
+                0.002041352679952979,
+                0.0
+              ],
+              [
+                0.004548011347651482,
+                0.0,
+                0.3653939664363861,
+                0.0
+              ],
+              [
+                0.3229469954967499,
+                0.25175952911376953,
+                0.04627799987792969,
+                1.0
+              ]
+            ]
+          }
+        },
+        "emission": {
+          "type": "area",
+          "param": {
+            "color": [
+              2.0,
+              2.0,
+              2.0
+            ],
+            "two_sided": false,
+            "scale": 1
+          }
+        }
+      }
+    },
+    {
+      "type": "quad",
+      "name": "shape_22",
+      "param": {
+        "width": 1.0,
+        "height": 1.0,
+        "material": "shape_22_material",
+        "transform": {
+          "type": "matrix4x4",
+          "param": {
+            "matrix4x4": [
+              [
+                -0.4602559506893158,
+                -1.7923028394761786e-07,
+                0.0,
+                0.0
+              ],
+              [
+                8.249200078580543e-08,
+                -0.2118360549211502,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.46025699377059937,
+                0.0
+              ],
+              [
+                0.0,
+                0.503849983215332,
+                0.03724350035190582,
+                1.0
+              ]
+            ]
+          }
+        },
+        "emission": {
+          "type": "area",
+          "param": {
+            "color": [
+              2.0,
+              2.0,
+              2.0
+            ],
+            "two_sided": false,
+            "scale": 1
+          }
+        }
+      }
+    }
+  ],
+  "materials": [
+    {
+      "type": "substrate",
+      "name": "Plastic_Orange",
+      "param": {
+        "color": [
+          1.0,
+          0.37867626547813416,
+          0.013473397120833397
+        ],
+        "ior": 1.5,
+        "specular": [
+          0.04,
+          0.04,
+          0.04
+        ],
+        "roughness": [
+          0.01,
+          0.01
+        ],
+        "remapping_roughness": false
+      }
+    },
+    {
+      "type": "substrate",
+      "name": "Plastic_Black",
+      "param": {
+        "color": [
+          0.00631,
+          0.00631,
+          0.00631
+        ],
+        "ior": 1.5,
+        "specular": [
+          0.04,
+          0.04,
+          0.04
+        ],
+        "roughness": [
+          0.1,
+          0.1
+        ],
+        "remapping_roughness": false
+      }
+    },
+    {
+      "type": "glass",
+      "name": "Glass",
+      "param": {
+        "ior": 1.5,
+        "roughness": [
+          0,
+          0
+        ],
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "type": "mirror",
+      "name": "Metal",
+      "param": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "roughness": [ 0.001, 0.001 ]
+      }
+    },
+    {
+      "type": "substrate",
+      "name": "Floor",
+      "param": {
+        "color": [
+          0.578596,
+          0.578596,
+          0.578596
+        ],
+        "ior": 1.5,
+        "specular": [
+          0.04,
+          0.04,
+          0.04
+        ],
+        "roughness": [
+          0.01,
+          0.01
+        ],
+        "remapping_roughness": false
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_20_material",
+      "param": {
+        "color": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_21_material",
+      "param": {
+        "color": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "type": "diffuse",
+      "name": "shape_22_material",
+      "param": {
+        "color": [
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  ],
+  "sampler": {
+    "type": "independent",
+    "name": "sampler0",
+    "param": {
+      "spp": 1
+    }
+  },
+  "camera": {
+    "type": "thin_lens",
+    "param": {
+      "fov_y": 25.0,
+      "name": "view1",
+      "velocity": 5,
+      "transform": {
+        "type": "look_at",
+        "param": {
+          "position": [
+            -0.0029600381385535,
+            0.19830328226089478,
+            0.828150749206543
+          ],
+          "up": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "target_pos": [
+            0.002896534511819482,
+            0.16660931706428528,
+            0.022717338055372238
+          ]
+        }
+      },
+      "radiance_collector": {
+        "type": "normal",
+        "param": {
+          "accumulation": 0,
+          "resolution": [
+            800,
+            1000
+          ],
+          "fb_state": 0
+        }
+      },
+      "filter": {
+        "type": "box",
+        "name": "boxFilter",
+        "param": {
+          "radius": [
+            0.5,
+            0.5
+          ]
+        }
+      }
+    }
+  },
+  "warper": {
+    "type": "alias_table"
+  },
+  "integrator": {
+    "type": "rt",
+    //        		"type" : "pt",
+    "param": {
+      //            "separate" : true,
+      "direct": {
+        "spatial": {
+          //                                        					"open": false,
+          "theta": 35,
+          "depth": 0.3,
+          "radius": 30,
+          "sample_num": 1
+        },
+        "temporal": {
+          //                                        					"open": false,
+          "theta": 35,
+          "depth": 0.3,
+          "radius": 8,
+          "motion_vec": 0.15,
+          "history_limit": 20
+        },
+        //                				"mis": true,
+        "M_light": 10,
+        "M_bsdf": 1
+      },
+      "indirect": {
+        "spatial": {
+          //					"open": false,
+          "theta": 35,
+          "depth": 0.3,
+          "radius": 30,
+          "sample_num": 1
+        },
+        "temporal": {
+          //					"open": false,
+          //					"mis": true,
+          "theta": 35,
+          "depth": 0.3,
+          "radius": 8,
+          "history_limit": 10
+        },
+        "correct_mode": 0,
+        //                "open": false,
+        "pairwise": true
+      },
+      "denoiser": {
+        "type": "svgf",
+        "param": {
+          "N": 3,
+          "filter": {
+            "type": "gaussian",
+            "param": {
+              "radius": 2.5
+            }
+          }
+        }
+      },
+      "min_depth": 5,
+      "max_depth": 16,
+      "rr_threshold": 1
+    }
+  },
+  "light_sampler": {
+    "type": "uniform",
+    "param": {
+      "lights": []
+    }
+  },
+  "render_setting": {
+    "polymorphic_mode": 1
+  },
+  "output": {
+    "spp": 1024,
+    "fn": "output.png"
+  }
+}
