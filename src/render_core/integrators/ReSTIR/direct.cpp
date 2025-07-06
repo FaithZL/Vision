@@ -33,6 +33,7 @@ void ReSTIRDI::render_sub_UI(ocarina::Widgets *widgets) noexcept {
     changed_ |= widgets->input_uint_limit("max recursion", &max_recursion_, 1, 100);
     changed_ |= widgets->drag_float("diffuse factor threshold", &diff_factor_, 0, 1);
     changed_ |= widgets->check_box("temporal", &temporal_.open);
+    widgets->check_box("pairwise", &pairwise_);
     if (temporal_.open) {
         changed_ |= widgets->input_uint_limit("history", &temporal_.limit, 0, 50, 1, 3);
         changed_ |= widgets->input_float_limit("temporal theta",
