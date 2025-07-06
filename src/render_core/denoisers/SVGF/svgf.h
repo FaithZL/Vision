@@ -38,6 +38,7 @@ private:
     float sigma_normal_{128.f};
 
 public:
+    SVGF() = default;
     explicit SVGF(const DenoiserDesc &desc)
         : Denoiser(desc),
           svgf_data(pipeline()->bindless_array()),

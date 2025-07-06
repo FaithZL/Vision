@@ -55,6 +55,7 @@ public:
     using Desc = DenoiserDesc;
 
 public:
+    Denoiser() = default;
     explicit Denoiser(const DenoiserDesc &desc)
         : Node(desc),
           mode_(RT),

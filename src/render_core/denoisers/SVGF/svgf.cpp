@@ -102,4 +102,4 @@ CommandList SVGF::dispatch(vision::RealTimeDenoiseInput &input) noexcept {
 
 }// namespace vision::svgf
 
-VS_MAKE_CLASS_CREATOR(vision::svgf::SVGF)
+VS_MAKE_CLASS_CREATOR_HOTFIX(vision::svgf, SVGF)
