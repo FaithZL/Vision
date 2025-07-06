@@ -173,7 +173,7 @@ GIReservoirVar ReSTIRGI::temporal_reuse(GIReservoirVar rsv, const SurfaceDataVar
         return make_pair(surf, prev_rsv);
     };
 
-    $if(param.temporal) {
+    $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
         auto data = get_prev_data(prev_p, prev_view_pos);
         auto prev_surf = data.first;
         auto prev_rsv = data.second;
