@@ -303,7 +303,7 @@ void Pipeline::display(double dt) noexcept {
     Clock clk;
     before_render();
     render(dt);
-    commit_command();
+//    commit_command();
     after_render();
     double ms = clk.elapse_ms();
     integrator()->accumulate_render_time(ms);

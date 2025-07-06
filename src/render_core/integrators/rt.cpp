@@ -142,7 +142,7 @@ public:
     }
 
     void render() const noexcept override {
-        const Pipeline *rp = pipeline();
+        Pipeline *rp = pipeline();
         Stream &stream = rp->stream();
         stream << frame_buffer().compute_hit(frame_index_);
         stream << compute_GBuffer();
@@ -157,6 +157,22 @@ public:
         auto dn_input = denoise_input();
         stream << denoiser_->dispatch(dn_input);
         increase_frame_index();
+        stream << synchronize();
+        stream << commit();
+
+        OfflineDenoiseInput input;
+
+        RegistrableManaged<float4> &original = scene().rad_collector()->output_buffer();
+        input.resolution = frame_buffer().resolution();
+        input.output = &original;
+        input.color = &original;
+        input.normal = &frame_buffer().normal();
+        input.albedo = &frame_buffer().albedo();
+        denoiser_->apply(input);
+
+        stream << frame_buffer().gamma_correct();
+        stream << synchronize();
+        stream << commit();
     }
 };
 
