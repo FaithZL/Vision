@@ -1827,7 +1827,7 @@
                 "pairwise": true
             },
             "denoiser" : {
-                "type" : "svgf",
+                "type" : "oidn",
                 "param" : {
                     "N": 3,
                     "filter": {
