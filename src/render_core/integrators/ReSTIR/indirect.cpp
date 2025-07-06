@@ -174,31 +174,30 @@ GIReservoirVar ReSTIRGI::temporal_reuse(GIReservoirVar rsv, const SurfaceDataVar
     };
 
     $if(param.temporal) {
-
         auto data = get_prev_data(prev_p, prev_view_pos);
         auto prev_surf = data.first;
         auto prev_rsv = data.second;
-        rsv = combine_temporal(rsv, cur_surf, prev_rsv, nullptr,view_pos, prev_view_pos);
 
-        //$if(is_temporal_valid(cur_surf, prev_surf,
-        //                      param, addressof(prev_rsv.sample))) {
-        //    rsv = combine_temporal(rsv, cur_surf, prev_rsv, nullptr,
-        //                           view_pos, prev_view_pos);
-        //}
-        //$else {
-        //    $for(i, temporal_.N) {
-        //        Float2 p = square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film;
-        //        auto data = get_prev_data(p, prev_view_pos);
-        //        auto another_surf = data.first;
-        //        auto another_rsv = data.second;
-        //        $if(is_temporal_valid(cur_surf, another_surf,
-        //                              param, addressof(another_rsv.sample))) {
-        //            rsv = combine_temporal(rsv, cur_surf, another_rsv, addressof(another_surf),
-        //                                   view_pos, prev_view_pos);
-        //            $break;
-        //        };
-        //    };
-        //};
+        $if(is_temporal_valid(cur_surf, prev_surf,
+                              param, addressof(prev_rsv.sample))) {
+            rsv = combine_temporal(rsv, cur_surf, prev_rsv, nullptr,
+                                   view_pos, prev_view_pos);
+        }
+        $else {
+            $for(i, temporal_.N) {
+                Uint2 p = make_uint2(square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film);
+                Uint2 p_clamped = ocarina::clamp(make_uint2(p), make_uint2(0), dispatch_dim().xy() - 1u);
+                auto data = get_prev_data(p_clamped, prev_view_pos);
+                auto another_surf = data.first;
+                auto another_rsv = data.second;
+                $if(is_temporal_valid(cur_surf, another_surf,
+                                      param, addressof(another_rsv.sample))) {
+                    rsv = combine_temporal(rsv, cur_surf, another_rsv, addressof(another_surf),
+                                           view_pos, prev_view_pos);
+                    $break;
+                };
+            };
+        };
     };
     return rsv;
 }
