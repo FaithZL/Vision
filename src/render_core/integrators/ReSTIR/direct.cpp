@@ -384,6 +384,7 @@ DIReservoirVar ReSTIRDI::temporal_reuse(DIReservoirVar rsv, const SurfaceDataVar
                                         const SensorSample &ss,
                                         const Var<DIParam> &param) const noexcept {
     Float2 prev_p_film = ss.p_film - motion_vec;
+    Uint2 prev_p = ocarina::clamp(make_uint2(prev_p_film), make_uint2(0), dispatch_dim().xy() - 1u);
     Float limit = rsv.C * param.history_limit;
     Int2 res = make_int2(dispatch_dim().xy());
     TSensor &camera = scene().sensor();
@@ -391,7 +392,7 @@ DIReservoirVar ReSTIRDI::temporal_reuse(DIReservoirVar rsv, const SurfaceDataVar
     Float3 view_pos = camera->device_position();
     Float3 prev_view_pos = camera->prev_device_position();
 
-    auto get_prev_data = [this, &limit](const Float2 &pos, Float3 &view_pos) {
+    auto get_prev_data = [this, &limit](const Uint2 &pos, Float3 &view_pos) {
         Uint index = dispatch_id(make_uint2(pos));
         DIReservoirVar prev_rsv = prev_reservoirs().read(index);
         prev_rsv->truncation(limit);
@@ -403,28 +404,29 @@ DIReservoirVar ReSTIRDI::temporal_reuse(DIReservoirVar rsv, const SurfaceDataVar
     };
 
     view_pos = cur_view_pos(cur_surf.is_replaced);
-    $if(in_screen(make_int2(prev_p_film), res) && param.temporal) {
-        auto data = get_prev_data(prev_p_film, prev_view_pos);
+    $if(param.temporal) {
+        auto data = get_prev_data(prev_p, prev_view_pos);
         auto prev_surf = data.first;
         auto prev_rsv = data.second;
+        //rsv = combine_temporal(rsv, cur_surf, prev_rsv, view_pos, prev_view_pos);
 
         $if(is_temporal_valid(cur_surf, prev_surf, param,
                               addressof(prev_rsv.sample))) {
             rsv = combine_temporal(rsv, cur_surf, prev_rsv, view_pos, prev_view_pos);
-        }
-        $else {
-            $for(i, temporal_.N) {
-                Float2 p = square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film;
-                auto data = get_prev_data(p, prev_view_pos);
-                auto another_surf = data.first;
-                auto another_rsv = data.second;
-                $if(is_temporal_valid(cur_surf, another_surf, param,
-                                      addressof(another_rsv.sample))) {
-                    rsv = combine_temporal(rsv, cur_surf, another_rsv, view_pos, prev_view_pos);
-                    $break;
-                };
-            };
         };
+        //$else {
+        //    $for(i, temporal_.N) {
+        //        Float2 p = square_to_disk(sampler()->next_2d()) * param.t_radius + prev_p_film;
+        //        auto data = get_prev_data(p, prev_view_pos);
+        //        auto another_surf = data.first;
+        //        auto another_rsv = data.second;
+        //        $if(is_temporal_valid(cur_surf, another_surf, param,
+        //                              addressof(another_rsv.sample))) {
+        //            rsv = combine_temporal(rsv, cur_surf, another_rsv, view_pos, prev_view_pos);
+        //            $break;
+        //        };
+        //    };
+        //};
     };
     return rsv;
 }
