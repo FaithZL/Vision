@@ -61,6 +61,8 @@ public:
         frame_buffer().prepare_screen_buffer(specular_buffer_);
         frame_buffer().prepare_hit_bsdfs();
         frame_buffer().prepare_surfaces();
+        frame_buffer().prepare_albedo();
+        frame_buffer().prepare_emission();
         frame_buffer().prepare_surface_extends();
         frame_buffer().prepare_hit_buffer();
         frame_buffer().prepare_gbuffer();
@@ -126,6 +128,8 @@ public:
         ret.prev_gbuffer = frame_buffer().prev_gbuffer(frame_index_);
         ret.motion_vec = frame_buffer().motion_vectors();
         ret.radiance = rad_collector()->rt_buffer();
+        ret.albedo = frame_buffer().albedo();
+        ret.emission = frame_buffer().emission();
         ret.output = rad_collector()->output_buffer();
         return ret;
     }

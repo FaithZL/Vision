@@ -125,6 +125,8 @@ public:                                                                    \
     VS_MAKE_BUFFER(RegistrableBuffer<SurfaceExtend>, surface_extends, 2)
     VS_MAKE_BUFFER(RegistrableBuffer<float2>, motion_vectors, 1)
     VS_MAKE_BUFFER(RegistrableBuffer<HitBSDF>, hit_bsdfs, 1)
+    VS_MAKE_BUFFER(RegistrableBuffer<float4>, emission, 1)
+    VS_MAKE_BUFFER(RegistrableBuffer<float4>, albedo, 1)
 
     VS_MAKE_BUFFER(RegistrableBuffer<PixelGeometry>, gbuffer, 2)
 
