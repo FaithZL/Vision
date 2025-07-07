@@ -145,7 +145,7 @@ public:                                                                    \
     VS_MAKE_BUFFER(RegistrableManaged<float4>, albedo, 1)
     VS_MAKE_BUFFER(RegistrableManaged<float4>, normal, 1)
 
-    VS_MAKE_BUFFER(RegistrableBuffer<PixelGeometry>, gbuffer, 2)
+    VS_MAKE_DOUBLE_BUFFER(RegistrableBuffer<PixelGeometry>, gbuffer)
 
     /// used for editor
     VS_MAKE_BUFFER(RegistrableManaged<TriangleHit>, hit_buffer, 1)
@@ -179,12 +179,6 @@ public:
     [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
     [[nodiscard]] uint pixel_index(uint2 pos) const noexcept;
-    template<typename T>
-    requires is_integral_expr_v<T>
-    [[nodiscard]] T prev_gbuffer_index(const T &frame_index) const noexcept { return prev_index(frame_index) + gbuffer_base(); }
-    template<typename T>
-    requires is_integral_expr_v<T>
-    [[nodiscard]] T cur_gbuffer_index(const T &frame_index) const noexcept { return cur_index(frame_index) + gbuffer_base(); }
 
     [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer(uint frame_index) const noexcept;
     [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
