@@ -310,27 +310,27 @@ const Buffer<float4> &FrameBuffer::cur_screen_buffer() const noexcept {
     return screen_buffers_.at(cur_view_)->device_buffer();
 }
 
-BufferView<PixelGeometry> FrameBuffer::prev_gbuffer(ocarina::uint frame_index) const noexcept {
+BufferView<PixelGeometry> FrameBuffer::prev_gbuffer_view(uint frame_index) const noexcept {
     return pipeline()->buffer_view<PixelGeometry>(prev_gbuffer_index(frame_index));
 }
 
-BufferView<PixelGeometry> FrameBuffer::cur_gbuffer(ocarina::uint frame_index) const noexcept {
+BufferView<PixelGeometry> FrameBuffer::cur_gbuffer_view(uint frame_index) const noexcept {
     return pipeline()->buffer_view<PixelGeometry>(cur_gbuffer_index(frame_index));
 }
 
-BufferView<SurfaceData> FrameBuffer::prev_surfaces(ocarina::uint frame_index) const noexcept {
+BufferView<SurfaceData> FrameBuffer::prev_surfaces_view(uint frame_index) const noexcept {
     return pipeline()->buffer_view<SurfaceData>(prev_surfaces_index(frame_index));
 }
 
-BufferView<SurfaceData> FrameBuffer::cur_surfaces(ocarina::uint frame_index) const noexcept {
+BufferView<SurfaceData> FrameBuffer::cur_surfaces_view(uint frame_index) const noexcept {
     return pipeline()->buffer_view<SurfaceData>(cur_surfaces_index(frame_index));
 }
 
-BindlessArrayBuffer<SurfaceData> FrameBuffer::prev_surfaces(const ocarina::Uint &frame_index) const noexcept {
+BindlessArrayBuffer<SurfaceData> FrameBuffer::prev_surfaces_var(const Uint &frame_index) const noexcept {
     return pipeline()->buffer_var<SurfaceData>(prev_surfaces_index(frame_index));
 }
 
-BindlessArrayBuffer<SurfaceData> FrameBuffer::cur_surfaces(const ocarina::Uint &frame_index) const noexcept {
+BindlessArrayBuffer<SurfaceData> FrameBuffer::cur_surfaces_var(const Uint &frame_index) const noexcept {
     return pipeline()->buffer_var<SurfaceData>(cur_surfaces_index(frame_index));
 }
 
@@ -356,8 +356,8 @@ Float3 FrameBuffer::compute_motion_vector(const TSensor &camera, const Float2 &p
                                           const Uint &frame_index) const noexcept {
     Uint2 pixel = make_uint2(p_film);
     Uint pixel_index = dispatch_id(pixel);
-    SurfaceDataVar cur_surf = cur_surfaces(frame_index).read(pixel_index);
-    SurfaceDataVar prev_surf = prev_surfaces(frame_index).read(pixel_index);
+    SurfaceDataVar cur_surf = cur_surfaces_var(frame_index).read(pixel_index);
+    SurfaceDataVar prev_surf = prev_surfaces_var(frame_index).read(pixel_index);
     return compute_motion_vector(camera, cur_surf->position(), prev_surf->position());
 }
 

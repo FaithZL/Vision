@@ -104,7 +104,7 @@ public:
     }
 
     [[nodiscard]] CommandList compute_GBuffer() const noexcept {
-        return frame_buffer().compute_GBuffer(frame_index_, frame_buffer().cur_gbuffer(frame_index_),
+        return frame_buffer().compute_GBuffer(frame_index_, frame_buffer().cur_gbuffer_view(frame_index_),
                                               frame_buffer().motion_vectors(), frame_buffer().albedo(),
                                               frame_buffer().emission(), frame_buffer().normal());
     }
@@ -131,8 +131,8 @@ public:
         TSensor &camera = scene().sensor();
         ret.frame_index = frame_index_;
         ret.resolution = pipeline()->resolution();
-        ret.gbuffer = frame_buffer().cur_gbuffer(frame_index_);
-        ret.prev_gbuffer = frame_buffer().prev_gbuffer(frame_index_);
+        ret.gbuffer = frame_buffer().cur_gbuffer_view(frame_index_);
+        ret.prev_gbuffer = frame_buffer().prev_gbuffer_view(frame_index_);
         ret.motion_vec = frame_buffer().motion_vectors();
         ret.radiance = rad_collector()->rt_buffer();
         ret.albedo = frame_buffer().albedo();

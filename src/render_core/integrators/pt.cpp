@@ -79,8 +79,8 @@ public:
         TSensor &camera = scene().sensor();
         ret.frame_index = frame_index_;
         ret.resolution = pipeline()->resolution();
-        ret.gbuffer = frame_buffer().cur_gbuffer(frame_index_);
-        ret.prev_gbuffer = frame_buffer().prev_gbuffer(frame_index_);
+        ret.gbuffer = frame_buffer().cur_gbuffer_view(frame_index_);
+        ret.prev_gbuffer = frame_buffer().prev_gbuffer_view(frame_index_);
         ret.motion_vec = frame_buffer().motion_vectors();
         ret.radiance = rad_collector()->rt_buffer();
         ret.output = rad_collector()->output_buffer();

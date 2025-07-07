@@ -180,12 +180,12 @@ public:
     [[nodiscard]] uint2 resolution() const noexcept;
     [[nodiscard]] uint pixel_index(uint2 pos) const noexcept;
 
-    [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer(uint frame_index) const noexcept;
-    [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
-    [[nodiscard]] BufferView<SurfaceData> prev_surfaces(uint frame_index) const noexcept;
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces(const Uint &frame_index) const noexcept;
-    [[nodiscard]] BufferView<SurfaceData> cur_surfaces(uint frame_index) const noexcept;
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces(const Uint &frame_index) const noexcept;
+    [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer_view(uint frame_index) const noexcept;
+    [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer_view(uint frame_index) const noexcept;
+    [[nodiscard]] BufferView<SurfaceData> prev_surfaces_view(uint frame_index) const noexcept;
+    [[nodiscard]] BufferView<SurfaceData> cur_surfaces_view(uint frame_index) const noexcept;
+    [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces_var(const Uint &frame_index) const noexcept;
+    [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces_var(const Uint &frame_index) const noexcept;
 
     [[nodiscard]] const Buffer<float4> &cur_screen_buffer() const noexcept;
 
