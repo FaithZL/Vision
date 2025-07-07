@@ -206,7 +206,7 @@ CommandList FrameBuffer::compute_hit(uint frame_index) const noexcept {
 }
 
 CommandList FrameBuffer::compute_geom(uint frame_index, BufferView<PixelGeometry> gbuffer, BufferView<float2> motion_vectors,
-                                      BufferView<float4> albedo, BufferView<float4> emission,BufferView<float4> normal) const noexcept {
+                                      BufferView<float4> albedo, BufferView<float4> emission, BufferView<float4> normal) const noexcept {
     CommandList ret;
     ret << compute_geom_(frame_index, gbuffer, motion_vectors, albedo, emission, normal).dispatch(resolution());
     return ret;
@@ -220,7 +220,7 @@ CommandList FrameBuffer::compute_grad(uint frame_index, BufferView<vision::Pixel
 
 CommandList FrameBuffer::compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer,
                                          BufferView<float2> motion_vectors,
-                                         BufferView<float4> albedo,BufferView<float4> emission,
+                                         BufferView<float4> albedo, BufferView<float4> emission,
                                          BufferView<float4> normal) const noexcept {
     CommandList ret;
     ret << compute_geom_(frame_index, gbuffer, motion_vectors, albedo, emission, normal).dispatch(resolution());
@@ -260,6 +260,10 @@ void FrameBuffer::unregister(const std::string &name) noexcept {
         OC_ERROR("");
     }
     screen_buffers_.erase(iter);
+}
+
+BindlessArray &FrameBuffer::bindless_array() const noexcept {
+    return pipeline()->bindless_array();
 }
 
 uint FrameBuffer::pixel_index(uint2 pos) const noexcept {
@@ -308,30 +312,6 @@ void FrameBuffer::after_render() noexcept {
 
 const Buffer<float4> &FrameBuffer::cur_screen_buffer() const noexcept {
     return screen_buffers_.at(cur_view_)->device_buffer();
-}
-
-BufferView<PixelGeometry> FrameBuffer::prev_gbuffer_view(uint frame_index) const noexcept {
-    return pipeline()->buffer_view<PixelGeometry>(prev_gbuffer_index(frame_index));
-}
-
-BufferView<PixelGeometry> FrameBuffer::cur_gbuffer_view(uint frame_index) const noexcept {
-    return pipeline()->buffer_view<PixelGeometry>(cur_gbuffer_index(frame_index));
-}
-
-BufferView<SurfaceData> FrameBuffer::prev_surfaces_view(uint frame_index) const noexcept {
-    return pipeline()->buffer_view<SurfaceData>(prev_surfaces_index(frame_index));
-}
-
-BufferView<SurfaceData> FrameBuffer::cur_surfaces_view(uint frame_index) const noexcept {
-    return pipeline()->buffer_view<SurfaceData>(cur_surfaces_index(frame_index));
-}
-
-BindlessArrayBuffer<SurfaceData> FrameBuffer::prev_surfaces_var(const Uint &frame_index) const noexcept {
-    return pipeline()->buffer_var<SurfaceData>(prev_surfaces_index(frame_index));
-}
-
-BindlessArrayBuffer<SurfaceData> FrameBuffer::cur_surfaces_var(const Uint &frame_index) const noexcept {
-    return pipeline()->buffer_var<SurfaceData>(cur_surfaces_index(frame_index));
 }
 
 Uint FrameBuffer::checkerboard_value(const Uint2 &coord) noexcept {

@@ -123,17 +123,29 @@ public:                                                                    \
         return buffer_name##_.index().hv();                                \
     }
 
-#define VS_MAKE_DOUBLE_BUFFER(Type, buffer_name)                                      \
-    VS_MAKE_BUFFER(Type, buffer_name, 2)                                              \
-    template<typename T>                                                              \
-    requires is_integral_expr_v<T>                                                    \
-    [[nodiscard]] T prev_##buffer_name##_index(const T &frame_index) const noexcept { \
-        return prev_index(frame_index) + buffer_name##_base();                        \
-    }                                                                                 \
-    template<typename T>                                                              \
-    requires is_integral_expr_v<T>                                                    \
-    [[nodiscard]] T cur_##buffer_name##_index(const T &frame_index) const noexcept {  \
-        return cur_index(frame_index) + buffer_name##_base();                         \
+#define VS_MAKE_DOUBLE_BUFFER(Type, buffer_name)                                                                              \
+    VS_MAKE_BUFFER(Type, buffer_name, 2)                                                                                      \
+    template<typename T>                                                                                                      \
+    requires is_integral_expr_v<T>                                                                                            \
+    [[nodiscard]] T prev_##buffer_name##_index(const T &frame_index) const noexcept {                                         \
+        return prev_index(frame_index) + buffer_name##_base();                                                                \
+    }                                                                                                                         \
+    template<typename T>                                                                                                      \
+    requires is_integral_expr_v<T>                                                                                            \
+    [[nodiscard]] T cur_##buffer_name##_index(const T &frame_index) const noexcept {                                          \
+        return cur_index(frame_index) + buffer_name##_base();                                                                 \
+    }                                                                                                                         \
+    [[nodiscard]] auto prev_##buffer_name##_view(uint frame_index) const noexcept {                                           \
+        return bindless_array().buffer_view<decltype(buffer_name##_)::element_type>(prev_##buffer_name##_index(frame_index)); \
+    }                                                                                                                         \
+    [[nodiscard]] auto cur_##buffer_name##_view(uint frame_index) const noexcept {                                            \
+        return bindless_array().buffer_view<decltype(buffer_name##_)::element_type>(cur_##buffer_name##_index(frame_index));  \
+    }                                                                                                                         \
+    [[nodiscard]] auto prev_##buffer_name##_var(const Uint &frame_index) const noexcept {                                     \
+        return bindless_array().buffer_var<decltype(buffer_name##_)::element_type>(prev_##buffer_name##_index(frame_index));  \
+    }                                                                                                                         \
+    [[nodiscard]] auto cur_##buffer_name##_var(const Uint &frame_index) const noexcept {                                      \
+        return bindless_array().buffer_var<decltype(buffer_name##_)::element_type>(cur_##buffer_name##_index(frame_index));   \
     }
 
     /// save two frames of data , use for ReSTIR
@@ -179,13 +191,7 @@ public:
     [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
     [[nodiscard]] uint pixel_index(uint2 pos) const noexcept;
-
-    [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer_view(uint frame_index) const noexcept;
-    [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer_view(uint frame_index) const noexcept;
-    [[nodiscard]] BufferView<SurfaceData> prev_surfaces_view(uint frame_index) const noexcept;
-    [[nodiscard]] BufferView<SurfaceData> cur_surfaces_view(uint frame_index) const noexcept;
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> prev_surfaces_var(const Uint &frame_index) const noexcept;
-    [[nodiscard]] BindlessArrayBuffer<SurfaceData> cur_surfaces_var(const Uint &frame_index) const noexcept;
+    [[nodiscard]] BindlessArray &bindless_array() const noexcept;
 
     [[nodiscard]] const Buffer<float4> &cur_screen_buffer() const noexcept;
 
