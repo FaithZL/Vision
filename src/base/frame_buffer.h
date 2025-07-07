@@ -123,9 +123,22 @@ public:                                                                    \
         return buffer_name##_.index().hv();                                \
     }
 
+#define VS_MAKE_DOUBLE_BUFFER(Type, buffer_name)                                      \
+    VS_MAKE_BUFFER(Type, buffer_name, 2)                                              \
+    template<typename T>                                                              \
+    requires is_integral_expr_v<T>                                                    \
+    [[nodiscard]] T prev_##buffer_name##_index(const T &frame_index) const noexcept { \
+        return prev_index(frame_index) + buffer_name##_base();                        \
+    }                                                                                 \
+    template<typename T>                                                              \
+    requires is_integral_expr_v<T>                                                    \
+    [[nodiscard]] T cur_##buffer_name##_index(const T &frame_index) const noexcept {  \
+        return cur_index(frame_index) + buffer_name##_base();                         \
+    }
+
     /// save two frames of data , use for ReSTIR
-    VS_MAKE_BUFFER(RegistrableBuffer<SurfaceData>, surfaces, 2)
-    VS_MAKE_BUFFER(RegistrableBuffer<SurfaceExtend>, surface_exts, 2)
+    VS_MAKE_DOUBLE_BUFFER(RegistrableBuffer<SurfaceData>, surfaces)
+    VS_MAKE_DOUBLE_BUFFER(RegistrableBuffer<SurfaceExtend>, surface_exts)
     VS_MAKE_BUFFER(RegistrableBuffer<float2>, motion_vectors, 1)
     VS_MAKE_BUFFER(RegistrableBuffer<HitBSDF>, hit_bsdfs, 1)
     VS_MAKE_BUFFER(RegistrableBuffer<float4>, emission, 1)
@@ -139,6 +152,8 @@ public:                                                                    \
 
     /// Display in full screen on the screen
     VS_MAKE_BUFFER(RegistrableBuffer<float4>, view_buffer, 1)
+
+#undef VS_MAKE_DOUBLE_BUFFER
 
 #undef VS_MAKE_BUFFER
 
@@ -170,22 +185,6 @@ public:
     template<typename T>
     requires is_integral_expr_v<T>
     [[nodiscard]] T cur_gbuffer_index(const T &frame_index) const noexcept { return cur_index(frame_index) + gbuffer_base(); }
-    template<typename T>
-    requires is_integral_expr_v<T>
-    [[nodiscard]] T cur_surfaces_index(const T &frame_index) const noexcept { return cur_index(frame_index) + surfaces_base(); }
-    template<typename T>
-    requires is_integral_expr_v<T>
-    [[nodiscard]] T prev_surfaces_index(const T &frame_index) const noexcept { return prev_index(frame_index) + surfaces_base(); }
-    template<typename T>
-    requires is_integral_expr_v<T>
-    [[nodiscard]] T prev_surface_exts_index(const T &frame_index) const noexcept {
-        return prev_index(frame_index) + surface_exts_base();
-    }
-    template<typename T>
-    requires is_integral_expr_v<T>
-    [[nodiscard]] T cur_surface_exts_index(const T &frame_index) const noexcept {
-        return cur_index(frame_index) + surface_exts_base();
-    }
 
     [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer(uint frame_index) const noexcept;
     [[nodiscard]] BufferView<PixelGeometry> cur_gbuffer(uint frame_index) const noexcept;
