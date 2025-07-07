@@ -118,11 +118,14 @@ public:                                                                    \
     }                                                                      \
     void reset_##buffer_name() noexcept {                                  \
         reset_buffer(buffer_name##_, "FrameBuffer::" #buffer_name, count); \
+    }                                                                      \
+    [[nodiscard]] uint buffer_name##_base() const noexcept {               \
+        return buffer_name##_.index().hv();                                \
     }
 
     /// save two frames of data , use for ReSTIR
     VS_MAKE_BUFFER(RegistrableBuffer<SurfaceData>, surfaces, 2)
-    VS_MAKE_BUFFER(RegistrableBuffer<SurfaceExtend>, surface_extends, 2)
+    VS_MAKE_BUFFER(RegistrableBuffer<SurfaceExtend>, surface_exts, 2)
     VS_MAKE_BUFFER(RegistrableBuffer<float2>, motion_vectors, 1)
     VS_MAKE_BUFFER(RegistrableBuffer<HitBSDF>, hit_bsdfs, 1)
     VS_MAKE_BUFFER(RegistrableBuffer<float4>, emission, 1)
@@ -145,7 +148,7 @@ public:
 public:
     FrameBuffer() = default;
     explicit FrameBuffer(const FrameBufferDesc &desc);
-    VS_HOTFIX_MAKE_RESTORE(Node, cur_view_, gbuffer_, surfaces_, surface_extends_, hit_bsdfs_,
+    VS_HOTFIX_MAKE_RESTORE(Node, cur_view_, gbuffer_, surfaces_, surface_exts_, hit_bsdfs_,
                            motion_vectors_, hit_buffer_, screen_buffers_, gamma_correct_,
                            view_buffer_, visualizer_, window_buffer_,
                            compute_geom_, compute_grad_, compute_hit_)
@@ -161,9 +164,6 @@ public:
     [[nodiscard]] uint pixel_num() const noexcept;
     [[nodiscard]] uint2 resolution() const noexcept;
     [[nodiscard]] uint pixel_index(uint2 pos) const noexcept;
-    [[nodiscard]] uint gbuffer_base() const noexcept { return gbuffer_.index().hv(); }
-    [[nodiscard]] uint surface_base() const noexcept { return surfaces_.index().hv(); }
-    [[nodiscard]] uint surface_ext_base() const noexcept { return surface_extends_.index().hv(); }
     template<typename T>
     requires is_integral_expr_v<T>
     [[nodiscard]] T prev_gbuffer_index(const T &frame_index) const noexcept { return prev_index(frame_index) + gbuffer_base(); }
@@ -172,19 +172,19 @@ public:
     [[nodiscard]] T cur_gbuffer_index(const T &frame_index) const noexcept { return cur_index(frame_index) + gbuffer_base(); }
     template<typename T>
     requires is_integral_expr_v<T>
-    [[nodiscard]] T cur_surfaces_index(const T &frame_index) const noexcept { return cur_index(frame_index) + surface_base(); }
+    [[nodiscard]] T cur_surfaces_index(const T &frame_index) const noexcept { return cur_index(frame_index) + surfaces_base(); }
     template<typename T>
     requires is_integral_expr_v<T>
-    [[nodiscard]] T prev_surfaces_index(const T &frame_index) const noexcept { return prev_index(frame_index) + surface_base(); }
+    [[nodiscard]] T prev_surfaces_index(const T &frame_index) const noexcept { return prev_index(frame_index) + surfaces_base(); }
     template<typename T>
     requires is_integral_expr_v<T>
-    [[nodiscard]] T prev_surface_extends_index(const T &frame_index) const noexcept {
-        return prev_index(frame_index) + surface_ext_base();
+    [[nodiscard]] T prev_surface_exts_index(const T &frame_index) const noexcept {
+        return prev_index(frame_index) + surface_exts_base();
     }
     template<typename T>
     requires is_integral_expr_v<T>
-    [[nodiscard]] T cur_surface_extends_index(const T &frame_index) const noexcept {
-        return cur_index(frame_index) + surface_ext_base();
+    [[nodiscard]] T cur_surface_exts_index(const T &frame_index) const noexcept {
+        return cur_index(frame_index) + surface_exts_base();
     }
 
     [[nodiscard]] BufferView<PixelGeometry> prev_gbuffer(uint frame_index) const noexcept;
@@ -225,10 +225,10 @@ public:
     [[nodiscard]] CommandList gamma_correct() const noexcept;
     [[nodiscard]] virtual CommandList compute_GBuffer(uint frame_index, BufferView<PixelGeometry> gbuffer,
                                                       BufferView<float2> motion_vectors, BufferView<float4> albedo,
-                                                      BufferView<float4> emission,BufferView<float4> normal) const noexcept;
+                                                      BufferView<float4> emission, BufferView<float4> normal) const noexcept;
     [[nodiscard]] virtual CommandList compute_geom(uint frame_index, BufferView<PixelGeometry> gbuffer,
                                                    BufferView<float2> motion_vectors, BufferView<float4> albedo,
-                                                   BufferView<float4> emission,BufferView<float4> normal) const noexcept;
+                                                   BufferView<float4> emission, BufferView<float4> normal) const noexcept;
     [[nodiscard]] virtual CommandList compute_grad(uint frame_index, BufferView<PixelGeometry> gbuffer) const noexcept;
     [[nodiscard]] virtual CommandList compute_hit(uint frame_index) const noexcept;
     template<typename T>

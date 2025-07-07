@@ -112,10 +112,10 @@ public:
         return pipeline()->buffer_var<SurfaceData>(frame_buffer().cur_surfaces_index(frame_index()));
     }
     [[nodiscard]] auto prev_surface_extends() const noexcept {
-        return pipeline()->buffer_var<SurfaceExtend>(frame_buffer().prev_surface_extends_index(frame_index()));
+        return pipeline()->buffer_var<SurfaceExtend>(frame_buffer().prev_surface_exts_index(frame_index()));
     }
     [[nodiscard]] auto cur_surface_extends() const noexcept {
-        return pipeline()->buffer_var<SurfaceExtend>(frame_buffer().cur_surface_extends_index(frame_index()));
+        return pipeline()->buffer_var<SurfaceExtend>(frame_buffer().cur_surface_exts_index(frame_index()));
     }
     [[nodiscard]] Float3 cur_view_pos(const Bool &is_replace) const noexcept {
         Float3 view_pos;

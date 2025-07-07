@@ -63,7 +63,7 @@ public:
         frame_buffer().prepare_surfaces();
         frame_buffer().prepare_albedo();
         frame_buffer().prepare_emission();
-        frame_buffer().prepare_surface_extends();
+        frame_buffer().prepare_surface_exts();
         frame_buffer().prepare_hit_buffer();
         frame_buffer().prepare_gbuffer();
         frame_buffer().prepare_normal();
