@@ -230,6 +230,16 @@ public:
                                                    BufferView<float4> emission, BufferView<float4> normal) const noexcept;
     [[nodiscard]] virtual CommandList compute_grad(uint frame_index, BufferView<PixelGeometry> gbuffer) const noexcept;
     [[nodiscard]] virtual CommandList compute_hit(uint frame_index) const noexcept;
+
+    template<typename T>
+    void register_buffer_view(T &buffer, uint index, size_t offset, size_t size) {
+        if (buffer.has_registered()) {
+            buffer.register_view_index(index, pixel_num() * index, pixel_num());
+        } else {
+            buffer.register_view(pixel_num() * index, pixel_num());
+        }
+    }
+
     template<typename T>
     void init_buffer(RegistrableBuffer<T> &buffer, const string &desc, uint count = 1) noexcept {
         uint element_num = count * pixel_num();
@@ -240,7 +250,7 @@ public:
         buffer.set_bindless_array(bindless_array());
         buffer.register_self();
         for (int i = 1; i < count; ++i) {
-            buffer.register_view(pixel_num() * i, pixel_num());
+            register_buffer_view(buffer, i, pixel_num() * i, pixel_num());
         }
     }
 
@@ -249,16 +259,7 @@ public:
         if (buffer.size() == 0) {
             return;
         }
-        uint element_num = count * pixel_num();
-        buffer.super() = device().create_buffer<T>(element_num, desc);
-        vector<T> vec{};
-        vec.assign(element_num, T{});
-        buffer.upload_immediately(vec.data());
-        buffer.set_bindless_array(bindless_array());
-        buffer.register_self();
-        for (int i = 1; i < count; ++i) {
-            buffer.register_view_index(i, pixel_num() * i, pixel_num());
-        }
+        init_buffer(buffer, desc, count);
     }
 
     template<typename T>
@@ -270,7 +271,7 @@ public:
         buffer.set_bindless_array(bindless_array());
         buffer.register_self();
         for (int i = 1; i < count; ++i) {
-            buffer.register_view(pixel_num() * i, pixel_num());
+            register_buffer_view(buffer, i, pixel_num() * i, pixel_num());
         }
     }
 
@@ -279,15 +280,7 @@ public:
         if (buffer.device_buffer().size() == 0) {
             return;
         }
-        uint element_num = count * pixel_num();
-        buffer.reset_all(device(), element_num, desc);
-        vector<T> vec{};
-        vec.assign(element_num, T{});
-        buffer.set_bindless_array(bindless_array());
-        buffer.register_self();
-        for (int i = 1; i < count; ++i) {
-            buffer.register_view_index(i, pixel_num() * i, pixel_num());
-        }
+        init_buffer(buffer, desc, count);
     }
 };
 
