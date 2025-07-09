@@ -199,8 +199,8 @@ public:
 
     template<typename Elm, typename Index>
     requires is_integral_expr_v<Index>
-    [[nodiscard]] SOAView<Elm, BindlessArrayByteBuffer> soa_view(Index &&index) noexcept {
-        return bindless_array_.soa_view<Elm>(OC_FORWARD(index));
+    [[nodiscard]] SOAViewVar<Elm, BindlessArrayByteBuffer> soa_view_var(Index &&index) noexcept {
+        return bindless_array_.soa_view_var<Elm>(OC_FORWARD(index));
     }
 };
 
