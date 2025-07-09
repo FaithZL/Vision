@@ -16,7 +16,6 @@
 namespace vision {
 using namespace ocarina;
 class Spectrum;
-
 class Pipeline : public Node, public Observer {
 public:
     using Desc = PipelineDesc;
