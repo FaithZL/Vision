@@ -223,8 +223,8 @@ CommandList FrameBuffer::compute_GBuffer(uint frame_index, BufferView<PixelGeome
                                          BufferView<float4> albedo, BufferView<float4> emission,
                                          BufferView<float4> normal) const noexcept {
     CommandList ret;
-    ret << compute_geom_(frame_index, gbuffer, motion_vectors, albedo, emission, normal).dispatch(resolution());
-    ret << compute_grad_(frame_index, gbuffer).dispatch(resolution());
+    ret << compute_geom(frame_index, gbuffer, motion_vectors, albedo, emission, normal);
+    ret << compute_grad(frame_index, gbuffer);
     return ret;
 }
 
