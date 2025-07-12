@@ -12,10 +12,10 @@
 
 namespace vision::svgf {
 struct ModulatorParam {
-    BufferProxy<float4> albedo_buffer;
-    BufferProxy<float4> emission_buffer;
-    BufferProxy<SVGFData> svgf_buffer;
-    BufferProxy<float4> radiance_buffer;
+    BufferDesc<float4> albedo_buffer;
+    BufferDesc<float4> emission_buffer;
+    BufferDesc<SVGFData> svgf_buffer;
+    BufferDesc<float4> radiance_buffer;
 };
 }// namespace vision::svgf
 

@@ -14,15 +14,15 @@ namespace vision::svgf {
 
 struct ReprojectParam {
 public:
-    BufferProxy<PixelGeometry> gbuffer;
-    BufferProxy<PixelGeometry> prev_gbuffer;
-    BufferProxy<float> history_buffer;
-    BufferProxy<float2> motion_vectors;
+    BufferDesc<PixelGeometry> gbuffer;
+    BufferDesc<PixelGeometry> prev_gbuffer;
+    BufferDesc<float> history_buffer;
+    BufferDesc<float2> motion_vectors;
     float alpha{};
     float moments_alpha{};
     uint history_limit{};
-    BufferProxy<SVGFData> cur_buffer{};
-    BufferProxy<SVGFData> prev_buffer{};
+    BufferDesc<SVGFData> cur_buffer{};
+    BufferDesc<SVGFData> prev_buffer{};
 };
 
 }// namespace vision::svgf

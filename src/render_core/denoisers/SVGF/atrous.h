@@ -14,9 +14,9 @@
 
 namespace vision::svgf {
 struct AtrousParam {
-    BufferProxy<SVGFData> svgf_buffer;
-    BufferProxy<PixelGeometry> gbuffer;
-    BufferProxy<float> history_buffer;
+    BufferDesc<SVGFData> svgf_buffer;
+    BufferDesc<PixelGeometry> gbuffer;
+    BufferDesc<float> history_buffer;
     float sigma_rt{};
     float sigma_normal{};
     int step_size{};
