@@ -146,6 +146,12 @@ public:                                                                    \
     }                                                                                                                         \
     [[nodiscard]] auto cur_##buffer_name##_var(const Uint &frame_index) const noexcept {                                      \
         return bindless_array().buffer_var<decltype(buffer_name##_)::element_type>(cur_##buffer_name##_index(frame_index));   \
+    }                                                                                                                         \
+    [[nodiscard]] auto prev_##buffer_name##_byte_view(uint frame_index) const noexcept {                                      \
+        return ByteBufferView(prev_##buffer_name##_view(frame_index));                                                        \
+    }                                                                                                                         \
+    [[nodiscard]] auto cur_##buffer_name##_byte_view(uint frame_index) const noexcept {                                       \
+        return ByteBufferView(cur_##buffer_name##_view(frame_index));                                                         \
     }
 
     /// save two frames of data , use for ReSTIR
